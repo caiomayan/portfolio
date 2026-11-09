@@ -1,3 +1,4 @@
+import { locales } from "@/lib/locales";
 import type { Content } from "./types";
 
 // Fonte do texto: docs/copy-deck.md
@@ -59,7 +60,7 @@ export const pt: Content = {
       { title: "Inglês fluente", period: "C2, EF SET" },
     ],
   },
-  ui: { themeToggle: "Tema escuro" },
+  ui: { themeToggle: "Tema escuro", otherLang: { label: "English", href: locales.en.path, lang: "en" } },
   carmine: {
     heading: "Carmine",
     note: "Projeto pessoal",

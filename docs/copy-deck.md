@@ -56,15 +56,77 @@ Regras: nunca citar o nome da instituição que usa o plugin, nem Inoue, Kurage,
 - E-mail: mail@caiomayan.com (com botão de copiar)
 - LinkedIn: https://www.linkedin.com/in/caiomayan/
 - GitHub: https://github.com/caiomayan
-- Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en). Rótulo no site: "Currículo (PDF)" (proposto pelo build, o Caio revisa; o inglês entra na tarefa do inglês).
+- Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en). Rótulo no site: "Currículo (PDF)" (proposto pelo build, o Caio revisa).
 
 ## Interface
 
 - Troca de língua: "English" na página em português, "Português" na página em inglês.
 - Botão de copiar e-mail: "Copiar e-mail" → "Copiado".
-- Botão de tema (nome acessível; proposto pelo build, o Caio revisa): "Tema escuro" (pt). Proposta pra tarefa do inglês: "Dark theme". Hoje o site usa o texto em pt nas duas rotas.
+- Botão de tema (nome acessível; proposto pelo build, o Caio revisa): "Tema escuro" (pt). Em inglês: "Dark theme" (seção English).
 - Título da aba (proposto, o Caio revisa): "Caio Mayan — Engenheiro de Software".
 
 ## English
 
-Ainda não escrito. Os protótipos usam só português; a versão em inglês entra no build de verdade.
+Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Valem as mesmas regras do topo deste arquivo. Nomes próprios, stack e links não mudam. **O Caio revisa este texto no PR.**
+
+### Presentation
+
+- Name: Caio Mayan
+- Title: Software Engineer
+- Opening line: Software Engineer. I build products on applied AI, on a solid backend foundation.
+- Location: João Pessoa, Paraíba
+- Photo alt: "Portrait of Caio Mayan"
+
+### Carmine
+
+- Name: Carmine
+- Side label: "Personal project"
+- What it is: SaaS for competitive Counter-Strike 2 players and teams.
+- Status: In development, launch expected in 2027
+- How it is built: Built with AI agents that open issues and pull requests and keep the specs and the backlog up to date, with a staging environment separate from production.
+- Stack (role):
+  - Nest.js (backend)
+  - Next.js (frontend)
+  - Valkey (cache and queues)
+  - CounterStrikeSharp (CS2 server plugins)
+  - AWS EC2 (test CS2 servers)
+  - Oracle Cloud (web server, on an Ampere machine)
+- Links: stcarmine.com · Repository
+- Screenshots: tab group "Carmine screens"; tabs "Inventory" and "Ranking"; caption "Screenshots from stcarmine.com, live."; list title "Stack".
+- Screenshot alt texts: "Carmine's Inventory screen, showing the item catalog, on stcarmine.com" / "Carmine's weekly Ranking screen on stcarmine.com"
+
+### Experience
+
+#### TechEduConnect
+- Role: Software Engineering Intern
+- Period: Oct. 2026 – present · remote
+- About the company: Edtech specialized in Moodle (deployment, plugins, integrations and hosting) for educational institutions and companies.
+- Lines:
+  - AI-powered essay grading plugin for Moodle, in production at a higher-education institution. The AI proposes the assessment and the tutor reviews and approves it.
+  - In-house learning platforms in Next.js, React and TypeScript, plus Moodle customizations and integrations in PHP.
+  - I develop with coding agents (Claude Code with skills), working from specs, tests and quality gates.
+
+#### Hospital Napoleão Laureano
+- Role: Apprentice – Procurement
+- Period: May 2024 – May 2025 · João Pessoa
+- Line: Purchasing of PPE, clinical engineering and IT, contracts and suppliers, at a hospital specialized in oncology.
+
+### Education
+
+- Associate Degree in Internet Systems Technology, Federal Institute of Paraíba (IFPB), João Pessoa campus. Oct. 2024 – Jul. 2027 (expected).
+- Teaching Assistant: Data Security course, 2026.2 semester.
+- Fluent English (C2, EF SET).
+
+### Contact
+
+- Heading: Contact
+- Email: mail@caiomayan.com (with copy button)
+- Resume (PDF): label "Resume (PDF)", file `caio-mayan-resume.pdf`
+
+### Interface
+
+- Language switch: "Português".
+- Copy email button: "Copy email" → "Copied".
+- Theme button (accessible name): "Dark theme".
+- Tab title: "Caio Mayan — Software Engineer".
+- Section headings: "Experience", "Education".

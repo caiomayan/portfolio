@@ -1,3 +1,4 @@
+import type { Lang } from "@/lib/locales";
 import type { OrgLogoId } from "@/lib/org-logos";
 import type { StackLogoId } from "@/lib/stack-logos";
 
@@ -55,6 +56,8 @@ export type Content = {
   };
   ui: {
     themeToggle: string;
+    /** Link pra rota equivalente na outra língua: o texto está na língua de destino ("English" / "Português"). */
+    otherLang: { label: string; href: string; lang: Lang };
   };
   carmine: {
     heading: string;
@@ -72,4 +75,4 @@ export type Content = {
   };
 };
 
-export type Lang = "pt" | "en";
+export type { Lang };
