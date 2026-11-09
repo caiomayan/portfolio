@@ -14,3 +14,6 @@ private/
 prototypes/
 .taste-skill/
 .impeccable/
+
+playwright-report/
+test-results/
