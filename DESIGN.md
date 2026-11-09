@@ -88,3 +88,7 @@ Tamanho de ícone vive só nesses tokens (`app/globals.css`); os componentes nã
 - O logo do Carmine no cabeçalho tem 40 × 40 px (`width`/`height` da imagem, não do CSS).
 - A seta `↗` dos links externos vem de `.link-external::after` (`content: " ↗" / ""`, sem texto alternativo). Ornamento, como o ponto do h1, e por isso fica fora de `content/`.
 - Logos da stack: registro único em `lib/stack-logos.ts` (SVG em `assets/logos/` + uma linha no registro). O do Valkey é o oficial (`valkey-horizontal.svg` de valkey-io/valkey-website, só com o `viewBox` cortado no ícone e metadados do editor removidos); os demais são do Simple Icons.
+
+## Medir performance
+
+O Lighthouse local, com a máquina ocupada, dá números baixos e instáveis. A medida que vale é o PageSpeed Insights (pagespeed.web.dev) no site no ar ou no preview.
