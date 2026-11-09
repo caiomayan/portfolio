@@ -42,8 +42,8 @@ export function ThemeToggle({ label }: { label: string }) {
       onClick={toggle}
       {...handlers}
     >
-      <SunIcon ref={sun} className="icon-sun" size={20} />
-      <MoonIcon ref={moon} className="icon-moon" size={20} />
+      <SunIcon ref={sun} className="icon-sun" />
+      <MoonIcon ref={moon} className="icon-moon" />
     </button>
   );
 }

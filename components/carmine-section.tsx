@@ -31,7 +31,7 @@ export function CarmineSection({ content }: { content: Content["carmine"] }) {
                 {s.logo ? (
                   <Image className={stackLogos[s.logo].colored ? "logo color" : "logo"} src={stackLogos[s.logo].src} alt="" width={20} height={20} unoptimized />
                 ) : (
-                  <span className="stack-logo-empty"><FallbackIcon id={s.icon!} size={20} /></span>
+                  <span className="stack-logo-empty"><FallbackIcon id={s.icon!} /></span>
                 )}
                 {s.name}
               </span>

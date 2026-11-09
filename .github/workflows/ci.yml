@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # PR vindo de fork não recebe secrets: só nesse caso o teste de termos proibidos é pulado, com aviso.
+      FORK_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Aviso (PR de fork)
+        if: env.FORK_PR == 'true'
+        run: echo "::warning::PR de fork não tem acesso ao secret FORBIDDEN_TERMS; o teste de termos proibidos foi pulado."
+
+      # O GitHub só mascara o secret inteiro; aqui cada termo vira uma máscara própria, pra nenhum aparecer no log.
+      # O segredo fica só neste passo e no do `npm test` (não no job inteiro): o `npm ci` e os scripts de instalação dos pacotes não o enxergam.
+      # Sem `if`: o `if` do passo não enxerga o `env` do próprio passo; segredo vazio só não gera máscara. O trim é em bash puro e o termo é mascarado exatamente como está (sem xargs, que mexe em aspas e barra invertida). Nunca imprime o termo.
+      - name: Mascarar cada termo proibido
+        env:
+          FORBIDDEN_TERMS: ${{ secrets.FORBIDDEN_TERMS }}
+        run: |
+          IFS='|' read -ra parts <<< "$FORBIDDEN_TERMS"
+          for p in "${parts[@]}"; do
+            p="${p#"${p%%[![:space:]]*}"}"
+            p="${p%"${p##*[![:space:]]}"}"
+            if [ -n "$p" ]; then echo "::add-mask::$p"; fi
+          done
+
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build
+
+      - name: Versão do Playwright
+        id: pw
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache dos navegadores do Playwright
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+      - name: Instalar Chromium
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Instalar dependências do sistema (cache de navegador encontrado)
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Testes
+        run: npm test
+        env:
+          FORBIDDEN_TERMS: ${{ secrets.FORBIDDEN_TERMS }}

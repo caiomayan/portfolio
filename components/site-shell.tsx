@@ -1,4 +1,5 @@
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import type { ReactNode } from "react";
 import type { Lang } from "@/content";
 import { locales } from "@/lib/locales";
@@ -20,6 +21,8 @@ export function SiteShell({ lang, children }: { lang: Lang; children: ReactNode 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {children}
         <Reveal />
+        {/* Vercel Web Analytics (sem cookies). Só no deploy da Vercel: fora dela o script não existe e daria 404. */}
+        {process.env.VERCEL && <Analytics />}
       </body>
     </html>
   );

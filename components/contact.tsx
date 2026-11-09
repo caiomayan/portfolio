@@ -22,7 +22,7 @@ function IconLink({ Icon, label, href, external }: { Icon: IconComponent } & Con
       {...handlers}
       onClick={play}
     >
-      <Icon ref={ref} className="icon" size={20} />
+      <Icon ref={ref} className="icon" />
       <span>{label}</span>
     </a>
   );
@@ -63,7 +63,7 @@ function CopyButton({ text, label, doneLabel }: { text: string; label: string; d
         onClick={onClick}
         {...handlers}
       >
-        {copied ? <CheckIcon ref={check} size={20} /> : <CopyIcon ref={copy} size={20} />}
+        {copied ? <CheckIcon ref={check} /> : <CopyIcon ref={copy} />}
       </button>
       {/* Região sempre presente: o leitor de tela anuncia a troca de texto. */}
       <span role="status" className="sr-only">
