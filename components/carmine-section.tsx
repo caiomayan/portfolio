@@ -14,7 +14,7 @@ const colored = new Set(["valkey"]);
 
 export function CarmineSection({ content }: { content: Content["carmine"] }) {
   return (
-    <section id="carmine" className="section" aria-labelledby="carmine-title">
+    <section id="carmine" aria-labelledby="carmine-title">
       <div className="rail">
         <h2 id="carmine-title">{content.heading}</h2>
         <p className="railnote">{content.note}</p>
@@ -48,8 +48,8 @@ export function CarmineSection({ content }: { content: Content["carmine"] }) {
         </ul>
 
         <div className="links">
-          <a className="ul" href={content.links.site.href}>{content.links.site.label} ↗</a>
-          <a className="ul" href={content.links.repo.href}>{content.links.repo.label} ↗</a>
+          <a className="ul" href={content.links.site.href}>{content.links.site.label} <span aria-hidden="true">↗</span></a>
+          <a className="ul" href={content.links.repo.href}>{content.links.repo.label} <span aria-hidden="true">↗</span></a>
         </div>
       </div>
     </section>
