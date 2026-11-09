@@ -31,6 +31,20 @@ export type Content = {
   ui: {
     themeToggle: string;
   };
+  carmine: {
+    heading: string;
+    note: string;
+    name: string;
+    what: string;
+    status: string;
+    how: string;
+    shotsLabel: string;
+    shots: { id: "inventario" | "ranking"; tab: string; alt: string }[];
+    shotsCaption: string;
+    stackLabel: string;
+    stack: { name: string; role: string; logo: "nestjs" | "nextdotjs" | "valkey" | "amazonec2" | "oracle" | null }[];
+    links: { site: { label: string; href: string }; repo: { label: string; href: string } };
+  };
 };
 
 export type Lang = "pt" | "en";
