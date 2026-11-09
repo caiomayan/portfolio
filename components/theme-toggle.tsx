@@ -14,6 +14,8 @@ export function ThemeToggle({ label }: { label: string }) {
 
   function toggle() {
     const next = dark ? "light" : "dark";
+    // A transição de cor só existe depois do primeiro clique: no recarregamento não há fade (sem piscar).
+    document.documentElement.classList.add("theme-ready");
     if (next === "dark") document.documentElement.dataset.theme = "dark";
     else delete document.documentElement.dataset.theme;
     try {

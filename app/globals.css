@@ -134,7 +134,7 @@ h1::after { content: "."; color: var(--accent); }
 
 /* Movimento: só transform e opacity; tudo desligado com prefers-reduced-motion. */
 @media (prefers-reduced-motion: no-preference) {
-  body { transition: background-color 300ms var(--ease), color 300ms var(--ease); }
+  .theme-ready body { transition: background-color 300ms var(--ease), color 300ms var(--ease); }
   @keyframes rise {
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: none; }

@@ -34,6 +34,9 @@ for (const path of rotas) {
       await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
       const early = await page.evaluate(() => document.documentElement.dataset.theme);
       expect(early).toBe("dark");
+      // O que o visitante vê: já escuro desde o início, sem fade do claro (transição em andamento daria outro valor).
+      const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+      expect(bg).toBe("rgb(11, 11, 12)");
     });
 
     test("o escuro vale também na outra rota", async ({ page }) => {
