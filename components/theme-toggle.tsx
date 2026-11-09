@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useSyncExternalStore } from "react";
-import { prefersReducedMotion } from "@/lib/motion";
+import { useIconHover, type IconHandle } from "@/lib/icon-hover";
 import { MoonIcon } from "./icons/moon";
 import { SunIcon } from "./icons/sun";
 
@@ -14,8 +14,8 @@ const isDark = () => document.documentElement.dataset.theme === "dark";
 
 export function ThemeToggle({ label }: { label: string }) {
   const dark = useSyncExternalStore(subscribe, isDark, () => false);
-  const sun = useRef<{ startAnimation: () => void; stopAnimation: () => void }>(null);
-  const moon = useRef<{ startAnimation: () => void; stopAnimation: () => void }>(null);
+  const sun = useRef<IconHandle>(null);
+  const moon = useRef<IconHandle>(null);
 
   function toggle() {
     const next = dark ? "light" : "dark";
@@ -28,14 +28,7 @@ export function ThemeToggle({ label }: { label: string }) {
     } catch {}
   }
 
-  const play = () => {
-    if (prefersReducedMotion()) return;
-    (dark ? sun : moon).current?.startAnimation();
-  };
-  const stop = () => {
-    sun.current?.stopAnimation();
-    moon.current?.stopAnimation();
-  };
+  const { handlers } = useIconHover([sun, moon], () => (dark ? sun : moon));
 
   return (
     <button
@@ -44,10 +37,7 @@ export function ThemeToggle({ label }: { label: string }) {
       aria-pressed={dark}
       aria-label={label}
       onClick={toggle}
-      onPointerEnter={play}
-      onPointerLeave={stop}
-      onFocus={play}
-      onBlur={stop}
+      {...handlers}
     >
       <SunIcon ref={sun} className="icon-sun" size={20} />
       <MoonIcon ref={moon} className="icon-moon" size={20} />

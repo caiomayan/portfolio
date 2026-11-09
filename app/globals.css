@@ -189,6 +189,10 @@ h1::after { content: "." / ""; color: var(--accent); }
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: none; }
   }
+  @keyframes pop {
+    40% { transform: scale(1.14); }
+  }
+  .copy-button[data-copied="true"] { animation: pop 320ms var(--ease); }
   .who, h1, .lead { animation: rise 700ms var(--ease) both; }
   h1 { animation-delay: 80ms; }
   .lead { animation-delay: 180ms; }

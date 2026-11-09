@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type ComponentType, type Ref, type RefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Content } from "@/content";
+import type { ContactLink } from "@/content/types";
+import { useIconHover, type IconComponent, type IconHandle } from "@/lib/icon-hover";
 import { prefersReducedMotion } from "@/lib/motion";
 import { CheckIcon } from "./icons/check";
 import { CopyIcon } from "./icons/copy";
@@ -9,32 +11,16 @@ import { FileTextIcon } from "./icons/file-text";
 import { GithubIcon } from "./icons/github";
 import { LinkedinIcon } from "./icons/linkedin";
 
-type IconHandle = { startAnimation: () => void; stopAnimation: () => void };
-type IconComponent = ComponentType<{ size?: number; className?: string; ref?: Ref<IconHandle> }>;
-
-type IconRef = RefObject<IconHandle | null>;
-
-/** Anima o ícone no hover, no foco e no clique; parado com prefers-reduced-motion. */
-function play(ref: IconRef) {
-  if (!prefersReducedMotion()) ref.current?.startAnimation();
-}
-function stop(ref: IconRef) {
-  ref.current?.stopAnimation();
-}
-
-function IconLink({ Icon, label, href }: { Icon: IconComponent; label: string; href: string }) {
+function IconLink({ Icon, label, href, external }: { Icon: IconComponent } & ContactLink) {
   const ref = useRef<IconHandle>(null);
-  const external = href.startsWith("http");
+  const { play, handlers } = useIconHover([ref]);
   return (
     <a
       className="contact-link"
       href={href}
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      onPointerEnter={() => play(ref)}
-      onPointerLeave={() => stop(ref)}
-      onFocus={() => play(ref)}
-      onBlur={() => stop(ref)}
-      onClick={() => play(ref)}
+      {...handlers}
+      onClick={play}
     >
       <Icon ref={ref} className="icon" size={20} />
       <span>{label}</span>
@@ -46,6 +32,7 @@ function CopyButton({ text, label, doneLabel }: { text: string; label: string; d
   const [copied, setCopied] = useState(false);
   const copy = useRef<IconHandle>(null);
   const check = useRef<IconHandle>(null);
+  const { play, handlers } = useIconHover([copy]);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -55,6 +42,7 @@ function CopyButton({ text, label, doneLabel }: { text: string; label: string; d
   }, [copied]);
 
   async function onClick() {
+    play(); // o clique anima já, antes da confirmação
     try {
       await navigator.clipboard.writeText(text);
     } catch {
@@ -73,10 +61,7 @@ function CopyButton({ text, label, doneLabel }: { text: string; label: string; d
         aria-label={label}
         data-copied={copied}
         onClick={onClick}
-        onPointerEnter={() => play(copy)}
-        onPointerLeave={() => stop(copy)}
-        onFocus={() => play(copy)}
-        onBlur={() => stop(copy)}
+        {...handlers}
       >
         {copied ? <CheckIcon ref={check} size={20} /> : <CopyIcon ref={copy} size={20} />}
       </button>

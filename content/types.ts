@@ -1,3 +1,6 @@
+/** `external`: abre em outra aba (sai do site). */
+export type ContactLink = { label: string; href: string; external?: boolean };
+
 /** Forma única do conteúdo: `pt` e `en` precisam satisfazer este tipo, ou o compilador acusa. */
 export type Content = {
   meta: {
@@ -20,10 +23,10 @@ export type Content = {
     copyEmail: string;
     /** Confirmação anunciada por leitor de tela depois de copiar. */
     copied: string;
-    linkedin: { label: string; href: string };
-    github: { label: string; href: string };
+    linkedin: ContactLink;
+    github: ContactLink;
     /** `null` quando não há PDF nessa língua: o link não aparece. */
-    resume: { label: string; href: string } | null;
+    resume: ContactLink | null;
   };
   ui: {
     themeToggle: string;
