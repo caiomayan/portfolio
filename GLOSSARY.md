@@ -14,4 +14,4 @@ _Avoid_: o nome real da instituição, "a faculdade X"
 
 **Carmine**:
 O principal projeto pessoal do Caio: um SaaS para jogadores e times competitivos de Counter-Strike 2. É o único projeto pessoal que aparece no site.
-_Avoid_: Inoue, Kurage (projetos antigos que não aparecem no site)
+_Avoid_: nomes de projetos anteriores (não aparecem no site)
