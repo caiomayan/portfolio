@@ -47,6 +47,16 @@ jobs:
             if [ -n "$p" ]; then echo "::add-mask::$p"; fi
           done
 
+      # Procura cada termo em todos os arquivos versionados (código, testes, comentários, docs), não só no site renderizado.
+      # O log mostra só arquivo e linha, nunca o termo. O segredo fica só neste passo, no de máscara e no dos testes.
+      - name: Termos proibidos no código
+        run: npm run check:terms
+        env:
+          FORBIDDEN_TERMS: ${{ secrets.FORBIDDEN_TERMS }}
+
+      - name: Teste da verificação de termos (termo inventado)
+        run: npm run test:terms
+
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run build
