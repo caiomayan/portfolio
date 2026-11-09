@@ -60,6 +60,8 @@ Regras: nunca citar o nome da instituição que usa o plugin, nem Inoue, Kurage,
 
 - Troca de língua: "English" na página em português, "Português" na página em inglês.
 - Botão de copiar e-mail: "Copiar e-mail" → "Copiado".
+- Botão de tema (nome acessível; proposto pelo build, o Caio revisa): "Tema escuro" (pt) · "Dark theme" (en, a confirmar).
+- Título da aba (proposto, o Caio revisa): "Caio Mayan — Engenheiro de Software".
 
 ## English
 
