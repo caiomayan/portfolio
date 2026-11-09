@@ -29,10 +29,13 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
         await expect(el).toHaveCSS("animation-name", "none");
         await expect(el).toHaveCSS("opacity", "1");
       }
-      // Assinatura pronta: todo traço desenhado por inteiro, sem animação.
-      const offsets = await page.locator(".signature path").evaluateAll((ps) => ps.map((p) => getComputedStyle(p).strokeDashoffset));
-      expect(offsets.length).toBeGreaterThan(5);
-      expect(new Set(offsets)).toEqual(new Set(["0px"]));
+      // Assinatura pronta e visível, sem animação: uma forma preenchida por letra (9 letras em "Caio Mayan").
+      const sig = page.locator(".signature");
+      await expect(sig).toBeVisible();
+      await expect(sig).toHaveAttribute("data-static", "");
+      await expect(sig.locator("path")).toHaveCount(9);
+      await expect(sig.locator("path").first()).toHaveCSS("fill", /rgb\(/);
+      expect(await sig.locator("mask").count()).toBe(0);
 
       // Rolar, trocar de print e de tema: nada vira animação nem transição.
       await scrollToEnd(page);
@@ -58,11 +61,16 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       const page = await ctx.newPage();
       await page.goto(path);
       await expect(page.locator("h1")).toHaveCSS("animation-name", "rise");
-      await expect(page.locator(".signature path").first()).toHaveCSS("animation-name", "signature-write");
-      // Só traço: o desenho termina com todo traço inteiro.
+      // Depois do mount a assinatura passa a ser desenhada (motion): a última letra ainda nem começou...
+      const sig = page.locator(".signature");
+      await expect(sig).not.toHaveAttribute("data-static", "");
+      const ultima = sig.locator(":scope > path").last();
+      expect(Number(await ultima.evaluate((el) => getComputedStyle(el).opacity))).toBe(0);
+      // ...e o desenho termina com todas as letras inteiras.
       await expect
-        .poll(async () => Math.max(...(await page.locator(".signature path").evaluateAll((ps) => ps.map((p) => Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset)))))), { timeout: 6000 })
-        .toBeLessThan(1e-6);
+        .poll(async () => Math.min(...(await sig.locator(":scope > path").evaluateAll((ps) => ps.map((p) => Number(getComputedStyle(p).opacity))))), { timeout: 8000 })
+        .toBe(1);
+      await expect(ultima).toHaveCSS("stroke-dashoffset", /^0(px)?$/);
       await ctx.close();
     });
 
@@ -70,6 +78,8 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await page.goto(path);
       const sig = page.locator(".signature");
       await expect(sig).toHaveAttribute("aria-hidden", "true");
+      await expect(sig).toBeVisible();
+      await expect.poll(() => sig.boundingBox()).not.toBeNull(); // a versão pronta é trocada pela animada logo após o mount
       const box = (await sig.boundingBox())!;
       expect(box.x).toBeLessThan(120);
       expect(box.y).toBeLessThan(60);

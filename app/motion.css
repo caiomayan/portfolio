@@ -1,6 +1,6 @@
 /*
  * Movimento (ver DESIGN.md → Movimento). Tudo que anima fica sob prefers-reduced-motion: no-preference.
- * Só transform e opacity; a única exceção é o traço da assinatura (stroke-dashoffset), documentada no DESIGN.md.
+ * Só transform e opacity; a única exceção é o traço da assinatura (pathLength, animado pelo motion), documentada no DESIGN.md.
  * Cor, fundo e sublinhado mudam sem transição. Os tokens de movimento (--ease, --spring) vivem só aqui.
  */
 :root {
@@ -14,7 +14,7 @@
   }
 }
 
-/* Assinatura: um traço estilizado do nome, desenhado na abertura. Sem animação, aparece pronta. */
+/* Assinatura (components/signature.tsx): decorativa, na cor do texto. Sem movimento reduzido ela é desenhada pelo motion. */
 .signature {
   display: block;
   flex: none;
@@ -24,22 +24,10 @@
   overflow: visible;
   color: var(--ink);
 }
-.signature path {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 46;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1 1;
-  stroke-dashoffset: 0;
-}
 
 @media (prefers-reduced-motion: no-preference) {
-  @keyframes signature-write {
-    from { stroke-dashoffset: 1; }
-    to { stroke-dashoffset: 0; }
-  }
-  .signature path { animation: signature-write var(--signature-duration) cubic-bezier(0.45, 0.05, 0.4, 1) calc(var(--signature-delay) + 250ms) both; }
+  /* A versão pronta (render do servidor) fica escondida até o script trocar pela animada; sem script, sem assinatura. */
+  .signature[data-static] { visibility: hidden; }
 
   /* Entrada escalonada: o estado escondido só existe se o script (components/reveal.tsx) o aplicar. */
   [data-reveal="pending"] { opacity: 0; transform: translateY(20px); }
