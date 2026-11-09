@@ -1,5 +1,9 @@
 {
   "enabledPlugins": {
     "cloudflare@anthropic-plugin-directory": true
+  },
+  "permissions": {
+    "allow": ["Bash(git push *)", "Bash(gh pr create *)"],
+    "deny": ["Bash(git push --force*)", "Bash(git push -f*)", "Bash(git push * --force*)", "Bash(git push * -f*)", "Bash(git push * +*)"]
   }
 }
