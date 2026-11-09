@@ -39,6 +39,13 @@ O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no
 - Ícones de interface: **lucide-animated** (registry `https://lucide-animated.com/r/<nome>.json`), copiados em `components/icons/` sem alteração (dependência `motion`). Animam no hover, no foco e no clique, disparados por `components/contact.tsx` e `theme-toggle.tsx`; com `prefers-reduced-motion` ficam parados (`lib/motion.ts`). O botão de tema também usa Sun/Moon do lucide-animated.
 - O telefone não aparece em lugar nenhum.
 
+## Experiência e formação
+
+- Duas seções curtas (`h2` em `--text-lead`), em linhas de duas pontas: texto à esquerda, período à direita (no celular o período desce para baixo do texto). Sem bordas nem cartões.
+- Logos reais só onde existem: TechEduConnect (marca) e IFPB, em selo branco de cantos suaves (funciona nos dois temas). O Hospital fica só com o nome; as linhas sem logo reservam a mesma coluna (`--entry-logo`, 40 px, mais `--entry-gap`) para alinhar o texto; o selo usa o token `--plate`. Os estilos ficam sob `#experiencia`/`#formacao`; a linha é um componente só (`components/entry-row.tsx`) e o logo vem de `content/` via `lib/org-logos.ts`.
+- TechEduConnect: nome (link para o site da empresa, sublinhado em acento no hover), cargo, descrição da empresa e as três linhas em texto corrido; o plugin de redações é só a primeira linha, sem destaque. Fonte do texto: `docs/copy-deck.md` → `content/` (`experience`, `education`).
+- Os logos ficam em `assets/logos/` (cópias de `design/prototipo/assets/logos/`).
+
 ## Movimento
 
 - Só `transform` e `opacity` (mais a cor do tema no `body`). Curva `cubic-bezier(0.2, 0.7, 0.2, 1)`, 160–700 ms.
