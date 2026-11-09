@@ -107,14 +107,14 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
   - I develop with coding agents (Claude Code with skills), working from specs, tests and quality gates.
 
 #### Hospital Napoleão Laureano
-- Role: Young Apprentice, Purchasing department
+- Role: Apprentice – Procurement
 - Period: May 2024 – May 2025 · João Pessoa
 - Line: Purchasing of PPE, clinical engineering and IT, contracts and suppliers, at a hospital specialized in oncology.
 
 ### Education
 
-- Associate degree in Internet Systems (Tecnologia em Sistemas para Internet), Federal Institute of Paraíba (IFPB), João Pessoa campus. Oct. 2024 – Jul. 2027 (expected).
-- Teaching assistant for the Data Security course, 2026.2 semester.
+- Associate Degree in Internet Systems Technology, Federal Institute of Paraíba (IFPB), João Pessoa campus. Oct. 2024 – Jul. 2027 (expected).
+- Teaching Assistant: Data Security course, 2026.2 semester.
 - Fluent English (C2, EF SET).
 
 ### Contact

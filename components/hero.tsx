@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { Content } from "@/content";
+import { locales } from "@/lib/locales";
 import foto from "@/assets/foto-original.jpg";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -10,7 +11,7 @@ export function Hero({ content }: { content: Content }) {
         <span aria-hidden="true" />
         <div className="top-actions">
           {/* Link comum, sem script: leva à rota equivalente; nenhuma escolha automática por língua do navegador. */}
-          <a className="lang-switch" href={content.ui.otherLang.href} lang={content.ui.otherLang.lang} hrefLang={content.ui.otherLang.lang}>
+          <a className="lang-switch" href={content.ui.otherLang.href} lang={content.ui.otherLang.lang} hrefLang={locales[content.ui.otherLang.lang].hreflang}>
             {content.ui.otherLang.label}
           </a>
           <ThemeToggle label={content.ui.themeToggle} />

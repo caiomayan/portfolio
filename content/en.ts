@@ -1,3 +1,4 @@
+import { locales } from "@/lib/locales";
 import type { Content } from "./types";
 
 // Fonte do texto: docs/copy-deck.md (seção English). O Caio revisa no PR da versão em inglês.
@@ -38,7 +39,7 @@ export const en: Content = {
       },
       {
         company: "Hospital Napoleão Laureano",
-        role: "Young Apprentice, Purchasing department",
+        role: "Apprentice – Procurement",
         period: "May 2024 – May 2025 · João Pessoa",
         lines: [
           "Purchasing of PPE, clinical engineering and IT, contracts and suppliers, at a hospital specialized in oncology.",
@@ -50,16 +51,16 @@ export const en: Content = {
     heading: "Education",
     items: [
       {
-        title: "Associate degree in Internet Systems (Tecnologia em Sistemas para Internet)",
+        title: "Associate Degree in Internet Systems Technology",
         logo: "ifpb",
         detail: "Federal Institute of Paraíba (IFPB), João Pessoa campus",
         period: "Oct. 2024 – Jul. 2027 (expected)",
       },
-      { title: "Teaching assistant for the Data Security course", period: "2026.2 semester" },
+      { title: "Teaching Assistant: Data Security course", period: "2026.2 semester" },
       { title: "Fluent English", period: "C2, EF SET" },
     ],
   },
-  ui: { themeToggle: "Dark theme", otherLang: { label: "Português", href: "/", lang: "pt-BR" } },
+  ui: { themeToggle: "Dark theme", otherLang: { label: "Português", href: locales.pt.path, lang: "pt" } },
   carmine: {
     heading: "Carmine",
     note: "Personal project",

@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { SITE_URL } from "@/lib/site";
 import { rotasTexto } from "./textos";
 
 // Issue #7: duas línguas, troca entre rotas equivalentes, hreflang, sem redirecionamento por língua do navegador.
@@ -8,26 +9,26 @@ test.describe("versão em inglês", () => {
     await page.getByRole("link", { name: rotasTexto["/"].outraLingua }).click();
     await expect(page).toHaveURL(/\/en$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Software Engineer");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(rotasTexto["/en"].titulo);
 
     await page.getByRole("link", { name: rotasTexto["/en"].outraLingua }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "pt-BR");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Engenheiro de Software");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(rotasTexto["/"].titulo);
   });
 
   for (const path of ["/", "/en"] as const) {
     test(`${path} declara hreflang pras duas rotas`, async ({ page }) => {
       await page.goto(path);
       const alt = (l: string) => page.locator(`link[rel="alternate"][hreflang="${l}"]`);
-      await expect(alt("pt-BR")).toHaveAttribute("href", "https://caiomayan.com");
-      await expect(alt("en")).toHaveAttribute("href", "https://caiomayan.com/en");
+      await expect(alt("pt-BR")).toHaveAttribute("href", SITE_URL);
+      await expect(alt("en")).toHaveAttribute("href", `${SITE_URL}/en`);
     });
   }
 
   test("o botão de língua tem alvo de toque de 44 px", async ({ page }) => {
     await page.goto("/");
-    const box = await page.getByRole("link", { name: "English" }).boundingBox();
+    const box = await page.getByRole("link", { name: rotasTexto["/"].outraLingua }).boundingBox();
     expect(box!.height).toBeGreaterThanOrEqual(44);
   });
 

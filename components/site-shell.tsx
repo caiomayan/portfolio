@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
-import { langs, type Lang } from "@/content";
+import type { Lang } from "@/content";
+import { locales } from "@/lib/locales";
 import "@/app/globals.css";
 
 // Inter variável com eixo de tamanho óptico (opsz); servida pelo próprio site.
@@ -11,7 +12,7 @@ const themeScript = `try{if(localStorage.getItem("theme")==="dark")document.docu
 
 export function SiteShell({ lang, children }: { lang: Lang; children: ReactNode }) {
   return (
-    <html lang={langs[lang].htmlLang} className={inter.variable} suppressHydrationWarning>
+    <html lang={locales[lang].htmlLang} className={inter.variable} suppressHydrationWarning>
       <body>
         {/* Antes de qualquer conteúdo: o tema já está aplicado na primeira pintura. */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
