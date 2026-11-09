@@ -21,11 +21,30 @@ const LETTER_GAP_S = 0.2; // entre uma letra e a próxima
 const DRAW_S = 1; // duração do traço de cada letra
 const START_S = 0.25;
 const OUTLINE_PX = 1.5;
+const MASK_STROKE = signature.fontSize * 0.22; // espessura do traço da máscara, proporcional à fonte
+const MASK_PAD = MASK_STROKE; // folga da máscara em volta do viewBox, pro traço grosso não cortar nas bordas
+
+// Região da máscara derivada do viewBox ("x y w h"): nada de medida fixa.
+const [vbX, vbY, vbW, vbH] = signature.viewBox.split(" ").map(Number);
+const mask = { x: vbX - MASK_PAD, y: vbY - MASK_PAD, width: vbW + 2 * MASK_PAD, height: vbH + 2 * MASK_PAD };
+
+// Um caminho por letra (o "" do espaço não entra); calculado uma vez, no módulo.
+const letters = signature.glyphs.map((d, i) => ({ d, i })).filter((l) => l.d);
 
 const noSubscription = () => () => {};
 
-const hidden = { pathLength: 0, opacity: 0 };
-const visible = { pathLength: 1, opacity: 1 };
+const variants = { hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength: 1, opacity: 1 } };
+
+/** As letras já prontas, sem animação: usado no render estático e como a camada de preenchimento da animada. */
+function Filled() {
+  return (
+    <>
+      {letters.map((l) => (
+        <path key={l.i} d={l.d} />
+      ))}
+    </>
+  );
+}
 
 /** Assinatura "Caio Mayan", desenhada letra a letra na abertura. Decorativa: o nome já está no texto da página. */
 export function Signature() {
@@ -33,7 +52,6 @@ export function Signature() {
   // Primeiro render (servidor e cliente) = assinatura pronta; só depois do mount, sem movimento reduzido, passa a desenhar.
   const animated = useSyncExternalStore(noSubscription, () => !prefersReducedMotion(), () => false);
 
-  const letters = signature.glyphs.map((d, i) => ({ d, i })).filter((l) => l.d);
   const timing = (i: number) => ({
     pathLength: { delay: START_S + i * LETTER_GAP_S, duration: DRAW_S, ease: "easeInOut" as const },
     opacity: { delay: START_S + i * LETTER_GAP_S + 0.01, duration: 0.01 },
@@ -43,9 +61,7 @@ export function Signature() {
     return (
       <svg className="signature" data-static="" viewBox={signature.viewBox} aria-hidden="true" focusable="false">
         <g fill="currentColor">
-          {letters.map((l) => (
-            <path key={l.i} d={l.d} />
-          ))}
+          <Filled />
         </g>
       </svg>
     );
@@ -54,17 +70,17 @@ export function Signature() {
   return (
     <motion.svg className="signature" viewBox={signature.viewBox} aria-hidden="true" focusable="false" fill="none" initial="hidden" animate="visible">
       <defs>
-        <mask id={maskId} maskUnits="userSpaceOnUse" x="-100" y="-300" width="1600" height="600">
+        <mask id={maskId} maskUnits="userSpaceOnUse" {...mask}>
           {letters.map((l) => (
             <motion.path
               key={l.i}
               d={l.d}
               stroke="white"
-              strokeWidth={signature.fontSize * 0.22}
+              strokeWidth={MASK_STROKE}
               fill="none"
               strokeLinecap="round"
               strokeLinejoin="round"
-              variants={{ hidden, visible }}
+              variants={variants}
               transition={timing(l.i)}
             />
           ))}
@@ -79,14 +95,12 @@ export function Signature() {
           vectorEffect="non-scaling-stroke"
           strokeLinejoin="round"
           fill="none"
-          variants={{ hidden, visible }}
+          variants={variants}
           transition={timing(l.i)}
         />
       ))}
       <g mask={`url(#${maskId})`} fill="currentColor">
-        {letters.map((l) => (
-          <path key={l.i} d={l.d} />
-        ))}
+        <Filled />
       </g>
     </motion.svg>
   );

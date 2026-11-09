@@ -25,7 +25,7 @@ export function EntryRow({ title, titleUrl, sub, about, lines, period, logo, ico
         {l ? (
           <Image className="entry-logo" src={l.src} alt="" width={40} height={l.height} unoptimized />
         ) : (
-          <span className="entry-logo-gap">{icon && <FallbackIcon id={icon} size={26} />}</span>
+          <span className="entry-logo-gap">{icon && <FallbackIcon id={icon} />}</span>
         )}
         <div>
           <h3>{titleUrl ? <a href={titleUrl}>{title}</a> : title}</h3>

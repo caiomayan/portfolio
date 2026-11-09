@@ -77,6 +77,14 @@ Estilo Apple: molas suaves, nada brusco. Os tokens vivem só em `app/motion.css`
 | `--carmine-gap` | 40px | espaço entre rótulo e coluna |
 | `--carmine-column` | 640px | largura máxima da coluna; também a do print |
 | `--stack-row` | 52px | altura mínima de cada linha da stack (logo de 20px + respiro) |
+| `--icon-ui` | 20px | ícones de contato, de copiar e-mail e do botão de tema |
+| `--icon-entry` | 26px | ícone de reserva em experiência e formação (a coluna `--entry-logo` segue em 40px) |
+| `--icon-stack` | 20px | logo ou ícone de reserva de cada item da stack |
+
+Tamanho de ícone vive só nesses tokens (`app/globals.css`); os componentes não passam `size`. As dimensões de `<Image>` (`width`/`height`) são só a proporção do arquivo: o CSS manda.
+
+- **Duas bibliotecas de ícones, de propósito.** `lucide-animated` (cópias em `components/icons/`, com `motion`) só nos controles que reagem ao toque: contato, copiar, tema. Os ícones de reserva são decorativos e parados, então ficam no `lucide-react`, que entra por ícone importado (sem `motion`, sem JavaScript de animação). Trocar tudo pra `lucide-animated` traria cópias e animação onde ninguém interage. Avaliado em 2026-11-09; mantido assim.
+- **Assinatura** (`components/signature.tsx`): a região da máscara de traço sai do `viewBox` de `lib/signature.ts`, e a espessura, do `fontSize`; um componente só (`Filled`) desenha as letras prontas nas duas versões.
 
 - O logo do Carmine no cabeçalho tem 40 × 40 px (`width`/`height` da imagem, não do CSS).
 - A seta `↗` dos links externos vem de `.link-external::after` (`content: " ↗" / ""`, sem texto alternativo). Ornamento, como o ponto do h1, e por isso fica fora de `content/`.
