@@ -42,7 +42,7 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await expect(sec.getByText("C2, EF SET")).toBeVisible();
     });
 
-    test("logos reais da TechEduConnect e do IFPB carregam; o Hospital só tem o nome", async ({ page }) => {
+    test("logos reais da TechEduConnect e do IFPB carregam, sem fundo; o Hospital tem ícone de reserva", async ({ page }) => {
       await page.goto(path);
       const exp = page.locator("section", { has: page.getByRole("heading", { name: t.exp.heading }) });
       const form = page.locator("section", { has: page.getByRole("heading", { name: t.form.heading }) });
@@ -53,6 +53,25 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
         await expect(l).toBeVisible();
         expect(await l.evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth > 0)).toBe(true);
       }
+    });
+
+    test("toda linha de experiência e formação tem logo OU ícone de reserva, sem selo, e legível nos dois temas", async ({ page }) => {
+      await page.goto(path);
+      const linhas = page.locator("#experiencia .entry, #formacao .entry");
+      expect(await linhas.count()).toBe(5);
+      for (let i = 0; i < 5; i++) {
+        const l = linhas.nth(i);
+        expect(await l.locator("img.entry-logo, svg.fallback-icon").count()).toBe(1);
+        await expect(l.locator("svg.fallback-icon")).toHaveCount(i === 0 || i === 2 ? 0 : 1);
+        for (const ic of await l.locator("svg.fallback-icon").all()) await expect(ic).toHaveAttribute("aria-hidden", "true");
+      }
+      // Sem selo: nenhum fundo atrás dos logos; no escuro o logo é invertido pra continuar legível.
+      for (const img of await page.locator("img.entry-logo").all()) {
+        await expect(img).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+        await expect(img).toHaveCSS("filter", "none");
+      }
+      await page.getByRole("button", { name: t.tema }).click();
+      for (const img of await page.locator("img.entry-logo").all()) await expect(img).not.toHaveCSS("filter", "none");
     });
 
     test("não rola na horizontal a 375 px", async ({ page }) => {

@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { orgLogos, type OrgLogoId } from "@/lib/org-logos";
+import type { FallbackIconId } from "@/lib/fallback-icons";
+import { FallbackIcon } from "./fallback-icon";
 
 type Props = {
   title: string;
@@ -9,19 +11,21 @@ type Props = {
   about?: string;
   lines?: string[];
   period: string;
+  /** Logo OU ícone de reserva: um dos dois, sempre. */
   logo?: OrgLogoId;
+  icon?: FallbackIconId;
 };
 
 /** Linha de duas pontas, igual em Experiência e Formação: texto à esquerda, período à direita. */
-export function EntryRow({ title, titleUrl, sub, about, lines, period, logo }: Props) {
+export function EntryRow({ title, titleUrl, sub, about, lines, period, logo, icon }: Props) {
   const l = logo ? orgLogos[logo] : null;
   return (
     <li className="entry" data-reveal-part>
       <div className="entry-main">
         {l ? (
-          <Image className={l.tight ? "entry-logo tight" : "entry-logo"} src={l.src} alt="" width={40} height={l.height} unoptimized />
+          <Image className="entry-logo" src={l.src} alt="" width={40} height={l.height} unoptimized />
         ) : (
-          <span className="entry-logo-gap" aria-hidden="true" />
+          <span className="entry-logo-gap">{icon && <FallbackIcon id={icon} size={26} />}</span>
         )}
         <div>
           <h3>{titleUrl ? <a href={titleUrl}>{title}</a> : title}</h3>

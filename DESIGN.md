@@ -42,7 +42,7 @@ O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no
 ## Experiência e formação
 
 - Duas seções curtas (`h2` em `--text-lead`), em linhas de duas pontas: texto à esquerda, período à direita (no celular o período desce para baixo do texto). Sem bordas nem cartões.
-- Logos reais só onde existem: TechEduConnect (marca) e IFPB, em selo branco de cantos suaves (funciona nos dois temas). O Hospital fica só com o nome; as linhas sem logo reservam a mesma coluna (`--entry-logo`, 40 px, mais `--entry-gap`) para alinhar o texto; o selo usa o token `--plate`. Os estilos ficam sob `#experiencia`/`#formacao`; a linha é um componente só (`components/entry-row.tsx`) e o logo vem de `content/` via `lib/org-logos.ts`.
+- Logos reais (TechEduConnect, IFPB) **sem selo nem fundo**: aparecem direto sobre `--bg`. Os coloridos continuam coloridos; no tema escuro levam `filter: invert(1) hue-rotate(180deg)` (preto vira branco, as cores seguem as mesmas) pra ficarem legíveis. Onde não há logo (Hospital, Monitor, Inglês), entra um ícone de reserva do Lucide (`lucide-react`, registro em `lib/fallback-icons.ts`, componente `components/fallback-icon.tsx`), decorativo (`aria-hidden`), traço 1,75 em `--soft`, centrado na mesma coluna do logo (`--entry-logo`, mais `--entry-gap`). Regra: todo item de experiência, formação e stack tem logo OU ícone (o tipo `Mark` em `content/types.ts` impede os dois e impede nenhum). Estilos sob `#experiencia`/`#formacao`; a linha é um componente só (`components/entry-row.tsx`) e o logo vem de `content/` via `lib/org-logos.ts`.
 - TechEduConnect: nome (link para o site da empresa, sublinhado em acento no hover), cargo, descrição da empresa e as três linhas em texto corrido; o plugin de redações é só a primeira linha, sem destaque. Fonte do texto: `docs/copy-deck.md` → `content/` (`experience`, `education`).
 - Os logos ficam em `assets/logos/` (cópias de `design/prototipo/assets/logos/`).
 
@@ -67,7 +67,7 @@ Estilo Apple: molas suaves, nada brusco. Os tokens vivem só em `app/motion.css`
 - Logo depois da primeira tela: rótulo à esquerda (200 px: "Carmine" + "Projeto pessoal") e coluna de 640 px à direita (no celular, uma coluna só). Texto em `--text-body`/`--text-small`; o único acento é o ponto de status.
 - Prints reais do stcarmine.com (`assets/carmine/`, 1280 × 800, tirados em 2026-11-09: catálogo de itens do Inventário e Ranking semanal; a tela inicial fica de fora porque hoje mostra os servidores dormindo). A moldura tem a largura da coluna (proporção 8:5, canto 12 px); nunca estica além dela. Refazer os prints quando o produto mudar.
 - Abas em pílula (`role="tablist"`): clique, setas, Home e End trocam o print; só a aba ativa entra na ordem de Tab. A troca é um fade (ver Movimento).
-- Stack em lista de duas pontas (nome + papel); logos em `assets/logos/` (registro em `lib/stack-logos.ts`), invertidas no tema escuro (a do Valkey é colorida e não inverte). Sem logo oficial (CounterStrikeSharp), só o nome.
+- Stack em lista de duas pontas (nome + papel); logos em `assets/logos/` (registro em `lib/stack-logos.ts`), sem fundo, monocromáticas invertidas no tema escuro (a do Valkey é colorida e não inverte). Sem logo oficial (CounterStrikeSharp), ícone de reserva do Lucide (quebra-cabeça), 20 px, decorativo.
 
 ### Medidas da seção (tokens em `app/globals.css`)
 

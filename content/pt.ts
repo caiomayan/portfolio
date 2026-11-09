@@ -39,6 +39,7 @@ export const pt: Content = {
       },
       {
         company: "Hospital Napoleão Laureano",
+        icon: "hospital",
         role: "Jovem Aprendiz, setor de Compras",
         period: "mai. 2024 – mai. 2025 · João Pessoa",
         lines: [
@@ -56,8 +57,8 @@ export const pt: Content = {
         detail: "Instituto Federal da Paraíba (IFPB), campus João Pessoa",
         period: "out. 2024 – jul. 2027 (previsão)",
       },
-      { title: "Monitor da disciplina de Segurança de Dados", period: "semestre 2026.2" },
-      { title: "Inglês fluente", period: "C2, EF SET" },
+      { title: "Monitor da disciplina de Segurança de Dados", icon: "graduation-cap", period: "semestre 2026.2" },
+      { title: "Inglês fluente", icon: "languages", period: "C2, EF SET" },
     ],
   },
   ui: { themeToggle: "Tema escuro", otherLang: { label: "English", href: locales.en.path, lang: "en" } },
@@ -79,7 +80,7 @@ export const pt: Content = {
       { name: "Nest.js", role: "backend", logo: "nestjs" },
       { name: "Next.js", role: "frontend", logo: "nextdotjs" },
       { name: "Valkey", role: "cache e filas", logo: "valkey" },
-      { name: "CounterStrikeSharp", role: "plugins dos servidores de CS2", logo: null },
+      { name: "CounterStrikeSharp", role: "plugins dos servidores de CS2", icon: "puzzle" },
       { name: "AWS EC2", role: "servidores de CS2 de teste", logo: "amazonec2" },
       { name: "Oracle Cloud", role: "servidor web, em máquina Ampere", logo: "oracle" },
     ],
