@@ -4,4 +4,8 @@ import type { Content } from "./types";
 // Até a tarefa da versão em inglês, mostra o texto em português.
 import { pt } from "./pt";
 
-export const en: Content = { ...pt };
+export const en: Content = {
+  ...pt,
+  // O PDF em inglês já existe; o rótulo continua provisório, como o resto do texto.
+  contact: { ...pt.contact, resume: { ...pt.contact.resume!, href: "/caio-mayan-resume.pdf" } },
+};
