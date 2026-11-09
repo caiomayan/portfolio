@@ -26,6 +26,8 @@ Regras: nunca citar o nome da instituição que usa o plugin, nem Inoue, Kurage,
   - AWS EC2 (servidores de CS2 de teste)
   - Oracle Cloud (servidor web, em máquina Ampere)
 - Links: stcarmine.com (https://stcarmine.com) · repositório (https://github.com/caiomayan/carmine)
+- Rótulo lateral da seção: "Projeto pessoal" (vindo do protótipo; proposto, o Caio revisa).
+- Prints (proposto pelo build, o Caio revisa): abas "Inventário" e "Ranking" (nomes das telas no próprio stcarmine.com); legenda "Capturas de stcarmine.com, no ar."; rótulo do grupo de abas "Telas do Carmine"; título da lista "Stack".
 
 ## Experiência
 

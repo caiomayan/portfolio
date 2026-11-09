@@ -49,3 +49,23 @@ O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no
 
 - Foco visível em todos os controles (contorno de 2 px na cor do texto). Botão de tema com 44 × 44 px e `aria-pressed`.
 - Contraste do texto secundário (`--soft`) acima de 4,5:1 nos dois temas.
+
+## Seção Carmine
+
+- Logo depois da primeira tela: rótulo à esquerda (200 px: "Carmine" + "Projeto pessoal") e coluna de 640 px à direita (no celular, uma coluna só). Texto em `--text-body`/`--text-small`; o único acento é o ponto de status.
+- Prints reais do stcarmine.com (`assets/carmine/`, 1280 × 800, tirados em 2026-11-09: catálogo de itens do Inventário e Ranking semanal; a tela inicial fica de fora porque hoje mostra os servidores dormindo). A moldura tem a largura da coluna (proporção 8:5, canto 12 px); nunca estica além dela. Refazer os prints quando o produto mudar.
+- Abas em pílula (`role="tablist"`): clique, setas, Home e End trocam o print; só a aba ativa entra na ordem de Tab. Sem animação própria (só cor).
+- Stack em lista de duas pontas (nome + papel); logos em `assets/logos/` (registro em `lib/stack-logos.ts`), invertidas no tema escuro (a do Valkey é colorida e não inverte). Sem logo oficial (CounterStrikeSharp), só o nome.
+
+### Medidas da seção (tokens em `app/globals.css`)
+
+| Token | Valor | Por quê |
+|---|---|---|
+| `--carmine-rail` | 200px | largura do rótulo à esquerda |
+| `--carmine-gap` | 40px | espaço entre rótulo e coluna |
+| `--carmine-column` | 640px | largura máxima da coluna; também a do print |
+| `--stack-row` | 52px | altura mínima de cada linha da stack (logo de 20px + respiro) |
+
+- O logo do Carmine no cabeçalho tem 40 × 40 px (`width`/`height` da imagem, não do CSS).
+- A seta `↗` dos links externos vem de `.link-external::after` (`content: " ↗" / ""`, sem texto alternativo). Ornamento, como o ponto do h1, e por isso fica fora de `content/`.
+- Logos da stack: registro único em `lib/stack-logos.ts` (SVG em `assets/logos/` + uma linha no registro). O do Valkey é o oficial (`valkey-horizontal.svg` de valkey-io/valkey-website, só com o `viewBox` cortado no ícone e metadados do editor removidos); os demais são do Simple Icons.
