@@ -17,14 +17,22 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       expect(sec!.y).toBeGreaterThan(hero!.y + hero!.height - 1);
     });
 
-    test("lista a stack, com logo só onde há logo oficial", async ({ page }) => {
+    test("lista a stack: cada item tem logo oficial ou ícone de reserva decorativo, sem fundo", async ({ page }) => {
       await page.goto(path);
       const itens = page.locator("#carmine .stack li");
       await expect(itens).toHaveCount(6);
       await expect(itens.nth(0)).toContainText("Nest.js");
       await expect(itens.nth(3)).toContainText("CounterStrikeSharp");
+      // CounterStrikeSharp não tem logo oficial: ícone de reserva (svg decorativo), sem imagem.
       await expect(itens.nth(3).locator("img")).toHaveCount(0);
+      await expect(itens.nth(3).locator("svg.fallback-icon")).toHaveAttribute("aria-hidden", "true");
       for (const i of [0, 1, 2, 4, 5]) await expect(itens.nth(i).locator("img")).toHaveCount(1);
+      for (let i = 0; i < 6; i++) {
+        const item = itens.nth(i);
+        expect(await item.locator("img, svg.fallback-icon").count()).toBe(1); // logo OU ícone, nunca nenhum
+        const marca = item.locator("img, .stack-logo-empty").first();
+        await expect(marca).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      }
     });
 
     test("links apontam pro site e pro repositório", async ({ page }) => {
@@ -66,13 +74,13 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await expect(abas.nth(0)).toHaveAttribute("tabindex", "0");
       await expect(abas.nth(1)).toHaveAttribute("tabindex", "-1");
       await expect(paineis.nth(0)).toBeVisible();
-      await expect(paineis.nth(1)).toHaveAttribute("hidden", "");
+      await expect(paineis.nth(1)).toHaveAttribute("aria-hidden", "true");
       await expect(paineis.nth(1)).toBeHidden();
 
       await abas.nth(1).click();
       await expect(abas.nth(0)).toHaveAttribute("tabindex", "-1");
       await expect(abas.nth(1)).toHaveAttribute("tabindex", "0");
-      await expect(paineis.nth(0)).toHaveAttribute("hidden", "");
+      await expect(paineis.nth(0)).toHaveAttribute("aria-hidden", "true");
       await expect(paineis.nth(1)).toBeVisible();
     });
 

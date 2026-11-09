@@ -28,7 +28,7 @@ export function CarmineShots({ content }: { content: Content["carmine"] }) {
   }
 
   return (
-    <figure className="shots">
+    <figure className="shots" data-reveal-part>
       <div className="tabs" role="tablist" aria-label={content.shotsLabel} onKeyDown={onKeyDown}>
         {content.shots.map((s, i) => (
           <button
@@ -46,18 +46,23 @@ export function CarmineShots({ content }: { content: Content["carmine"] }) {
           </button>
         ))}
       </div>
-      {content.shots.map((s, i) => (
-        <div
-          key={s.id}
-          className="frame"
-          role="tabpanel"
-          id={`shot-panel-${s.id}`}
-          aria-labelledby={`shot-tab-${s.id}`}
-          hidden={i !== active}
-        >
-          <Image src={images[s.id]} alt={s.alt} sizes="(min-width: 900px) 640px, calc(100vw - 48px)" />
-        </div>
-      ))}
+      <div className="frames">
+        {content.shots.map((s, i) => (
+          // Todos os prints ficam empilhados e a troca é um fade; o inativo sai da árvore de acessibilidade na hora.
+          <div
+            key={s.id}
+            className="frame"
+            role="tabpanel"
+            id={`shot-panel-${s.id}`}
+            aria-labelledby={`shot-tab-${s.id}`}
+            aria-hidden={i !== active}
+            data-active={i === active}
+            inert={i !== active}
+          >
+            <Image src={images[s.id]} alt={s.alt} sizes="(min-width: 900px) 640px, calc(100vw - 48px)" />
+          </div>
+        ))}
+      </div>
       <figcaption>{content.shotsCaption}</figcaption>
     </figure>
   );

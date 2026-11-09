@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useSyncExternalStore } from "react";
+import { withViewTransition } from "@/lib/motion";
 import { useIconHover, type IconHandle } from "@/lib/icon-hover";
 import { MoonIcon } from "./icons/moon";
 import { SunIcon } from "./icons/sun";
@@ -18,11 +19,13 @@ export function ThemeToggle({ label }: { label: string }) {
   const moon = useRef<IconHandle>(null);
 
   function toggle() {
-    const next = dark ? "light" : "dark";
-    // A transição de cor só existe depois do primeiro clique: no recarregamento não há fade (sem piscar).
-    document.documentElement.classList.add("theme-ready");
-    if (next === "dark") document.documentElement.dataset.theme = "dark";
-    else delete document.documentElement.dataset.theme;
+    const next = isDark() ? "light" : "dark";
+    const apply = () => {
+      if (next === "dark") document.documentElement.dataset.theme = "dark";
+      else delete document.documentElement.dataset.theme;
+    };
+    // Fade da página inteira quando há View Transitions; senão, troca instantânea. No recarregamento não há fade.
+    withViewTransition(apply);
     try {
       localStorage.setItem("theme", next);
     } catch {}

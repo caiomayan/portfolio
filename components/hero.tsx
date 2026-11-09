@@ -2,13 +2,14 @@ import Image from "next/image";
 import type { Content } from "@/content";
 import { locales } from "@/lib/locales";
 import foto from "@/assets/foto-original.jpg";
+import { Signature } from "./signature";
 import { ThemeToggle } from "./theme-toggle";
 
 export function Hero({ content }: { content: Content }) {
   return (
     <>
       <header className="top">
-        <span aria-hidden="true" />
+        <Signature />
         <div className="top-actions">
           {/* Link comum, sem script: leva à rota equivalente; nenhuma escolha automática por língua do navegador. */}
           <a className="lang-switch" href={content.ui.otherLang.href} lang={content.ui.otherLang.lang} hrefLang={locales[content.ui.otherLang.lang].hreflang}>

@@ -1,12 +1,16 @@
 import type { Lang } from "@/lib/locales";
 import type { OrgLogoId } from "@/lib/org-logos";
+import type { FallbackIconId } from "@/lib/fallback-icons";
 import type { StackLogoId } from "@/lib/stack-logos";
 
 /** `external`: abre em outra aba (sai do site). */
 export type ContactLink = { label: string; href: string; external?: boolean };
 
-/** O que Experiência e Formação têm em comum: uma linha com período e, opcionalmente, o logo da instituição. */
-export type EntryBase = { period: string; logo?: OrgLogoId };
+/** Todo item tem um logo OU um ícone de reserva (Lucide), nunca nenhum dos dois. */
+export type Mark<Logo extends string> = { logo: Logo; icon?: never } | { logo?: never; icon: FallbackIconId };
+
+/** O que Experiência e Formação têm em comum: uma linha com período e logo ou ícone de reserva. */
+export type EntryBase = { period: string } & Mark<OrgLogoId>;
 
 /** Forma única do conteúdo: `pt` e `en` precisam satisfazer este tipo, ou o compilador acusa. */
 export type Content = {
@@ -70,7 +74,7 @@ export type Content = {
     shots: { id: "inventario" | "ranking"; tab: string; alt: string }[];
     shotsCaption: string;
     stackLabel: string;
-    stack: { name: string; role: string; logo: StackLogoId | null }[];
+    stack: ({ name: string; role: string } & Mark<StackLogoId>)[];
     links: { site: { label: string; href: string }; repo: { label: string; href: string } };
   };
 };

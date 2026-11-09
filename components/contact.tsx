@@ -77,14 +77,14 @@ export function Contact({ content }: { content: Content }) {
   const c = content.contact;
   return (
     <section className="contact" aria-labelledby="contato">
-      <h2 id="contato">{c.heading}</h2>
-      <div className="mail">
+      <h2 id="contato" data-reveal-part>{c.heading}</h2>
+      <div className="mail" data-reveal-part>
         <a className="mail-address" href={`mailto:${c.email}`}>
           {c.email}
         </a>
         <CopyButton text={c.email} label={c.copyEmail} doneLabel={c.copied} />
       </div>
-      <ul className="contact-links">
+      <ul className="contact-links" data-reveal-part>
         <li>
           <IconLink Icon={LinkedinIcon} {...c.linkedin} />
         </li>

@@ -30,7 +30,7 @@ O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no
 
 - Foto original inteira (quadrado, sem corte), cantos de 28 px, 360 px no desktop; no celular fica pequena ao lado do nome e da cidade.
 - Título (h1) em `--text-display` (até 104 px), peso 700, tracking −0,045em, com o ponto final em acento. Esse ponto é ornamento tipográfico, não texto: vem de `h1::after` (`content: "." / ""`, sem texto alternativo, então leitores de tela não o leem) e fica fora de `content/` de propósito, porque o título do copy deck não tem ponto e a frase de abertura (`openingLine`) o monta como "título. lead". Frase de abertura em `--text-lead`, cor `--soft`.
-- O canto superior esquerdo fica livre para a assinatura (tarefa futura); no canto superior direito ficam o link de língua (pílula de 44 px de altura em `--surface`, com o nome da outra língua: "English" / "Português", texto vindo de `ui.otherLang` em `content/`; é um link comum pra rota equivalente, sem script e sem escolha automática por língua do navegador) e, ao lado, o botão de tema. O `hreflang` entre `/` e `/en` sai de `lib/page-metadata.ts` (`alternates.languages`).
+- No canto superior esquerdo fica a assinatura (ver Movimento); no canto superior direito ficam o link de língua (pílula de 44 px de altura em `--surface`, com o nome da outra língua: "English" / "Português", texto vindo de `ui.otherLang` em `content/`; é um link comum pra rota equivalente, sem script e sem escolha automática por língua do navegador) e, ao lado, o botão de tema. O `hreflang` entre `/` e `/en` sai de `lib/page-metadata.ts` (`alternates.languages`).
 
 ## Contato
 
@@ -42,15 +42,20 @@ O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no
 ## Experiência e formação
 
 - Duas seções curtas (`h2` em `--text-lead`), em linhas de duas pontas: texto à esquerda, período à direita (no celular o período desce para baixo do texto). Sem bordas nem cartões.
-- Logos reais só onde existem: TechEduConnect (marca) e IFPB, em selo branco de cantos suaves (funciona nos dois temas). O Hospital fica só com o nome; as linhas sem logo reservam a mesma coluna (`--entry-logo`, 40 px, mais `--entry-gap`) para alinhar o texto; o selo usa o token `--plate`. Os estilos ficam sob `#experiencia`/`#formacao`; a linha é um componente só (`components/entry-row.tsx`) e o logo vem de `content/` via `lib/org-logos.ts`.
+- Logos reais (TechEduConnect, IFPB) **sem selo nem fundo**: aparecem direto sobre `--bg`. Os coloridos continuam coloridos; no tema escuro levam `filter: invert(1) hue-rotate(180deg)` (preto vira branco, as cores seguem as mesmas) pra ficarem legíveis. Onde não há logo (Hospital, Monitor, Inglês), entra um ícone de reserva do Lucide (`lucide-react`, registro em `lib/fallback-icons.ts`, componente `components/fallback-icon.tsx`), decorativo (`aria-hidden`), traço 1,75 em `--soft`, centrado na mesma coluna do logo (`--entry-logo`, mais `--entry-gap`). Regra: todo item de experiência, formação e stack tem logo OU ícone (o tipo `Mark` em `content/types.ts` impede os dois e impede nenhum). Estilos sob `#experiencia`/`#formacao`; a linha é um componente só (`components/entry-row.tsx`) e o logo vem de `content/` via `lib/org-logos.ts`.
 - TechEduConnect: nome (link para o site da empresa, sublinhado em acento no hover), cargo, descrição da empresa e as três linhas em texto corrido; o plugin de redações é só a primeira linha, sem destaque. Fonte do texto: `docs/copy-deck.md` → `content/` (`experience`, `education`).
 - Os logos ficam em `assets/logos/` (cópias de `design/prototipo/assets/logos/`).
 
 ## Movimento
 
-- Só `transform` e `opacity` (mais a cor do tema no `body`). Curva `cubic-bezier(0.2, 0.7, 0.2, 1)`, 160–700 ms.
-- Entrada escalonada da primeira tela (foto, título, frase) e troca de ícone do botão de tema.
-- Tudo desligado com `prefers-reduced-motion: reduce`; a página é completa e legível sem animação.
+Estilo Apple: molas suaves, nada brusco. Os tokens vivem só em `app/motion.css`: `--ease` (`cubic-bezier(0.2, 0.7, 0.2, 1)`) e `--spring` (CSS `linear()` de uma mola com amortecimento 0,78, passa ~2% e assenta; sem suporte cai em `--ease`). Só `transform` e `opacity`, com uma exceção documentada: o traço da assinatura (`pathLength`, num SVG pequeno). Cor, fundo e sublinhado mudam sem transição (hover de abas, links e botões é instantâneo na cor). Tudo desligado com `prefers-reduced-motion: reduce`; a página é completa e legível sem animação ou sem JavaScript.
+
+- **Assinatura** (`components/signature.tsx`, dados em `lib/signature.ts`): o nome "Caio Mayan" no canto superior esquerdo, 40 px de altura, na cor do texto (`currentColor`, legível nos dois temas), se escreve letra a letra na abertura (0,2 s entre letras, 1 s por letra, ~2,9 s no total) com o pacote `motion` (traço do contorno + preenchimento revelado por máscara). É um traço estilizado, **não** a assinatura real do Caio. `aria-hidden` (o nome já está no texto). Com movimento reduzido aparece pronta; sem JavaScript e com movimento, não aparece (é decorativa). Os contornos vêm da fonte **Lastoria Bold** e ficam pré-gerados em `lib/signature.ts` por `npm run signature` (`scripts/generate-signature.mjs`, com opentype.js só como devDependency): a fonte é baixada pra `scripts/fonts/` (ignorada pelo git) e nunca vai pra `public/` nem pro navegador. **Licença da Lastoria não confirmada; o risco é assumido pelo Caio.** Créditos: o componente é adaptado do `Signature` do componentry.dev (MIT, © 2026 Harsh Jadhav; aviso no topo de `components/signature.tsx`), registry `https://componentry.dev/r/signature.json`; fonte `https://componentry.dev/LastoriaBoldRegular.otf`.
+- **Primeira tela:** entrada escalonada de foto, título e frase (`rise`).
+- **Seções:** as partes de cada seção entram em sequência (70 ms entre elas, até 5 passos), uma vez, ao chegar na tela (`components/reveal.tsx`; cada componente marca suas partes com `data-reveal-part`, e o estado vai em `data-reveal`, valores em `lib/reveal.ts`). O estado escondido é aplicado só pelo script e só ao que está abaixo da tela: se o script falhar, nada ficou escondido.
+- **Prints do Carmine:** todos empilhados na mesma célula; a troca é um fade com leve escala (`.frame[data-active]`). O print que sai deixa a árvore de acessibilidade na hora (`aria-hidden` + `inert`) e some da tela depois do fade.
+- **Tema:** fade da página inteira pelo View Transitions (`document.startViewTransition`, 360 ms), só composição (`withViewTransition` em `lib/motion.ts`). Sem suporte a View Transitions no navegador, ou com movimento reduzido, a troca é instantânea (aceitável: é só o fade que se perde). No recarregamento não há fade.
+- **Controles:** hover, foco e clique em todos (botões de tema e copiar e abas com mola; links com sublinhado em acento por `transform` e opacidade no clique). Transições dos botões ficam sob `prefers-reduced-motion: no-preference`; o `.theme-toggle` é definido só em `app/globals.css`.
 
 ## Acessibilidade
 
@@ -61,8 +66,8 @@ O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no
 
 - Logo depois da primeira tela: rótulo à esquerda (200 px: "Carmine" + "Projeto pessoal") e coluna de 640 px à direita (no celular, uma coluna só). Texto em `--text-body`/`--text-small`; o único acento é o ponto de status.
 - Prints reais do stcarmine.com (`assets/carmine/`, 1280 × 800, tirados em 2026-11-09: catálogo de itens do Inventário e Ranking semanal; a tela inicial fica de fora porque hoje mostra os servidores dormindo). A moldura tem a largura da coluna (proporção 8:5, canto 12 px); nunca estica além dela. Refazer os prints quando o produto mudar.
-- Abas em pílula (`role="tablist"`): clique, setas, Home e End trocam o print; só a aba ativa entra na ordem de Tab. Sem animação própria (só cor).
-- Stack em lista de duas pontas (nome + papel); logos em `assets/logos/` (registro em `lib/stack-logos.ts`), invertidas no tema escuro (a do Valkey é colorida e não inverte). Sem logo oficial (CounterStrikeSharp), só o nome.
+- Abas em pílula (`role="tablist"`): clique, setas, Home e End trocam o print; só a aba ativa entra na ordem de Tab. A troca é um fade (ver Movimento).
+- Stack em lista de duas pontas (nome + papel); logos em `assets/logos/` (registro em `lib/stack-logos.ts`), sem fundo, monocromáticas invertidas no tema escuro (a do Valkey é colorida e não inverte). Sem logo oficial (CounterStrikeSharp), ícone de reserva do Lucide (quebra-cabeça), 20 px, decorativo.
 
 ### Medidas da seção (tokens em `app/globals.css`)
 
