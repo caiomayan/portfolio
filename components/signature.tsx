@@ -51,8 +51,19 @@ function Filled() {
   );
 }
 
-/** Assinatura "Caio Mayan", desenhada letra a letra na abertura. Decorativa: o nome já está no texto da página. */
-export function Signature() {
+/**
+ * Assinatura "Caio Mayan", desenhada letra a letra na abertura. É o nome do site: o nome acessível fica num invólucro
+ * que nunca é escondido (o SVG fica `visibility: hidden` até o script trocar pela versão animada).
+ */
+export function Signature({ name }: { name: string }) {
+  return (
+    <span className="signature-mark" role="img" aria-label={name}>
+      <SignatureArt />
+    </span>
+  );
+}
+
+function SignatureArt() {
   const maskId = `signature-reveal-${useId().replace(/:/g, "")}`;
   // Primeiro render (servidor e cliente) = assinatura pronta; só depois do mount, sem movimento reduzido, passa a desenhar.
   const animated = useSyncExternalStore(noSubscription, () => !prefersReducedMotion(), () => false);

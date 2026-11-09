@@ -19,7 +19,7 @@ for (const { path, lang } of rotas) {
       await page.goto(path);
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(t.titulo);
       await expect(page.getByText(t.lead)).toBeVisible();
-      await expect(page.getByText("Caio Mayan", { exact: true })).toBeVisible();
+      await expect(page.getByRole("img", { name: "Caio Mayan", exact: true })).toBeVisible();
       const foto = page.getByRole("img", { name: t.foto });
       await expect(foto).toBeVisible();
       const box = await foto.boundingBox();

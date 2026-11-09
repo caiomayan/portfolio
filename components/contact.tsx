@@ -5,6 +5,7 @@ import type { Content } from "@/content";
 import type { ContactLink } from "@/content/types";
 import { useIconHover, type IconComponent, type IconHandle } from "@/lib/icon-hover";
 import { prefersReducedMotion } from "@/lib/motion";
+import { Tooltip } from "./tooltip";
 import { CheckIcon } from "./icons/check";
 import { CopyIcon } from "./icons/copy";
 import { FileTextIcon } from "./icons/file-text";
@@ -15,16 +16,18 @@ function IconLink({ Icon, label, href, external }: { Icon: IconComponent } & Con
   const ref = useRef<IconHandle>(null);
   const { play, handlers } = useIconHover([ref]);
   return (
-    <a
-      className="contact-link"
-      href={href}
-      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      {...handlers}
-      onClick={play}
-    >
-      <Icon ref={ref} className="icon" />
-      <span>{label}</span>
-    </a>
+    <Tooltip label={label}>
+      <a
+        className="contact-link"
+        href={href}
+        aria-label={label}
+        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        {...handlers}
+        onClick={play}
+      >
+        <Icon ref={ref} className="icon" />
+      </a>
+    </Tooltip>
   );
 }
 

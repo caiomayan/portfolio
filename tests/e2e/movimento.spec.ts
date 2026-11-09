@@ -37,10 +37,9 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await expect(sig.locator("path").first()).toHaveCSS("fill", /rgb\(/);
       expect(await sig.locator("mask").count()).toBe(0);
 
-      // Rolar, trocar de print e de tema: nada vira animação nem transição.
+      // Rolar e trocar de tema: nada vira animação nem transição.
       await scrollToEnd(page);
       expect(await opacities(page, REVEAL_TARGETS)).not.toContain(0);
-      await page.locator("#carmine").getByRole("tab").nth(1).click();
       await page.getByRole("button", { name: t.tema }).click();
       await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
       expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
@@ -74,8 +73,9 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await ctx.close();
     });
 
-    test("a assinatura fica no canto superior esquerdo e é decorativa", async ({ page }) => {
+    test("a assinatura fica no canto superior esquerdo e é o nome do site (nome acessível)", async ({ page }) => {
       await page.goto(path);
+      await expect(page.getByRole("img", { name: "Caio Mayan", exact: true })).toHaveCount(1);
       const sig = page.locator(".signature");
       await expect(sig).toHaveAttribute("aria-hidden", "true");
       await expect(sig).toBeVisible();
@@ -128,7 +128,6 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       const controles = [
         page.getByRole("button", { name: t.tema }),
         page.getByRole("link", { name: t.outraLingua }),
-        page.locator("#carmine").getByRole("tab").nth(1),
         page.getByRole("button", { name: t.copiar }),
       ];
       for (const c of controles) {
@@ -167,20 +166,5 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await ctx.close();
     });
 
-    test("a troca dos prints do Carmine é suave: o painel novo entra e o antigo sai da árvore na hora", async ({ browser }) => {
-      const ctx = await browser.newContext({ reducedMotion: "no-preference" });
-      const page = await ctx.newPage();
-      await page.goto(path);
-      const abas = page.locator("#carmine").getByRole("tab");
-      await abas.nth(1).click();
-      // Só um painel acessível por vez, mesmo durante o fade.
-      await expect(page.locator("#carmine").getByRole("tabpanel")).toHaveCount(1);
-      await expect(page.locator("#carmine").getByRole("tabpanel").getByRole("img")).toHaveAttribute("alt", t.carmine.aba2);
-      const frames = page.locator("#carmine .frame");
-      await expect(frames.nth(0)).toHaveCSS("transition-property", /opacity/);
-      await expect(frames.nth(0)).toBeHidden();
-      await expect(frames.nth(1)).toHaveCSS("opacity", "1");
-      await ctx.close();
-    });
   });
 }

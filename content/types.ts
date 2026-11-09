@@ -24,6 +24,7 @@ export type Content = {
     title: string;
     /** Resto da frase de abertura; título + lead formam a frase do copy deck. */
     lead: string;
+    /** Linha discreta embaixo da frase de abertura. */
     location: string;
     photoAlt: string;
   };
@@ -70,11 +71,8 @@ export type Content = {
     what: string;
     status: string;
     how: string;
-    shotsLabel: string;
-    shots: { id: "inventario" | "ranking"; tab: string; alt: string }[];
-    shotsCaption: string;
     stackLabel: string;
-    stack: ({ name: string; role: string } & Mark<StackLogoId>)[];
+    stack: ({ name: string } & Mark<StackLogoId>)[];
     links: { site: { label: string; href: string }; repo: { label: string; href: string } };
   };
 };

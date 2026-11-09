@@ -6,6 +6,7 @@ export const rotasTexto = {
     foto: /Retrato de Caio Mayan/,
     outraLingua: "English",
     tema: "Tema escuro",
+    local: "João Pessoa, PB",
     copiar: "Copiar e-mail",
     copiado: "Copiado",
     carmine: {
@@ -13,8 +14,6 @@ export const rotasTexto = {
       status: "Em desenvolvimento, lançamento previsto para 2027",
       how: /agentes de IA que abrem issues e pull requests/,
       repo: /Repositório/,
-      aba1: /Inventário/,
-      aba2: /Ranking/,
     },
     exp: {
       heading: "Experiência",
@@ -42,6 +41,7 @@ export const rotasTexto = {
     foto: /Portrait of Caio Mayan/,
     outraLingua: "Português",
     tema: "Dark theme",
+    local: "João Pessoa, Brazil",
     copiar: "Copy email",
     copiado: "Copied",
     carmine: {
@@ -49,8 +49,6 @@ export const rotasTexto = {
       status: "In development, launch expected in 2027",
       how: /AI agents that open issues and pull requests/,
       repo: /Repository/,
-      aba1: /Inventory/,
-      aba2: /Ranking/,
     },
     exp: {
       heading: "Experience",

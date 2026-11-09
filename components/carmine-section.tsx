@@ -1,9 +1,9 @@
 import Image from "next/image";
 import type { Content } from "@/content";
-import { CarmineShots } from "./carmine-shots";
 import carmineLogo from "@/assets/logos/carmine.svg";
 import { FallbackIcon } from "./fallback-icon";
 import { stackLogos } from "@/lib/stack-logos";
+import { Tooltip } from "./tooltip";
 
 export function CarmineSection({ content }: { content: Content["carmine"] }) {
   return (
@@ -21,21 +21,20 @@ export function CarmineSection({ content }: { content: Content["carmine"] }) {
         <p data-reveal-part>{content.what}</p>
         <p className="soft" data-reveal-part>{content.how}</p>
 
-        <CarmineShots content={content} />
-
         <h3 className="label" data-reveal-part>{content.stackLabel}</h3>
         <ul className="stack" data-reveal-part>
           {content.stack.map((s) => (
             <li key={s.name}>
-              <span className="stack-name">
-                {s.logo ? (
-                  <Image className={stackLogos[s.logo].colored ? "logo color" : "logo"} src={stackLogos[s.logo].src} alt="" width={20} height={20} unoptimized />
-                ) : (
-                  <span className="stack-logo-empty"><FallbackIcon id={s.icon!} /></span>
-                )}
-                {s.name}
-              </span>
-              <span className="stack-role">{s.role}</span>
+              <Tooltip label={s.name}>
+                {/* Foco pelo teclado abre o tooltip; o nome acessível é o do próprio controle. */}
+                <span className="stack-icon" role="img" aria-label={s.name} tabIndex={0}>
+                  {s.logo ? (
+                    <Image className={stackLogos[s.logo].colored ? "logo color" : "logo"} src={stackLogos[s.logo].src} alt="" width={20} height={20} unoptimized />
+                  ) : (
+                    <span className="stack-logo-empty"><FallbackIcon id={s.icon!} /></span>
+                  )}
+                </span>
+              </Tooltip>
             </li>
           ))}
         </ul>
