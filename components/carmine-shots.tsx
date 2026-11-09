@@ -28,7 +28,7 @@ export function CarmineShots({ content }: { content: Content["carmine"] }) {
   }
 
   return (
-    <figure className="shots">
+    <figure className="shots" data-reveal-part>
       <div className="tabs" role="tablist" aria-label={content.shotsLabel} onKeyDown={onKeyDown}>
         {content.shots.map((s, i) => (
           <button

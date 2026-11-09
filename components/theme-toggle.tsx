@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useSyncExternalStore } from "react";
-import { prefersReducedMotion } from "@/lib/motion";
+import { withViewTransition } from "@/lib/motion";
 import { useIconHover, type IconHandle } from "@/lib/icon-hover";
 import { MoonIcon } from "./icons/moon";
 import { SunIcon } from "./icons/sun";
@@ -24,11 +24,8 @@ export function ThemeToggle({ label }: { label: string }) {
       if (next === "dark") document.documentElement.dataset.theme = "dark";
       else delete document.documentElement.dataset.theme;
     };
-    // Troca com um fade da página inteira (View Transitions: composição, não repintura por quadro).
-    // Sem suporte ou com prefers-reduced-motion, troca na hora. No recarregamento não há fade (sem piscar).
-    const vt = (document as Document & { startViewTransition?: (cb: () => void) => unknown }).startViewTransition;
-    if (vt && !prefersReducedMotion()) vt.call(document, apply);
-    else apply();
+    // Fade da página inteira quando há View Transitions; senão, troca instantânea. No recarregamento não há fade.
+    withViewTransition(apply);
     try {
       localStorage.setItem("theme", next);
     } catch {}

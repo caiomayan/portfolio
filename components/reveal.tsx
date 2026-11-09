@@ -2,23 +2,15 @@
 
 import { useEffect } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
+import { REVEAL_PART_SELECTOR, REVEAL_STATE } from "@/lib/reveal";
 
-/** As partes de cada seção que entram em sequência ao chegar na tela. */
-const TARGETS = [
-  "#carmine .carmine-aside",
-  "#carmine .carmine-body > *",
-  ":is(#experiencia, #formacao) h2",
-  ":is(#experiencia, #formacao) .entry",
-  ".contact h2",
-  ".contact .mail",
-  ".contact .contact-links",
-].join(", ");
-
-const STEP_MS = 70;
-const MAX_STEPS = 5;
+/** Atraso entre uma parte e a seguinte da mesma seção, e quantos passos de atraso no máximo. */
+const STAGGER_STEP_MS = 70;
+const MAX_STAGGER_STEPS = 5;
 
 /**
- * Entrada escalonada ao rolar, disparada uma vez por parte.
+ * Entrada escalonada ao rolar, disparada uma vez por parte. Não conhece as seções: só procura
+ * o atributo `data-reveal-part`, que cada componente põe nas suas partes.
  * O estado escondido só é aplicado aqui, no cliente, e só ao que ainda está abaixo da tela:
  * se o script falhar, nada chegou a ser escondido. Sem animação (prefers-reduced-motion), não faz nada.
  */
@@ -28,14 +20,14 @@ export function Reveal() {
 
     const below = window.innerHeight * 0.92;
     const hidden: HTMLElement[] = [];
-    const seen = new Map<Element, number>(); // seção → quantas partes já têm atraso
-    document.querySelectorAll<HTMLElement>(TARGETS).forEach((el) => {
+    const partsHiddenBySection = new Map<Element, number>(); // seção → quantas partes já têm atraso
+    document.querySelectorAll<HTMLElement>(REVEAL_PART_SELECTOR).forEach((el) => {
       if (el.getBoundingClientRect().top <= below) return; // já na tela (ou acima): fica como está
       const section = el.closest("section") ?? document.body;
-      const n = seen.get(section) ?? 0;
-      seen.set(section, n + 1);
-      el.style.setProperty("--reveal-delay", `${Math.min(n, MAX_STEPS) * STEP_MS}ms`);
-      el.dataset.reveal = "pending";
+      const n = partsHiddenBySection.get(section) ?? 0;
+      partsHiddenBySection.set(section, n + 1);
+      el.style.setProperty("--reveal-delay", `${Math.min(n, MAX_STAGGER_STEPS) * STAGGER_STEP_MS}ms`);
+      el.dataset.reveal = REVEAL_STATE.hidden;
       hidden.push(el);
     });
     if (!hidden.length) return;
@@ -45,7 +37,7 @@ export function Reveal() {
       (entries) => {
         for (const e of entries) {
           if (!e.isIntersecting) continue;
-          (e.target as HTMLElement).dataset.reveal = "in";
+          (e.target as HTMLElement).dataset.reveal = REVEAL_STATE.shown;
           io.unobserve(e.target);
         }
       },

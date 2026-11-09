@@ -16,7 +16,7 @@ type Props = {
 export function EntryRow({ title, titleUrl, sub, about, lines, period, logo }: Props) {
   const l = logo ? orgLogos[logo] : null;
   return (
-    <li className="entry">
+    <li className="entry" data-reveal-part>
       <div className="entry-main">
         {l ? (
           <Image className={l.tight ? "entry-logo tight" : "entry-logo"} src={l.src} alt="" width={40} height={l.height} unoptimized />

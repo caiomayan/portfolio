@@ -1,6 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
+import { rotasTexto, type RotaTexto } from "./textos";
 
-const REVEAL_TARGETS = "#carmine .carmine-body > *, #experiencia .entry, #formacao .entry, .contact .mail, .contact .contact-links";
+// Mesma marcação que o componente Reveal usa: nenhuma lista de seletores própria.
+const REVEAL_TARGETS = "[data-reveal-part]";
 
 /** Rola até o fim da página, devagar o bastante pro observer ver cada parte. */
 async function scrollToEnd(page: Page) {
@@ -15,7 +17,8 @@ async function scrollToEnd(page: Page) {
 const opacities = (page: Page, sel: string) =>
   page.locator(sel).evaluateAll((els) => els.map((el) => Number(getComputedStyle(el).opacity)));
 
-for (const path of ["/", "/en"]) {
+for (const path of ["/", "/en"] as RotaTexto[]) {
+  const t = rotasTexto[path];
   test.describe(`movimento em ${path}`, () => {
     test("com prefers-reduced-motion: reduce, nada anima e a assinatura aparece pronta", async ({ browser }) => {
       const ctx = await browser.newContext({ reducedMotion: "reduce" });
@@ -35,7 +38,7 @@ for (const path of ["/", "/en"]) {
       await scrollToEnd(page);
       expect(await opacities(page, REVEAL_TARGETS)).not.toContain(0);
       await page.locator("#carmine").getByRole("tab").nth(1).click();
-      await page.getByRole("button", { name: /^Tema|^Theme/ }).click();
+      await page.getByRole("button", { name: t.tema }).click();
       await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
       expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
       await ctx.close();
@@ -55,7 +58,7 @@ for (const path of ["/", "/en"]) {
       const page = await ctx.newPage();
       await page.goto(path);
       await expect(page.locator("h1")).toHaveCSS("animation-name", "rise");
-      await expect(page.locator(".signature path").first()).toHaveCSS("animation-name", "write");
+      await expect(page.locator(".signature path").first()).toHaveCSS("animation-name", "signature-write");
       // Só traço: o desenho termina com todo traço inteiro.
       await expect
         .poll(async () => Math.max(...(await page.locator(".signature path").evaluateAll((ps) => ps.map((p) => Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset)))))), { timeout: 6000 })
@@ -99,6 +102,61 @@ for (const path of ["/", "/en"]) {
       await ctx.close();
     });
 
+    test("com prefers-reduced-motion, hover e clique dos controles não animam e a View Transition do tema não roda", async ({ browser }) => {
+      const ctx = await browser.newContext({ reducedMotion: "reduce" });
+      const page = await ctx.newPage();
+      await page.goto(path);
+      await page.evaluate(() => {
+        const w = window as unknown as { __vt: number };
+        w.__vt = 0;
+        const original = document.startViewTransition?.bind(document);
+        document.startViewTransition = ((cb: () => void) => {
+          w.__vt++;
+          return original?.(cb);
+        }) as typeof document.startViewTransition;
+      });
+      const controles = [
+        page.getByRole("button", { name: t.tema }),
+        page.getByRole("link", { name: t.outraLingua }),
+        page.locator("#carmine").getByRole("tab").nth(1),
+        page.getByRole("button", { name: t.copiar }),
+      ];
+      for (const c of controles) {
+        await c.scrollIntoViewIfNeeded();
+        await c.hover();
+        await page.mouse.down();
+        await expect(c).toHaveCSS("transition-duration", "0s");
+        await expect(c).toHaveCSS("transform", "none");
+        expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+        await page.mouse.move(2, 2); // solta fora do controle: sem clique (o link de língua navegaria)
+        await page.mouse.up();
+      }
+      await page.getByRole("button", { name: t.tema }).click();
+      await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+      expect(await page.evaluate(() => (window as unknown as { __vt: number }).__vt)).toBe(0);
+      await ctx.close();
+    });
+
+    test("sem preferência, a troca de tema usa View Transition e só transform/opacity transicionam nos controles", async ({ browser }) => {
+      const ctx = await browser.newContext({ reducedMotion: "no-preference" });
+      const page = await ctx.newPage();
+      await page.goto(path);
+      await page.evaluate(() => {
+        const w = window as unknown as { __vt: number };
+        w.__vt = 0;
+        const original = document.startViewTransition?.bind(document);
+        if (original) document.startViewTransition = ((cb: () => void) => { w.__vt++; return original(cb); }) as typeof document.startViewTransition;
+      });
+      const props = await page.evaluate(() =>
+        [...document.querySelectorAll("button, a")].flatMap((el) => getComputedStyle(el).transitionProperty.split(", ")),
+      );
+      expect(props.filter((p) => /color/.test(p))).toEqual([]);
+      await page.getByRole("button", { name: t.tema }).click();
+      await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+      expect(await page.evaluate(() => (window as unknown as { __vt: number }).__vt)).toBe(1);
+      await ctx.close();
+    });
+
     test("a troca dos prints do Carmine é suave: o painel novo entra e o antigo sai da árvore na hora", async ({ browser }) => {
       const ctx = await browser.newContext({ reducedMotion: "no-preference" });
       const page = await ctx.newPage();
@@ -107,7 +165,7 @@ for (const path of ["/", "/en"]) {
       await abas.nth(1).click();
       // Só um painel acessível por vez, mesmo durante o fade.
       await expect(page.locator("#carmine").getByRole("tabpanel")).toHaveCount(1);
-      await expect(page.locator("#carmine").getByRole("tabpanel").getByRole("img")).toHaveAttribute("alt", /Ranking/);
+      await expect(page.locator("#carmine").getByRole("tabpanel").getByRole("img")).toHaveAttribute("alt", t.carmine.aba2);
       const frames = page.locator("#carmine .frame");
       await expect(frames.nth(0)).toHaveCSS("transition-property", /opacity/);
       await expect(frames.nth(0)).toBeHidden();

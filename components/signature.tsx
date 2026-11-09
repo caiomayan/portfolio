@@ -13,7 +13,7 @@ export function Signature() {
           key={i}
           d={s.d}
           pathLength={1}
-          style={{ "--delay": `${s.delay}ms`, "--dur": `${s.dur}ms` } as CSSProperties}
+          style={{ "--signature-delay": `${s.delay}ms`, "--signature-duration": `${s.duration}ms` } as CSSProperties}
         />
       ))}
     </svg>
