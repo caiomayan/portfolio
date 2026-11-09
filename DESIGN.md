@@ -32,6 +32,13 @@ O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no
 - Título (h1) em `--text-display` (até 104 px), peso 700, tracking −0,045em, com o ponto final em acento. Esse ponto é ornamento tipográfico, não texto: vem de `h1::after` (`content: "." / ""`, sem texto alternativo, então leitores de tela não o leem) e fica fora de `content/` de propósito, porque o título do copy deck não tem ponto e a frase de abertura (`openingLine`) o monta como "título. lead". Frase de abertura em `--text-lead`, cor `--soft`.
 - O canto superior esquerdo fica livre para a assinatura (tarefa futura); o botão de tema fica no canto superior direito.
 
+## Contato
+
+- Última seção: título "Contato" (`h2`, em `--soft`), e-mail em `--text-lead` com botão de copiar ao lado (círculo de 44 px em `--surface`, só ícone, `aria-label`, foco visível). Ao copiar, o ícone vira o de confirmado por 2 s e uma região `role="status"` (só pra leitor de tela) anuncia "Copiado".
+- Abaixo, LinkedIn, GitHub e Currículo (PDF) com ícone. O link do PDF só aparece se a língua tem arquivo (`contact.resume` em `content/`).
+- Ícones de interface: **lucide-animated** (registry `https://lucide-animated.com/r/<nome>.json`), copiados em `components/icons/` sem alteração (dependência `motion`). Animam no hover, no foco e no clique, disparados por `components/contact.tsx` e `theme-toggle.tsx`; com `prefers-reduced-motion` ficam parados (`lib/motion.ts`). O botão de tema também usa Sun/Moon do lucide-animated.
+- O telefone não aparece em lugar nenhum.
+
 ## Movimento
 
 - Só `transform` e `opacity` (mais a cor do tema no `body`). Curva `cubic-bezier(0.2, 0.7, 0.2, 1)`, 160–700 ms.

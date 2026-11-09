@@ -10,5 +10,14 @@ export const pt: Content = {
     location: "João Pessoa, Paraíba",
     photoAlt: "Retrato de Caio Mayan",
   },
+  contact: {
+    heading: "Contato",
+    email: "mail@caiomayan.com",
+    copyEmail: "Copiar e-mail",
+    copied: "Copiado",
+    linkedin: { label: "LinkedIn", href: "https://www.linkedin.com/in/caiomayan/" },
+    github: { label: "GitHub", href: "https://github.com/caiomayan" },
+    resume: { label: "Currículo (PDF)", href: "/caio-mayan-curriculo.pdf" },
+  },
   ui: { themeToggle: "Tema escuro" },
 };

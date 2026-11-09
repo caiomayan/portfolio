@@ -54,7 +54,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, nem Inoue, Kurage,
 - E-mail: mail@caiomayan.com (com botão de copiar)
 - LinkedIn: https://www.linkedin.com/in/caiomayan/
 - GitHub: https://github.com/caiomayan
-- Currículo (PDF): link por língua; o arquivo ainda não existe (placeholder nos protótipos).
+- Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en). Rótulo no site: "Currículo (PDF)" (proposto pelo build, o Caio revisa; o inglês entra na tarefa do inglês).
 
 ## Interface
 
