@@ -225,8 +225,10 @@ h1::after { content: "." / ""; color: var(--accent); }
 :is(#experiencia, #formacao) .entry-logo { height: auto; background: var(--plate); border-radius: 9px; padding: 4px; align-self: flex-start; }
 :is(#experiencia, #formacao) .entry-logo.tight { padding: 3px; }
 :is(#experiencia, #formacao) h3 { margin: 0; font-size: var(--text-body); font-weight: 600; letter-spacing: -0.01em; line-height: 1.4; }
-:is(#experiencia, #formacao) h3 a { color: inherit; text-decoration: none; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 1px no-repeat; transition: background-size 240ms var(--ease); }
-:is(#experiencia, #formacao) h3 a:hover { background-size: 100% 1px; }
+:is(#experiencia, #formacao) h3 a { position: relative; color: inherit; text-decoration: none; }
+/* Sublinhado em acento: desenhado com transform (composição), não com background-size. */
+:is(#experiencia, #formacao) h3 a::after { content: "" / ""; position: absolute; inset: auto 0 0; height: 1px; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+:is(#experiencia, #formacao) h3 a:is(:hover, :focus-visible)::after { transform: scaleX(1); }
 :is(#experiencia, #formacao) .entry-sub,
 :is(#experiencia, #formacao) .entry-period { margin: 0; color: var(--soft); font-size: var(--text-small); line-height: 1.5; }
 :is(#experiencia, #formacao) .entry-sub { margin-top: 2px; }
@@ -252,7 +254,6 @@ h1::after { content: "." / ""; color: var(--accent); }
 
 /* Movimento: só transform e opacity; tudo desligado com prefers-reduced-motion. */
 @media (prefers-reduced-motion: no-preference) {
-  .theme-ready body { transition: background-color 300ms var(--ease), color 300ms var(--ease); }
   @keyframes rise {
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: none; }
@@ -303,8 +304,9 @@ h1::after { content: "." / ""; color: var(--accent); }
   transition: color 180ms, background-color 180ms;
 }
 #carmine .tabs button[aria-selected="true"] { background: var(--bg); color: var(--ink); }
-#carmine .frame { border-radius: 12px; overflow: hidden; background: var(--surface); aspect-ratio: 8 / 5; }
-#carmine .frame[hidden] { display: none; }
+#carmine .frames { display: grid; }
+#carmine .frame { grid-area: 1 / 1; border-radius: 12px; overflow: hidden; background: var(--surface); aspect-ratio: 8 / 5; }
+#carmine .frame[data-active="false"] { visibility: hidden; opacity: 0; }
 #carmine .frame img { width: 100%; height: 100%; object-fit: cover; object-position: top left; }
 #carmine .shots figcaption { margin-top: 12px; color: var(--soft); font-size: var(--text-small); }
 #carmine h3.label { font-size: var(--text-small); font-weight: 600; line-height: 1; color: var(--soft); margin: 48px 0 8px; }

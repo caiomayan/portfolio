@@ -66,13 +66,13 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await expect(abas.nth(0)).toHaveAttribute("tabindex", "0");
       await expect(abas.nth(1)).toHaveAttribute("tabindex", "-1");
       await expect(paineis.nth(0)).toBeVisible();
-      await expect(paineis.nth(1)).toHaveAttribute("hidden", "");
+      await expect(paineis.nth(1)).toHaveAttribute("aria-hidden", "true");
       await expect(paineis.nth(1)).toBeHidden();
 
       await abas.nth(1).click();
       await expect(abas.nth(0)).toHaveAttribute("tabindex", "-1");
       await expect(abas.nth(1)).toHaveAttribute("tabindex", "0");
-      await expect(paineis.nth(0)).toHaveAttribute("hidden", "");
+      await expect(paineis.nth(0)).toHaveAttribute("aria-hidden", "true");
       await expect(paineis.nth(1)).toBeVisible();
     });
 

@@ -30,7 +30,7 @@ O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no
 
 - Foto original inteira (quadrado, sem corte), cantos de 28 px, 360 px no desktop; no celular fica pequena ao lado do nome e da cidade.
 - Título (h1) em `--text-display` (até 104 px), peso 700, tracking −0,045em, com o ponto final em acento. Esse ponto é ornamento tipográfico, não texto: vem de `h1::after` (`content: "." / ""`, sem texto alternativo, então leitores de tela não o leem) e fica fora de `content/` de propósito, porque o título do copy deck não tem ponto e a frase de abertura (`openingLine`) o monta como "título. lead". Frase de abertura em `--text-lead`, cor `--soft`.
-- O canto superior esquerdo fica livre para a assinatura (tarefa futura); no canto superior direito ficam o link de língua (pílula de 44 px de altura em `--surface`, com o nome da outra língua: "English" / "Português", texto vindo de `ui.otherLang` em `content/`; é um link comum pra rota equivalente, sem script e sem escolha automática por língua do navegador) e, ao lado, o botão de tema. O `hreflang` entre `/` e `/en` sai de `lib/page-metadata.ts` (`alternates.languages`).
+- No canto superior esquerdo fica a assinatura (ver Movimento); no canto superior direito ficam o link de língua (pílula de 44 px de altura em `--surface`, com o nome da outra língua: "English" / "Português", texto vindo de `ui.otherLang` em `content/`; é um link comum pra rota equivalente, sem script e sem escolha automática por língua do navegador) e, ao lado, o botão de tema. O `hreflang` entre `/` e `/en` sai de `lib/page-metadata.ts` (`alternates.languages`).
 
 ## Contato
 
@@ -48,9 +48,14 @@ O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no
 
 ## Movimento
 
-- Só `transform` e `opacity` (mais a cor do tema no `body`). Curva `cubic-bezier(0.2, 0.7, 0.2, 1)`, 160–700 ms.
-- Entrada escalonada da primeira tela (foto, título, frase) e troca de ícone do botão de tema.
-- Tudo desligado com `prefers-reduced-motion: reduce`; a página é completa e legível sem animação.
+Estilo Apple: molas suaves, nada brusco. Os tokens vivem em `app/motion.css`: `--ease` (`cubic-bezier(0.2, 0.7, 0.2, 1)`) e `--spring` (CSS `linear()` de uma mola com amortecimento 0,78, passa ~2% e assenta; sem suporte cai em `--ease`). Só `transform` e `opacity`, com duas exceções pedidas: o traço da assinatura (`stroke-dashoffset`, num SVG pequeno) e a cor do tema (ver abaixo). Tudo desligado com `prefers-reduced-motion: reduce`; a página é completa e legível sem animação ou sem JavaScript.
+
+- **Assinatura** (`components/signature.tsx`, dados em `lib/signature.ts`): o nome "Caio Mayan" no canto superior esquerdo, 40 px de altura, se escreve na abertura (~2 s, um traço por vez, da esquerda pra direita). É um traço estilizado, **não** a assinatura real do Caio: vem da fonte de linha única *Hershey Script 1-stroke* (Hershey Fonts, domínio liberal: uso livre com os créditos de A. V. Hershey, U. S. National Bureau of Standards, e de James Hurt, Cognition, Inc., conforme a licença da distribuição), com cada linha suavizada em curvas de Bézier. Os caminhos ficam commitados; nada é carregado em tempo de execução. `aria-hidden` (o nome já está no texto). Com movimento reduzido aparece pronta.
+- **Primeira tela:** entrada escalonada de foto, título e frase (`rise`).
+- **Seções:** as partes de cada seção entram em sequência (70 ms entre elas, até 5 passos), uma vez, ao chegar na tela (`components/reveal.tsx`, lista de alvos nele). O estado escondido é aplicado só pelo script e só ao que está abaixo da tela: se o script falhar, nada ficou escondido.
+- **Prints do Carmine:** todos empilhados na mesma célula; a troca é um fade com leve escala (`.frame[data-active]`). O print que sai deixa a árvore de acessibilidade na hora (`aria-hidden` + `inert`) e some da tela depois do fade.
+- **Tema:** fade da página inteira pelo View Transitions (`document.startViewTransition`, 360 ms), só composição; sem suporte ou com movimento reduzido, troca na hora. No recarregamento não há fade.
+- **Controles:** hover, foco e clique em todos (botões de tema e copiar e abas com mola; links com sublinhado em acento por `transform` e opacidade no clique).
 
 ## Acessibilidade
 
@@ -61,7 +66,7 @@ O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no
 
 - Logo depois da primeira tela: rótulo à esquerda (200 px: "Carmine" + "Projeto pessoal") e coluna de 640 px à direita (no celular, uma coluna só). Texto em `--text-body`/`--text-small`; o único acento é o ponto de status.
 - Prints reais do stcarmine.com (`assets/carmine/`, 1280 × 800, tirados em 2026-11-09: catálogo de itens do Inventário e Ranking semanal; a tela inicial fica de fora porque hoje mostra os servidores dormindo). A moldura tem a largura da coluna (proporção 8:5, canto 12 px); nunca estica além dela. Refazer os prints quando o produto mudar.
-- Abas em pílula (`role="tablist"`): clique, setas, Home e End trocam o print; só a aba ativa entra na ordem de Tab. Sem animação própria (só cor).
+- Abas em pílula (`role="tablist"`): clique, setas, Home e End trocam o print; só a aba ativa entra na ordem de Tab. A troca é um fade (ver Movimento).
 - Stack em lista de duas pontas (nome + papel); logos em `assets/logos/` (registro em `lib/stack-logos.ts`), invertidas no tema escuro (a do Valkey é colorida e não inverte). Sem logo oficial (CounterStrikeSharp), só o nome.
 
 ### Medidas da seção (tokens em `app/globals.css`)

@@ -2,7 +2,9 @@ import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import type { Lang } from "@/content";
 import { locales } from "@/lib/locales";
+import { Reveal } from "@/components/reveal";
 import "@/app/globals.css";
+import "@/app/motion.css";
 
 // Inter variável com eixo de tamanho óptico (opsz); servida pelo próprio site.
 const inter = Inter({ subsets: ["latin"], axes: ["opsz"], variable: "--font-inter", display: "swap" });
@@ -17,6 +19,7 @@ export function SiteShell({ lang, children }: { lang: Lang; children: ReactNode 
         {/* Antes de qualquer conteúdo: o tema já está aplicado na primeira pintura. */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {children}
+        <Reveal />
       </body>
     </html>
   );

@@ -1,0 +1,74 @@
+/*
+ * Movimento (ver DESIGN.md → Movimento). Tudo aqui some com prefers-reduced-motion.
+ * Só transform e opacity — a exceção é o traço da assinatura (stroke-dashoffset), que o pedido permite.
+ */
+:root {
+  /* Mola suave (amortecimento 0,78: passa ~2% e assenta). Sem suporte a linear(), cai na curva padrão. */
+  --spring: var(--ease);
+}
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    --spring: linear(0, 0.014, 0.05, 0.102, 0.165, 0.235, 0.308, 0.382, 0.455, 0.524, 0.59, 0.651, 0.706, 0.756, 0.801, 0.84, 0.874, 0.904, 0.929, 0.949, 0.967, 0.981, 0.992, 1.001, 1.008, 1.013, 1.016, 1.018, 1.019, 1.02, 1.02, 1.019, 1.018, 1.017, 1.015, 1.014, 1);
+  }
+}
+
+/* Assinatura: um traço estilizado do nome, desenhado na abertura. Sem animação, aparece pronta. */
+.signature {
+  display: block;
+  flex: none;
+  height: 40px;
+  width: auto;
+  max-width: calc(100vw - 2 * var(--gutter) - 44px - 16px);
+  overflow: visible;
+  color: var(--ink);
+}
+.signature path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 46;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes write {
+    from { stroke-dashoffset: 1; }
+    to { stroke-dashoffset: 0; }
+  }
+  .signature path { animation: write var(--dur) cubic-bezier(0.45, 0.05, 0.4, 1) calc(var(--delay) + 250ms) both; }
+
+  /* Entrada escalonada: o estado escondido só existe se o script (components/reveal.tsx) o aplicar. */
+  [data-reveal="pending"] { opacity: 0; transform: translateY(20px); }
+  [data-reveal="in"] {
+    transition:
+      opacity 600ms var(--ease) var(--reveal-delay, 0ms),
+      transform 900ms var(--spring) var(--reveal-delay, 0ms);
+  }
+
+  /* Troca dos prints do Carmine: fade com leve escala; o inativo só some da tela depois do fade. */
+  #carmine .frame {
+    transition: opacity 380ms var(--ease), transform 700ms var(--spring), visibility 0s linear 380ms;
+  }
+  #carmine .frame[data-active="false"] { transform: scale(0.985); }
+  #carmine .frame[data-active="true"] { visibility: visible; transition-delay: 0s; }
+
+  /* Troca de tema: fade da página inteira (View Transitions), 100% composição. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation-duration: 360ms; animation-timing-function: var(--ease); }
+
+  /* Feedback dos controles: hover, foco e clique. */
+  #carmine .tabs button { transition: color 180ms, background-color 180ms, transform 400ms var(--spring); }
+  #carmine .tabs button:hover { color: var(--ink); }
+  #carmine .tabs button:active { transform: scale(0.95); }
+  .theme-toggle, .copy-button { transition: transform 420ms var(--spring), color 160ms; }
+  .link-external, .contact-link, .mail-address, :is(#experiencia, #formacao) h3 a { transition: opacity 140ms, text-decoration-color 180ms; }
+  .link-external:active, .contact-link:active, .mail-address:active, :is(#experiencia, #formacao) h3 a:active { opacity: 0.6; }
+  :is(#experiencia, #formacao) h3 a::after { transition: transform 320ms var(--ease); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #carmine .tabs button { transition: none; }
+  :is(#experiencia, #formacao) h3 a::after { transition: none; }
+}
