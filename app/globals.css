@@ -78,10 +78,10 @@ img { display: block; max-width: 100%; height: auto; }
   text-decoration: none;
 }
 /* Sem fundo em repouso; o fundo aparece no hover e no foco (o contorno do foco continua). A cor muda sem transição. */
-.lang-switch:focus-visible, .theme-toggle:focus-visible { background: var(--surface); }
+.lang-switch:focus-visible, .theme-toggle:focus-visible, .copy-button:focus-visible { background: var(--surface); }
 /* Hover só com mouse: no toque o :hover fica preso depois do toque e deixaria o fundo em repouso. */
 @media (hover: hover) {
-  .lang-switch:hover, .theme-toggle:hover { background: var(--surface); }
+  .lang-switch:hover, .theme-toggle:hover, .copy-button:hover { background: var(--surface); }
 }
 .theme-toggle {
   position: relative;
@@ -171,7 +171,7 @@ h1::after { content: "." / ""; }
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: var(--surface);
+  background: transparent;
   color: var(--soft);
   cursor: pointer;
 }

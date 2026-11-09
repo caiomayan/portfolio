@@ -28,6 +28,23 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       expect(await alvos[0].evaluate((el) => getComputedStyle(el).outlineStyle)).not.toBe("none");
     });
 
+    test("copiar e-mail: sem fundo em repouso; fundo no hover e no foco do teclado", async ({ page }) => {
+      await page.goto(path);
+      const copiar = page.getByRole("button", { name: t.copiar });
+      await copiar.scrollIntoViewIfNeeded();
+      await expect(copiar).toHaveCSS("background-color", TRANSPARENTE);
+      await copiar.hover();
+      await expect(copiar).not.toHaveCSS("background-color", TRANSPARENTE);
+      await page.mouse.move(2, 2);
+      await expect(copiar).toHaveCSS("background-color", TRANSPARENTE);
+      // Foco pelo teclado (:focus-visible): sai e volta com Shift+Tab e Tab.
+      await copiar.focus();
+      await page.keyboard.press("Shift+Tab");
+      await page.keyboard.press("Tab");
+      await expect(copiar).toBeFocused();
+      await expect(copiar).not.toHaveCSS("background-color", TRANSPARENTE);
+    });
+
     test("sem nome nem cidade embaixo da foto; cidade numa linha embaixo da frase, do conteúdo", async ({ page }) => {
       await page.goto(path);
       await expect(page.locator(".who figcaption")).toHaveCount(0);

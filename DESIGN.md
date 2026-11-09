@@ -32,7 +32,7 @@ O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no
 
 ## Contato
 
-- Última seção: título "Contato" (`h2`, em `--soft`), e-mail em `--text-lead` com botão de copiar ao lado (círculo de 44 px em `--surface`, só ícone, `aria-label`, foco visível). Ao copiar, o ícone vira o de confirmado por 2 s e uma região `role="status"` (só pra leitor de tela) anuncia "Copiado".
+- Última seção: título "Contato" (`h2`, em `--soft`), e-mail em `--text-lead` com botão de copiar ao lado (círculo de 44 px sem fundo em repouso, com `--surface` só no hover e no foco, como os botões do topo; só ícone, `aria-label`, foco visível). Ao copiar, o ícone vira o de confirmado por 2 s e uma região `role="status"` (só pra leitor de tela) anuncia "Copiado".
 - Abaixo, LinkedIn, GitHub e Currículo (PDF) **só com ícone** (alvo de 44 px, sem texto do lado). O nome de cada um (`contact.linkedin.label` etc.) é o tooltip e o nome acessível (`aria-label`); o e-mail continua escrito, com o botão de copiar. O tooltip é o mesmo da stack do Carmine (`components/tooltip.tsx`, ver Seção Carmine). O link do PDF só aparece se a língua tem arquivo (`contact.resume` em `content/`).
 - Ícones de interface: **lucide-animated** (registry `https://lucide-animated.com/r/<nome>.json`), copiados em `components/icons/` sem alteração (dependência `motion`). Animam no hover, no foco e no clique, disparados por `components/contact.tsx` e `theme-toggle.tsx`; com `prefers-reduced-motion` ficam parados (`lib/motion.ts`). O botão de tema também usa Sun/Moon do lucide-animated.
 - O telefone não aparece em lugar nenhum.
