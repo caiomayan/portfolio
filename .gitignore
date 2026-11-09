@@ -11,6 +11,7 @@ next-env.d.ts
 # Contexto pessoal: nomes e dados que não podem ficar públicos
 private/
 .claude/settings.local.json
+.maestri/
 prototypes/
 .taste-skill/
 .impeccable/

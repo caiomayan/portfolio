@@ -6,10 +6,10 @@ export type { Content, Lang };
 
 export const content: Record<Lang, Content> = { pt, en };
 
-/** Valor do atributo `lang` do <html> e rota de cada língua. */
-export const langs: Record<Lang, { htmlLang: string; path: string }> = {
-  pt: { htmlLang: "pt-BR", path: "/" },
-  en: { htmlLang: "en", path: "/en" },
+/** Valor do atributo `lang` do <html> de cada língua. */
+export const langs: Record<Lang, { htmlLang: string }> = {
+  pt: { htmlLang: "pt-BR" },
+  en: { htmlLang: "en" },
 };
 
 /** Frase de abertura completa (título + lead), usada na descrição da página. */

@@ -3,30 +3,30 @@ import type { Content } from "@/content";
 import foto from "@/assets/foto-original.jpg";
 import { ThemeToggle } from "./theme-toggle";
 
-export function Hero({ c }: { c: Content }) {
+export function Hero({ content }: { content: Content }) {
   return (
     <>
       <header className="top">
         <span aria-hidden="true" />
-        <ThemeToggle label={c.ui.themeToggle} />
+        <ThemeToggle label={content.ui.themeToggle} />
       </header>
       <main className="hero">
         <figure className="who">
           <Image
             className="photo"
             src={foto}
-            alt={c.hero.photoAlt}
+            alt={content.hero.photoAlt}
             sizes="(min-width: 900px) 360px, 160px"
             preload
           />
           <figcaption>
-            <b>{c.hero.name}</b>
-            <span>{c.hero.location}</span>
+            <b>{content.hero.name}</b>
+            <span>{content.hero.location}</span>
           </figcaption>
         </figure>
         <div className="intro">
-          <h1>{c.hero.title}</h1>
-          <p className="lead">{c.hero.lead}</p>
+          <h1>{content.hero.title}</h1>
+          <p className="lead">{content.hero.lead}</p>
         </div>
       </main>
     </>

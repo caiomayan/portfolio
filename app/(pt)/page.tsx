@@ -5,5 +5,5 @@ import { pageMetadata } from "@/lib/page-metadata";
 export const metadata = pageMetadata("pt");
 
 export default function Page() {
-  return <Hero c={content.pt} />;
+  return <Hero content={content.pt} />;
 }

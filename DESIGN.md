@@ -6,7 +6,7 @@ Direção: **quiet instrument** (escolhida pelo Caio entre três protótipos; re
 
 - Um acento só (vermelho), usado em pouco: o ponto depois do título, a seleção de texto e, nas próximas tarefas, o ponto de status e os sublinhados.
 - Uma família só: **Inter variável** com eixo de tamanho óptico (`opsz`), carregada por `next/font` (sem pedido externo em tempo de execução). Nada de segunda família por enquanto.
-- No máximo **5 tamanhos de texto**, todos tokens (`--text-small`, `--text-body`, `--text-lead`, `--text-head`, `--text-display`). Não criar tamanhos soltos.
+- No máximo **4 tamanhos de texto**, todos tokens (`--text-small`, `--text-body`, `--text-lead`, `--text-display`). Não criar tamanhos soltos.
 - Superfícies por tom (`--surface` sobre `--bg`), não por borda. Sombra só na foto.
 - Sem ilustração grande, 3D, elementos de jogo ou cara de blog.
 - Todo texto vem de `content/` (fonte única, `pt` e `en`); componentes não têm texto fixo.
@@ -20,13 +20,16 @@ Direção: **quiet instrument** (escolhida pelo Caio entre três protótipos; re
 | `--ink` | `#1d1d1f` | `#f5f5f7` |
 | `--soft` | `#6e6e73` | `#a1a1a6` |
 | `--accent` | `#d92b21` | `#ff5a4f` |
+| `--accent-ink` | `#ffffff` | `#0b0b0c` |
+| `--shadow` | `0 1px 2px rgb(0 0 0 / 0.04), 0 12px 40px -12px rgb(0 0 0 / 0.18)` | `0 1px 2px rgb(0 0 0 / 0.4), 0 12px 40px -12px rgb(0 0 0 / 0.8)` |
 
+`--accent-ink` é a cor do texto sobre o acento (hoje, a seleção de texto). `--shadow` é a sombra da foto, a única do site.
 O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no topo), guardada em `localStorage` (`theme`) e aplicada por um script inline antes da primeira pintura (`data-theme="dark"` no `<html>`). O tema do sistema não é consultado.
 
 ## Primeira tela
 
 - Foto original inteira (quadrado, sem corte), cantos de 28 px, 360 px no desktop; no celular fica pequena ao lado do nome e da cidade.
-- Título (h1) em `--text-display` (até 104 px), peso 700, tracking −0,045em, com o ponto final em acento. Frase de abertura em `--text-lead`, cor `--soft`.
+- Título (h1) em `--text-display` (até 104 px), peso 700, tracking −0,045em, com o ponto final em acento. Esse ponto é ornamento tipográfico, não texto: vem de `h1::after` (`content: "." / ""`, sem texto alternativo, então leitores de tela não o leem) e fica fora de `content/` de propósito, porque o título do copy deck não tem ponto e a frase de abertura (`openingLine`) o monta como "título. lead". Frase de abertura em `--text-lead`, cor `--soft`.
 - O canto superior esquerdo fica livre para a assinatura (tarefa futura); o botão de tema fica no canto superior direito.
 
 ## Movimento
