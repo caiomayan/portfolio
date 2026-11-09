@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caio Mayan — Engenheiro de Software</title>
+<meta name="description" content="Engenheiro de Software. Construo produtos com IA aplicada, sobre uma base sólida de backend.">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --surface: #f2f2f2;
+  --ink: #0a0a0a;
+  --soft: #5f5f5f;
+  --hair: #e4e4e4;
+  --accent: #d92b21;
+  --accent-ink: #ffffff;
+  --invert: none;
+  --display: "League Spartan", "Figtree", system-ui, sans-serif;
+  --text: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --step-small: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-head: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+  --step-display: clamp(2.5rem, 1.2rem + 4.6vw, 5.25rem);
+  --rail: 200px;
+  --gap: 96px;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0b0b;
+    --surface: #161616;
+    --ink: #f4f4f2;
+    --soft: #9b9b9b;
+    --hair: #242424;
+    --accent: #ff5a4f;
+    --accent-ink: #0b0b0b;
+    --invert: invert(1);
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 var(--step-body)/1.55 var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 3px; }
+
+.wrap { width: min(1120px, 100% - 48px); margin-inline: auto; }
+
+/* top bar */
+.top { display: flex; justify-content: space-between; align-items: center; padding: 28px 0; font-size: var(--step-small); }
+.top nav { display: flex; gap: 28px; }
+.top a, .lang { color: var(--soft); text-decoration: none; transition: color 180ms; }
+.top a:hover, .lang:hover { color: var(--ink); }
+.lang { font: inherit; background: none; border: 1px solid var(--hair); border-radius: 999px; padding: 6px 14px; cursor: default; transition: color 180ms, border-color 180ms; }
+.lang:hover { border-color: var(--soft); }
+
+/* hero */
+.hero { padding: clamp(48px, 9vh, 104px) 0 var(--gap); }
+.hero { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); column-gap: 40px; align-items: start; }
+.who { display: block; }
+.who img { width: 120px; height: 120px; border-radius: 16px; margin-bottom: 14px; object-fit: cover; transition: transform 400ms var(--ease); }
+.who:hover img { transform: rotate(-2deg) scale(1.04); }
+.who b { display: block; margin-top: 2px; font-weight: 600; font-size: 1.125rem; line-height: 1.25; }
+.who span { color: var(--soft); font-size: var(--step-small); }
+h1 {
+  font: 700 var(--step-display)/.95 var(--display); letter-spacing: -0.04em;
+  margin: 0; text-wrap: balance;
+}
+.lead { font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem); line-height: 1.35; max-width: 28ch; margin: 28px 0 0; }
+.cta { display: flex; align-items: center; gap: 28px; margin-top: 40px; flex-wrap: wrap; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; font: 600 1rem/1 var(--text);
+  background: var(--ink); color: var(--bg); border: 0; border-radius: 999px; padding: 14px 22px;
+  text-decoration: none; cursor: pointer;
+  transition: transform 140ms var(--ease), opacity 180ms;
+}
+.btn:hover { opacity: .86; }
+.btn:active { transform: scale(.97); }
+.btn .arrow { transition: transform 220ms var(--ease); }
+.btn:hover .arrow { transform: translateY(2px); }
+
+/* animated underline links */
+.ul { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); transition: text-decoration-color 180ms, color 180ms; }
+.ul:hover { text-decoration-color: var(--accent); }
+
+/* sections */
+section { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); column-gap: 40px; padding-bottom: var(--gap); }
+section > h2 { font: 700 var(--step-head)/1.05 var(--display); letter-spacing: -0.03em; margin: 0; align-self: start; }
+.rail h2 { margin: 0; font: 700 var(--step-head)/1.05 var(--display); letter-spacing: -0.03em; }
+.railnote { margin: 8px 0 0; font-size: var(--step-small); color: var(--soft); }
+.col { max-width: 880px; min-width: 0; }
+.col p { margin: 0 0 1em; }
+.soft { color: var(--soft); }
+.small { font-size: var(--step-small); }
+
+/* carmine */
+.status { display: inline-flex; align-items: center; gap: 10px; font-size: var(--step-small); color: var(--soft); margin: 0 0 20px; }
+.status i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.proj-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.proj-head img { width: 40px; height: 40px; border-radius: 50%; }
+.proj-head b { font: 700 1.75rem/1 var(--display); letter-spacing: -0.03em; }
+.shot { margin: 40px 0 0 calc(-1 * (var(--rail) + 40px)); }
+.tabs { display: inline-flex; position: relative; background: var(--surface); border-radius: 999px; padding: 4px; margin-bottom: 14px; }
+.tabs button { position: relative; z-index: 1; font: 600 var(--step-small)/1 var(--text); background: none; border: 0; color: var(--soft); padding: 9px 16px; border-radius: 999px; cursor: pointer; transition: color 180ms; }
+.tabs button[aria-pressed="true"] { color: var(--ink); }
+.tabs .pill { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 4px; width: var(--w, 70px); background: var(--bg); border-radius: 999px; transform: translateX(var(--x, 0)); transition: transform 260ms var(--ease), width 260ms var(--ease); }
+.frame { position: relative; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 16 / 10; }
+.frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; opacity: 0; transition: opacity 260ms; }
+.frame img.on { opacity: 1; }
+.frame img { transition: opacity 260ms, transform 900ms var(--ease); }
+.frame:hover img.on { transform: scale(1.015); }
+.shot figcaption { margin-top: 12px; color: var(--soft); font-size: var(--step-small); }
+.links { display: flex; gap: 28px; margin-top: 28px; flex-wrap: wrap; font-size: 1rem; }
+h3.label { font: 600 var(--step-small)/1 var(--text); color: var(--soft); margin: 48px 0 8px; }
+
+/* two-ended rows */
+.rows { list-style: none; margin: 0; padding: 0; }
+.rows li { display: grid; grid-template-columns: 1fr auto; column-gap: 24px; align-items: center; padding: 12px 0; min-height: 52px; font-size: 1.1875rem; transition: opacity 180ms; }
+.rows .l { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.rows .v { color: var(--soft); font-size: var(--step-small); font-variant-numeric: tabular-nums; text-align: right; }
+.rows:hover li { opacity: .5; }
+.rows li:hover, .rows li:focus-within { opacity: 1; }
+.logo { width: 24px; height: 24px; flex: none; object-fit: contain; filter: var(--invert); }
+.logo.color { filter: none; }
+.logo.round { border-radius: 4px; }
+.noicon { width: 24px; flex: none; }
+.ifpb { width: 48px; height: auto; background: #fff; border-radius: 6px; padding: 3px; filter: none; }
+.tec { background: #fff; border-radius: 7px; padding: 3px; }
+.edu li { padding: 18px 0; }
+
+/* experience */
+.job { padding-bottom: 44px; }
+.job:last-child { padding-bottom: 0; }
+.job-head { display: grid; grid-template-columns: 1fr auto; column-gap: 24px; align-items: baseline; }
+.job-head .name { display: flex; align-items: center; gap: 14px; font: 700 clamp(1.5rem, 1.2rem + 1vw, 2rem)/1.1 var(--display); letter-spacing: -0.03em; }
+.job-head .name img { width: 40px; height: 40px; }
+.job-head .v { color: var(--soft); font-size: var(--step-small); font-variant-numeric: tabular-nums; }
+.role { margin: 8px 0 16px 54px; color: var(--soft); font-size: var(--step-small); }
+.job ul { margin: 0 0 0 54px; padding: 0; list-style: none; }
+.job li { margin: 0 0 .8em; font-size: 1.25rem; line-height: 1.5; }
+.job .about { margin: 0 0 22px 54px; color: var(--soft); font-size: 1.0625rem; }
+
+/* contact */
+.mail { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 36px; }
+.mail a.addr { font: 700 clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem)/1.1 var(--display); letter-spacing: -0.03em; }
+.copy { font: 600 var(--step-small)/1 var(--text); background: none; color: var(--ink); border: 1px solid var(--hair); border-radius: 999px; padding: 10px 16px; cursor: pointer; transition: transform 140ms var(--ease), border-color 180ms; position: relative; overflow: hidden; min-width: 118px; }
+.copy:hover { border-color: var(--ink); }
+.copy:active { transform: scale(.96); }
+.copy span { display: block; transition: transform 240ms var(--ease), opacity 200ms; }
+.copy .done { position: absolute; inset: 0; display: grid; place-items: center; transform: translateY(100%); opacity: 0; color: var(--bg); background: var(--ink); }
+.copy.ok .idle { transform: translateY(-100%); opacity: 0; }
+.copy.ok .done { transform: none; opacity: 1; }
+.plain-links { list-style: none; margin: 0; padding: 0; }
+.contact { display: grid; grid-template-columns: 140px minmax(0,1fr); gap: 40px; align-items: start; }
+.portrait { width: 140px; height: 140px; border-radius: 14px; object-fit: cover; }
+.mail a.addr { font-size: clamp(1.6rem, 1rem + 2.4vw, 3rem); }
+
+footer { padding: 0 0 56px; }
+footer .wrap { padding-top: 22px; display: flex; justify-content: space-between; color: var(--soft); font-size: var(--step-small); gap: 16px; flex-wrap: wrap; }
+
+/* entrance: only once, only if JS runs */
+.js [data-r] { opacity: 0; transform: translateY(14px); }
+.js [data-r].in { opacity: 1; transform: none; transition: opacity 520ms var(--ease), transform 520ms var(--ease); transition-delay: var(--d, 0ms); }
+
+@media (max-width: 900px) {
+  :root { --gap: 72px; }
+  .top nav { display: none; }
+  .hero { grid-template-columns: 1fr; row-gap: 32px; }
+  .shot { margin-left: 0; }
+  .who { display: flex; align-items: center; gap: 16px; order: 2; }
+  .who img { width: 80px; height: 80px; margin: 0; }
+  section { grid-template-columns: 1fr; row-gap: 24px; }
+  .rows li { min-height: 48px; }
+  .job-head, .rows li { grid-template-columns: 1fr; row-gap: 2px; }
+  .role, .job ul, .job .about, .job-head .v { margin-left: 0 !important; }
+  .rows .v { text-align: left; padding-left: 0; }
+  .noicon { display: none; }
+  .job-head .v { margin: 4px 0 0 54px; }
+  .role, .job ul, .job .about { margin-left: 0; }
+  .cta { gap: 20px; }
+  .contact { grid-template-columns: 1fr; gap: 24px; }
+  .portrait { width: 96px; height: 96px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js [data-r] { opacity: 1; transform: none; }
+  .js [data-r].in { transition: none; }
+  .who:hover img, .btn:active, .copy:active { transform: none; }
+  .tabs .pill, .copy span, .ul::after, .frame img, .btn .arrow, .who img { transition: none; }
+  .btn:hover .arrow { transform: none; }
+}
+</style>
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span>Caio Mayan</span>
+    <nav aria-label="Seções">
+      <a href="#carmine">Carmine</a>
+      <a href="#experiencia">Experiência</a>
+      <a href="#formacao">Formação</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <button class="lang" type="button" aria-label="Switch to English">English</button>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div class="who" data-r>
+        <img src="assets/caio.jpg" width="120" height="120" alt="Caio Mayan">
+        <div>
+          <b>Caio Mayan</b>
+          <span>João Pessoa, Paraíba</span>
+        </div>
+      </div>
+      <div class="hero-main">
+      <h1 data-r style="--d:70ms">Engenheiro de Software.</h1>
+      <p class="lead" data-r style="--d:140ms">Construo produtos com IA aplicada, sobre uma base sólida de backend.</p>
+      <div class="cta" data-r style="--d:210ms">
+        <a class="btn" href="#carmine">Ver o Carmine <span class="arrow" aria-hidden="true">↓</span></a>
+        <a class="ul" href="#" title="O arquivo ainda não existe (placeholder)">Currículo (PDF)</a>
+      </div>
+      </div>
+    </div>
+
+    <section id="carmine">
+      <div class="rail" data-r><h2>Carmine</h2><p class="railnote">Projeto pessoal</p></div>
+      <div class="col" data-r style="--d:70ms">
+        <p class="status"><i aria-hidden="true"></i>Em desenvolvimento · lançamento previsto para 2027</p>
+        <div class="proj-head">
+          <img class="logo-c" src="assets/logos/carmine.svg" width="40" height="40" alt="">
+          <b>Carmine</b>
+        </div>
+        <p>SaaS para jogadores e times competitivos de Counter-Strike 2.</p>
+        <p class="soft">Desenvolvido com agentes de IA que abrem issues e pull requests e mantêm as specs e o backlog em dia, com homologação separada da produção.</p>
+
+        <figure class="shot">
+          <div class="tabs" role="group" aria-label="Telas do Carmine">
+            <span class="pill" aria-hidden="true"></span>
+            <button type="button" aria-pressed="true" data-shot="0">Início</button>
+            <button type="button" aria-pressed="false" data-shot="1">Ranking</button>
+          </div>
+          <div class="frame">
+            <img class="on" src="assets/carmine-home.png" width="1440" height="900" alt="Página inicial do Carmine em stcarmine.com">
+            <img src="assets/carmine-ranking.png" width="1440" height="900" alt="Página de ranking do Carmine em stcarmine.com" loading="lazy">
+          </div>
+          <figcaption>Capturas de stcarmine.com, no ar.</figcaption>
+        </figure>
+
+        <h3 class="label">Stack</h3>
+        <ul class="rows">
+          <li><span class="l"><img class="logo" src="assets/logos/nestjs.svg" alt="" width="20" height="20">Nest.js</span><span class="v">backend</span></li>
+          <li><span class="l"><img class="logo" src="assets/logos/nextdotjs.svg" alt="" width="20" height="20">Next.js</span><span class="v">frontend</span></li>
+          <li><span class="l"><img class="logo color" src="assets/logos/valkey.svg" alt="" width="20" height="20">Valkey</span><span class="v">cache e filas</span></li>
+          <li><span class="l"><span class="noicon"></span>CounterStrikeSharp</span><span class="v">plugins dos servidores de CS2</span></li>
+          <li><span class="l"><img class="logo" src="assets/logos/amazonec2.svg" alt="" width="20" height="20">AWS EC2</span><span class="v">servidores de CS2 de teste</span></li>
+          <li><span class="l"><img class="logo" src="assets/logos/oracle.svg" alt="" width="20" height="20">Oracle Cloud</span><span class="v">servidor web, em máquina Ampere</span></li>
+        </ul>
+
+        <div class="links">
+          <a class="ul" href="https://stcarmine.com">stcarmine.com ↗</a>
+          <a class="ul" href="https://github.com/caiomayan/carmine">Repositório ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="experiencia">
+      <h2 data-r>Experiência</h2>
+      <div class="col" data-r style="--d:70ms">
+        <div class="job">
+          <div class="job-head">
+            <span class="name"><img class="tec" src="assets/logos/tec-mark.svg" alt="" width="32" height="32">TechEduConnect</span>
+            <span class="v">out. 2026 – atual · remoto</span>
+          </div>
+          <p class="role">Estagiário de Engenharia de Software</p>
+          <p class="about">Edtech especializada em Moodle (implantação, plugins, integrações e hospedagem) para instituições de ensino e empresas.</p>
+          <ul>
+            <li>Plugin de correção de redações com IA para Moodle, em produção numa instituição de ensino superior. A IA propõe a avaliação e o tutor revisa e aprova.</li>
+            <li>Plataformas de ensino próprias em Next.js, React e TypeScript, e customizações e integrações para Moodle em PHP.</li>
+            <li>Desenvolvo com agentes de código (Claude Code com skills), a partir de specs, testes e quality gates.</li>
+          </ul>
+        </div>
+        <div class="job">
+          <div class="job-head">
+            <span class="name" style="font-size:1.375rem"><span class="noicon" style="width:40px"></span>Hospital Napoleão Laureano</span>
+            <span class="v">mai. 2024 – mai. 2025 · João Pessoa</span>
+          </div>
+          <p class="role" style="margin-bottom:0;font-size:1rem">Jovem Aprendiz, setor de Compras. Compras de EPIs, engenharia clínica e TI, contratos e fornecedores, num hospital especializado em oncologia.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="formacao">
+      <h2 data-r>Formação</h2>
+      <div class="col" data-r style="--d:70ms">
+        <ul class="rows edu">
+          <li><span class="l"><img class="logo ifpb" src="assets/logos/ifpb.png" alt="" width="48" height="53"><span>Tecnologia em Sistemas para Internet<br><span class="soft small">Instituto Federal da Paraíba (IFPB), campus João Pessoa</span></span></span><span class="v">out. 2024 – jul. 2027 (previsão)</span></li>
+          <li><span class="l"><span class="noicon" style="width:48px"></span>Monitor da disciplina de Segurança de Dados</span><span class="v">semestre 2026.2</span></li>
+          <li><span class="l"><span class="noicon" style="width:48px"></span>Inglês fluente</span><span class="v">C2, EF SET</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="contato">
+      <h2 data-r>Contato</h2>
+      <div class="col contact" data-r style="--d:70ms">
+        <img class="portrait" src="assets/caio.jpg" width="140" height="140" alt="Caio Mayan" loading="lazy">
+        <div>
+        <div class="mail">
+          <a class="addr ul" href="mailto:mail@caiomayan.com" id="addr">mail@caiomayan.com</a>
+          <button class="copy" type="button" id="copy" aria-live="polite"><span class="idle">Copiar e-mail</span><span class="done">Copiado</span></button>
+        </div>
+        <ul class="rows plain-links">
+          <li><span class="l"><img class="logo" src="assets/logos/linkedin.svg" alt="" width="20" height="20"><a class="ul" href="https://www.linkedin.com/in/caiomayan/">LinkedIn</a></span><span class="v">/in/caiomayan</span></li>
+          <li><span class="l"><img class="logo" src="assets/logos/github.svg" alt="" width="20" height="20"><a class="ul" href="https://github.com/caiomayan">GitHub</a></span><span class="v">caiomayan</span></li>
+          <li><span class="l"><span class="noicon"></span><a class="ul" href="#">Currículo (PDF)</a></span><span class="v">em breve</span></li>
+        </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<footer>
+  <div class="wrap"><span>Caio Mayan · João Pessoa, Paraíba</span><span>Protótipo: quiet-instrument</span></div>
+</footer>
+
+<script>
+(function () {
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // entrance, once
+  document.querySelectorAll('.rows, .job ul').forEach(function (g) { g.querySelectorAll('li').forEach(function (li, i) { li.setAttribute('data-r', ''); li.style.setProperty('--d', (i * 70) + 'ms'); }); });
+  var els = document.querySelectorAll('[data-r]');
+  if ('IntersectionObserver' in window && !reduce) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (el) { io.observe(el); });
+    setTimeout(function () { els.forEach(function (el) { el.classList.add('in'); }); }, 2500 + 0);
+  } else { els.forEach(function (el) { el.classList.add('in'); }); }
+
+  // screenshots tabs with sliding pill
+  var tabs = document.querySelector('.tabs'), btns = tabs.querySelectorAll('button'), pill = tabs.querySelector('.pill'), imgs = document.querySelectorAll('.frame img');
+  function place(b) { pill.style.setProperty('--x', (b.offsetLeft - 4) + 'px'); pill.style.setProperty('--w', b.offsetWidth + 'px'); }
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      btns.forEach(function (o) { o.setAttribute('aria-pressed', o === b); });
+      imgs.forEach(function (im, i) { im.classList.toggle('on', i === +b.dataset.shot); });
+      place(b);
+    });
+  });
+  function init() { place(tabs.querySelector('[aria-pressed="true"]')); }
+  init(); addEventListener('resize', init);
+  if (document.fonts) document.fonts.ready.then(init);
+
+  // copy email
+  var c = document.getElementById('copy');
+  c.addEventListener('click', function () {
+    var t = document.getElementById('addr').textContent;
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).catch(function () {}).then(function () {
+      c.classList.add('ok'); setTimeout(function () { c.classList.remove('ok'); }, 1800);
+    });
+  });
+})();
+</script>
+</body>
+</html>
