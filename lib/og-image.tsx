@@ -1,14 +1,12 @@
 import { ImageResponse } from "next/og";
 import { content, type Lang } from "@/content";
+import { palette } from "@/lib/palette";
 
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
 
-// Mesmas cores do tema claro (app/globals.css). Satori não lê variáveis CSS, então ficam aqui.
-const BG = "#fbfbfd";
-const INK = "#1d1d1f";
-const SOFT = "#6e6e73";
-const ACCENT = "#d92b21";
+// Satori não lê variáveis CSS: as cores do tema claro vêm de lib/palette.ts.
+const { bg: BG, ink: INK, soft: SOFT, accent: ACCENT } = palette;
 
 /** Texto alternativo da imagem de prévia: o título da aba, que já está em content/. */
 export function ogAlt(lang: Lang): string {

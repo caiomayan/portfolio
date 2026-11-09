@@ -17,7 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      FORBIDDEN_TERMS: ${{ secrets.FORBIDDEN_TERMS }}
       # PR vindo de fork não recebe secrets: só nesse caso o teste de termos proibidos é pulado, com aviso.
       FORK_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
     steps:
@@ -35,12 +34,16 @@ jobs:
         run: echo "::warning::PR de fork não tem acesso ao secret FORBIDDEN_TERMS; o teste de termos proibidos foi pulado."
 
       # O GitHub só mascara o secret inteiro; aqui cada termo vira uma máscara própria, pra nenhum aparecer no log.
+      # O segredo fica só neste passo e no do `npm test` (não no job inteiro): o `npm ci` e os scripts de instalação dos pacotes não o enxergam.
+      # Sem `if`: o `if` do passo não enxerga o `env` do próprio passo; segredo vazio só não gera máscara. O trim é em bash puro e o termo é mascarado exatamente como está (sem xargs, que mexe em aspas e barra invertida). Nunca imprime o termo.
       - name: Mascarar cada termo proibido
-        if: env.FORBIDDEN_TERMS != ''
+        env:
+          FORBIDDEN_TERMS: ${{ secrets.FORBIDDEN_TERMS }}
         run: |
           IFS='|' read -ra parts <<< "$FORBIDDEN_TERMS"
           for p in "${parts[@]}"; do
-            p="$(echo "$p" | xargs)"
+            p="${p#"${p%%[![:space:]]*}"}"
+            p="${p%"${p##*[![:space:]]}"}"
             if [ -n "$p" ]; then echo "::add-mask::$p"; fi
           done
 
@@ -67,4 +70,7 @@ jobs:
         if: steps.pw-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
 
-      - run: npm test
+      - name: Testes
+        run: npm test
+        env:
+          FORBIDDEN_TERMS: ${{ secrets.FORBIDDEN_TERMS }}

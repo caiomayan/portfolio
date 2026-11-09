@@ -25,11 +25,16 @@ const MASK_STROKE = signature.fontSize * 0.22; // espessura do traço da máscar
 const MASK_PAD = MASK_STROKE; // folga da máscara em volta do viewBox, pro traço grosso não cortar nas bordas
 
 // Região da máscara derivada do viewBox ("x y w h"): nada de medida fixa.
-const [vbX, vbY, vbW, vbH] = signature.viewBox.split(" ").map(Number);
-const mask = { x: vbX - MASK_PAD, y: vbY - MASK_PAD, width: vbW + 2 * MASK_PAD, height: vbH + 2 * MASK_PAD };
+const [viewBoxX, viewBoxY, viewBoxWidth, viewBoxHeight] = signature.viewBox.split(" ").map(Number);
+const maskRegion = {
+  x: viewBoxX - MASK_PAD,
+  y: viewBoxY - MASK_PAD,
+  width: viewBoxWidth + 2 * MASK_PAD,
+  height: viewBoxHeight + 2 * MASK_PAD,
+};
 
 // Um caminho por letra (o "" do espaço não entra); calculado uma vez, no módulo.
-const letters = signature.glyphs.map((d, i) => ({ d, i })).filter((l) => l.d);
+const drawnLetters = signature.glyphs.map((d, i) => ({ d, i })).filter((l) => l.d);
 
 const noSubscription = () => () => {};
 
@@ -39,7 +44,7 @@ const variants = { hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength:
 function Filled() {
   return (
     <>
-      {letters.map((l) => (
+      {drawnLetters.map((l) => (
         <path key={l.i} d={l.d} />
       ))}
     </>
@@ -70,8 +75,8 @@ export function Signature() {
   return (
     <motion.svg className="signature" viewBox={signature.viewBox} aria-hidden="true" focusable="false" fill="none" initial="hidden" animate="visible">
       <defs>
-        <mask id={maskId} maskUnits="userSpaceOnUse" {...mask}>
-          {letters.map((l) => (
+        <mask id={maskId} maskUnits="userSpaceOnUse" {...maskRegion}>
+          {drawnLetters.map((l) => (
             <motion.path
               key={l.i}
               d={l.d}
@@ -86,7 +91,7 @@ export function Signature() {
           ))}
         </mask>
       </defs>
-      {letters.map((l) => (
+      {drawnLetters.map((l) => (
         <motion.path
           key={l.i}
           d={l.d}

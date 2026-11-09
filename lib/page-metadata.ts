@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { content, openingLine, type Lang } from "@/content";
-import { defaultLang, locales } from "@/lib/locales";
+import { defaultLang, languageAlternates, locales } from "@/lib/locales";
 import { SITE_URL } from "@/lib/site";
 
 export function pageMetadata(lang: Lang): Metadata {
@@ -15,8 +15,7 @@ export function pageMetadata(lang: Lang): Metadata {
     alternates: {
       canonical: url,
       languages: {
-        [locales.pt.hreflang]: locales.pt.path,
-        [locales.en.hreflang]: locales.en.path,
+        ...languageAlternates(),
         "x-default": locales[defaultLang].path,
       },
     },
