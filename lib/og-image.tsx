@@ -6,7 +6,7 @@ export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
 
 // Satori não lê variáveis CSS: as cores do tema claro vêm de lib/palette.ts.
-const { bg: BG, ink: INK, soft: SOFT, accent: ACCENT } = palette;
+const { bg: BG, ink: INK, soft: SOFT } = palette;
 
 /** Texto alternativo da imagem de prévia: o título da aba, que já está em content/. */
 export function ogAlt(lang: Lang): string {
@@ -33,8 +33,7 @@ export function ogImage(lang: Lang): ImageResponse {
         <div style={{ display: "flex", alignItems: "center", fontSize: 36, fontWeight: 600, color: SOFT }}>{hero.name}</div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", whiteSpace: "nowrap", fontSize: 88, fontWeight: 700, letterSpacing: -4, lineHeight: 1.05 }}>
-            {hero.title}
-            <span style={{ color: ACCENT }}>.</span>
+            {hero.title}.
           </div>
           <div style={{ display: "flex", marginTop: 28, fontSize: 40, lineHeight: 1.35, color: SOFT }}>{hero.lead}</div>
         </div>

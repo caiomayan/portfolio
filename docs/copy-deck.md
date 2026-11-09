@@ -9,7 +9,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, nem Inoue, Kurage,
 - Nome: Caio Mayan
 - Título: Engenheiro de Software
 - Frase de abertura: Engenheiro de Software. Construo produtos com IA aplicada, sobre uma base sólida de backend.
-- Local: João Pessoa, Paraíba
+- Local: João Pessoa, PB (linha discreta embaixo da frase de abertura; #18, proposto, o Caio revisa)
 - Foto: `assets/foto-original.jpg`
 
 ## Carmine
@@ -18,16 +18,16 @@ Regras: nunca citar o nome da instituição que usa o plugin, nem Inoue, Kurage,
 - O que é: SaaS para jogadores e times competitivos de Counter-Strike 2.
 - Situação: em desenvolvimento, lançamento previsto para 2027.
 - Como é feito: desenvolvido com agentes de IA que abrem issues e pull requests e mantêm as specs e o backlog em dia, com homologação separada da produção.
-- Stack:
-  - Nest.js (backend)
-  - Next.js (frontend)
-  - Valkey (cache e filas)
-  - CounterStrikeSharp (plugins dos servidores de CS2)
-  - AWS EC2 (servidores de CS2 de teste)
-  - Oracle Cloud (servidor web, em máquina Ampere)
+- Stack (só ícones; o nome aparece no tooltip e no nome acessível; sem a função de cada tecnologia, #18):
+  - Nest.js
+  - Next.js
+  - Valkey
+  - CounterStrikeSharp
+  - AWS EC2
+  - Oracle Cloud
 - Links: stcarmine.com (https://stcarmine.com) · repositório (https://github.com/caiomayan/carmine)
 - Rótulo lateral da seção: "Projeto pessoal" (vindo do protótipo; proposto, o Caio revisa).
-- Prints (proposto pelo build, o Caio revisa): abas "Inventário" e "Ranking" (nomes das telas no próprio stcarmine.com); legenda "Capturas de stcarmine.com, no ar."; rótulo do grupo de abas "Telas do Carmine"; título da lista "Stack".
+- Prints do Carmine removidos (#18): sem abas, legenda nem rótulo das telas. Fica o título da lista: "Stack".
 
 ## Experiência
 
@@ -56,7 +56,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, nem Inoue, Kurage,
 - E-mail: mail@caiomayan.com (com botão de copiar)
 - LinkedIn: https://www.linkedin.com/in/caiomayan/
 - GitHub: https://github.com/caiomayan
-- Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en). Rótulo no site: "Currículo (PDF)" (proposto pelo build, o Caio revisa).
+- Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en). Só ícone no site (#18): o rótulo "Currículo (PDF)" vira tooltip e nome acessível, assim como "LinkedIn" e "GitHub". O e-mail continua escrito.
 
 ## Interface
 
@@ -74,7 +74,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 - Name: Caio Mayan
 - Title: Software Engineer
 - Opening line: Software Engineer. I build products on applied AI, on a solid backend foundation.
-- Location: João Pessoa, Paraíba
+- Location: João Pessoa, Brazil (#18, proposed, Caio reviews)
 - Photo alt: "Portrait of Caio Mayan"
 
 ### Carmine
@@ -84,16 +84,15 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 - What it is: SaaS for competitive Counter-Strike 2 players and teams.
 - Status: In development, launch expected in 2027
 - How it is built: Built with AI agents that open issues and pull requests and keep the specs and the backlog up to date, with a staging environment separate from production.
-- Stack (role):
-  - Nest.js (backend)
-  - Next.js (frontend)
-  - Valkey (cache and queues)
-  - CounterStrikeSharp (CS2 server plugins)
-  - AWS EC2 (test CS2 servers)
-  - Oracle Cloud (web server, on an Ampere machine)
+- Stack (icons only; the name is the tooltip and the accessible name; no role per technology, #18):
+  - Nest.js
+  - Next.js
+  - Valkey
+  - CounterStrikeSharp
+  - AWS EC2
+  - Oracle Cloud
 - Links: stcarmine.com · Repository
-- Screenshots: tab group "Carmine screens"; tabs "Inventory" and "Ranking"; caption "Screenshots from stcarmine.com, live."; list title "Stack".
-- Screenshot alt texts: "Carmine's Inventory screen, showing the item catalog, on stcarmine.com" / "Carmine's weekly Ranking screen on stcarmine.com"
+- Screenshots removed (#18); list title "Stack".
 
 ### Experience
 
@@ -121,7 +120,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 
 - Heading: Contact
 - Email: mail@caiomayan.com (with copy button)
-- Resume (PDF): label "Resume (PDF)", file `caio-mayan-resume.pdf`
+- Resume (PDF): icon only (#18); "Resume (PDF)" is the tooltip and accessible name, file `caio-mayan-resume.pdf`. Email stays as text.
 
 ### Interface
 

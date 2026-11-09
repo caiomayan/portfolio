@@ -17,22 +17,54 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       expect(sec!.y).toBeGreaterThan(hero!.y + hero!.height - 1);
     });
 
-    test("lista a stack: cada item tem logo oficial ou ícone de reserva decorativo, sem fundo", async ({ page }) => {
+    test("lista a stack só com ícones, lado a lado, sem nome nem função na tela", async ({ page }) => {
       await page.goto(path);
       const itens = page.locator("#carmine .stack li");
       await expect(itens).toHaveCount(6);
-      await expect(itens.nth(0)).toContainText("Nest.js");
-      await expect(itens.nth(3)).toContainText("CounterStrikeSharp");
-      // CounterStrikeSharp não tem logo oficial: ícone de reserva (svg decorativo), sem imagem.
-      await expect(itens.nth(3).locator("img")).toHaveCount(0);
-      await expect(itens.nth(3).locator("svg.fallback-icon")).toHaveAttribute("aria-hidden", "true");
-      for (const i of [0, 1, 2, 4, 5]) await expect(itens.nth(i).locator("img")).toHaveCount(1);
-      for (let i = 0; i < 6; i++) {
+      const nomes = ["Nest.js", "Next.js", "Valkey", "CounterStrikeSharp", "AWS EC2", "Oracle Cloud"];
+      for (const [i, nome] of nomes.entries()) {
         const item = itens.nth(i);
-        expect(await item.locator("img, svg.fallback-icon").count()).toBe(1); // logo OU ícone, nunca nenhum
-        const marca = item.locator("img, .stack-logo-empty").first();
-        await expect(marca).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+        await expect(item).toHaveText(""); // nada escrito: nem nome, nem função
+        await expect(item.getByRole("img", { name: nome })).toBeVisible();
+        expect(await item.locator("img, svg.fallback-icon").count()).toBe(1); // logo OU ícone de reserva
+        await expect(item.locator("img, .stack-logo-empty").first()).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
       }
+      // CounterStrikeSharp não tem logo oficial: ícone de reserva decorativo.
+      await expect(itens.nth(3).locator("svg.fallback-icon")).toHaveAttribute("aria-hidden", "true");
+      // Lado a lado: mesma linha, da esquerda pra direita.
+      const caixas = await itens.evaluateAll((els) => els.map((el) => el.getBoundingClientRect()));
+      for (const b of caixas) expect(Math.abs(b.top - caixas[0].top)).toBeLessThan(1);
+      for (let i = 1; i < caixas.length; i++) expect(caixas[i].left).toBeGreaterThan(caixas[i - 1].left);
+      // A função de cada tecnologia saiu do conteúdo.
+      expect(await page.locator("#carmine").innerText()).not.toMatch(/backend|frontend|Ampere|cache|queues|filas/i);
+    });
+
+    test("o nome da tecnologia aparece em tooltip no hover e no foco, e some com Esc", async ({ page }) => {
+      await page.goto(path);
+      const itens = page.locator("#carmine .stack li");
+      const tip = page.locator("#carmine .tip");
+      await expect(tip).toHaveCount(0);
+      await itens.nth(3).hover();
+      await expect(tip).toHaveText("CounterStrikeSharp");
+      await expect(tip).toHaveAttribute("aria-hidden", "true");
+      await page.mouse.move(2, 2);
+      await expect(tip).toHaveCount(0);
+      // Teclado: o ícone é focável e abre o tooltip.
+      await itens.nth(0).getByRole("img").focus();
+      await expect(tip).toHaveText("Nest.js");
+      await page.keyboard.press("Escape");
+      await expect(tip).toHaveCount(0);
+      await itens.nth(1).getByRole("img").focus();
+      await expect(tip).toHaveText("Next.js");
+    });
+
+    test("sem prints, abas nem legenda; o logo do Carmine continua", async ({ page }) => {
+      await page.goto(path);
+      const secao = page.locator("#carmine");
+      await expect(secao.getByRole("tab")).toHaveCount(0);
+      await expect(secao.locator("figure, figcaption, [role=tabpanel]")).toHaveCount(0);
+      await expect(secao.locator(".project-head img")).toHaveCount(1);
+      expect(await secao.innerText()).not.toMatch(/no ar\.|Screenshots from|Telas do|Carmine screens/);
     });
 
     test("links apontam pro site e pro repositório", async ({ page }) => {
@@ -44,46 +76,6 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       );
     });
 
-    test("abas trocam o print, com mouse e com teclado", async ({ page }) => {
-      await page.goto(path);
-      const abas = page.locator("#carmine").getByRole("tab");
-      await expect(abas).toHaveCount(2);
-      const painel = page.locator("#carmine").getByRole("tabpanel");
-      await expect(abas.nth(0)).toHaveAttribute("aria-selected", "true");
-      await expect(painel.getByRole("img")).toHaveAttribute("alt", t.aba1);
-
-      await abas.nth(1).click();
-      await expect(abas.nth(1)).toHaveAttribute("aria-selected", "true");
-      await expect(painel.getByRole("img")).toHaveAttribute("alt", t.aba2);
-
-      await abas.nth(1).focus();
-      await page.keyboard.press("ArrowLeft");
-      await expect(abas.nth(0)).toBeFocused();
-      await expect(abas.nth(0)).toHaveAttribute("aria-selected", "true");
-      await expect(painel.getByRole("img")).toHaveAttribute("alt", t.aba1);
-      await page.keyboard.press("End");
-      await expect(abas.nth(1)).toHaveAttribute("aria-selected", "true");
-      await page.keyboard.press("Home");
-      await expect(abas.nth(0)).toHaveAttribute("aria-selected", "true");
-    });
-
-    test("só a aba ativa entra na ordem de Tab e o painel inativo fica oculto", async ({ page }) => {
-      await page.goto(path);
-      const abas = page.locator("#carmine").getByRole("tab");
-      const paineis = page.locator("#carmine [role=tabpanel]");
-      await expect(abas.nth(0)).toHaveAttribute("tabindex", "0");
-      await expect(abas.nth(1)).toHaveAttribute("tabindex", "-1");
-      await expect(paineis.nth(0)).toBeVisible();
-      await expect(paineis.nth(1)).toHaveAttribute("aria-hidden", "true");
-      await expect(paineis.nth(1)).toBeHidden();
-
-      await abas.nth(1).click();
-      await expect(abas.nth(0)).toHaveAttribute("tabindex", "-1");
-      await expect(abas.nth(1)).toHaveAttribute("tabindex", "0");
-      await expect(paineis.nth(0)).toHaveAttribute("aria-hidden", "true");
-      await expect(paineis.nth(1)).toBeVisible();
-    });
-
     test("os logos da stack carregam", async ({ page }) => {
       await page.goto(path);
       const logos = page.locator("#carmine .stack img");
@@ -92,16 +84,6 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       for (let i = 0; i < 5; i++) {
         await expect.poll(() => logos.nth(i).evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
       }
-    });
-
-    test("o print carrega e fica em tamanho moderado dentro da coluna", async ({ page }) => {
-      await page.goto(path);
-      const img = page.locator("#carmine").getByRole("tabpanel").getByRole("img");
-      await img.scrollIntoViewIfNeeded();
-      await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
-      const box = await img.boundingBox();
-      expect(box!.width).toBeLessThanOrEqual(720);
-      expect(box!.height).toBeLessThanOrEqual(450);
     });
 
     test("não rola na horizontal a 375 px", async ({ page }) => {

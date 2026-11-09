@@ -6,5 +6,4 @@ export const palette = {
   bg: "#fbfbfd", // --bg
   ink: "#1d1d1f", // --ink
   soft: "#6e6e73", // --soft
-  accent: "#d92b21", // --accent
 } as const;

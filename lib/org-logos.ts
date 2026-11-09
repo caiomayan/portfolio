@@ -12,6 +12,6 @@ type OrgLogo = { src: StaticImageData; height: number };
 export type OrgLogoId = "techeduconnect" | "ifpb";
 
 export const orgLogos: Record<OrgLogoId, OrgLogo> = {
-  techeduconnect: { src: techeduconnect, height: 40 },
+  techeduconnect: { src: techeduconnect, height: 28 },
   ifpb: { src: ifpb, height: 44 },
 };

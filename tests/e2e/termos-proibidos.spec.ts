@@ -12,7 +12,8 @@ import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 // Padrão de telefone brasileiro, fixo (não é segredo).
 const PHONE = /\(?\d{2}\)?\s?9?\s?\d{4}-?\d{4}/;
 
-const NEXT_ASSET = /\/_next\/[^"'\s\)]+/g;
+// Idem o hash de versão das imagens geradas (?<16 hex> em /opengraph-image-xxxx): pode casar com o padrão por acaso.
+const NEXT_ASSET = /\/_next\/[^"'\s\)]+|\?[0-9a-f]{16}/g;
 
 // Em PR vindo de fork os secrets não existem: aí, e só aí, o teste é pulado com aviso (FORK_PR vem do workflow).
 const forkPr = process.env.FORK_PR === "true";

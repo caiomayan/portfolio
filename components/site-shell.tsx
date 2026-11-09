@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 import type { Lang } from "@/content";
 import { locales } from "@/lib/locales";
 import { Reveal } from "@/components/reveal";
+import { SmoothScroll } from "@/components/smooth-scroll";
+import "lenis/dist/lenis.css";
 import "@/app/globals.css";
 import "@/app/motion.css";
 
@@ -21,6 +23,11 @@ export function SiteShell({ lang, children }: { lang: Lang; children: ReactNode 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {children}
         <Reveal />
+        <SmoothScroll />
+        {/* Sem JavaScript a assinatura não é desenhada: aparece pronta (é o nome do site). */}
+        <noscript>
+          <style>{`.signature[data-static]{visibility:visible}`}</style>
+        </noscript>
         {/* Vercel Web Analytics (sem cookies). Só no deploy da Vercel: fora dela o script não existe e daria 404. */}
         {process.env.VERCEL && <Analytics />}
       </body>
