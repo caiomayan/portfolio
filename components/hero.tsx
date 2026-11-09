@@ -8,7 +8,13 @@ export function Hero({ content }: { content: Content }) {
     <>
       <header className="top">
         <span aria-hidden="true" />
-        <ThemeToggle label={content.ui.themeToggle} />
+        <div className="top-actions">
+          {/* Link comum, sem script: leva à rota equivalente; nenhuma escolha automática por língua do navegador. */}
+          <a className="lang-switch" href={content.ui.otherLang.href} lang={content.ui.otherLang.lang} hrefLang={content.ui.otherLang.lang}>
+            {content.ui.otherLang.label}
+          </a>
+          <ThemeToggle label={content.ui.themeToggle} />
+        </div>
       </header>
       <main className="hero">
         <figure className="who">

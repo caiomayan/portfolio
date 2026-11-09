@@ -1,11 +1,13 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { rotasTexto } from "./textos";
 
 const rotas = [
   { path: "/", pdf: "/caio-mayan-curriculo.pdf" },
   { path: "/en", pdf: "/caio-mayan-resume.pdf" },
-];
+] as const;
 
 for (const { path, pdf } of rotas) {
+  const t = rotasTexto[path];
   test.describe(`contato em ${path}`, () => {
     test("links certos pra e-mail, LinkedIn e GitHub", async ({ page }) => {
       await page.goto(path);
@@ -29,19 +31,19 @@ for (const { path, pdf } of rotas) {
       const ctx = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"] });
       const page = await ctx.newPage();
       await page.goto(path);
-      const botao = page.getByRole("button", { name: "Copiar e-mail" });
+      const botao = page.getByRole("button", { name: t.copiar });
       await expect(botao).toBeVisible();
       await botao.click();
       expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("mail@caiomayan.com");
       // Confirmação visual e anunciada por leitor de tela.
-      await expect(page.getByRole("status")).toHaveText("Copiado");
+      await expect(page.getByRole("status")).toHaveText(t.copiado);
       await expect(botao).toHaveAttribute("data-copied", "true");
       await ctx.close();
     });
 
     test("o botão de copiar tem foco visível pelo teclado", async ({ page }) => {
       await page.goto(path);
-      const botao = page.getByRole("button", { name: "Copiar e-mail" });
+      const botao = page.getByRole("button", { name: t.copiar });
       await botao.focus();
       await expect(botao).toBeFocused();
       const outline = await botao.evaluate((el) => getComputedStyle(el).outlineStyle);
@@ -84,7 +86,7 @@ for (const { path, pdf } of rotas) {
     };
     const alvos = (page: Page) => [
       page.getByRole("link", { name: /LinkedIn/ }),
-      page.getByRole("button", { name: "Copiar e-mail" }),
+      page.getByRole("button", { name: t.copiar }),
     ];
 
     test("sem preferência de movimento, o hover muda o desenho dos ícones", async ({ page }) => {
@@ -97,9 +99,9 @@ for (const { path, pdf } of rotas) {
       const page = await ctx.newPage();
       await page.goto(path);
       for (const alvo of alvos(page)) expect(await desenhosVistos(page, alvo)).toBe(1);
-      await page.getByRole("button", { name: "Copiar e-mail" }).click();
-      await expect(page.getByRole("status")).toHaveText("Copiado");
-      const anim = await page.getByRole("button", { name: "Copiar e-mail" }).evaluate((el) => getComputedStyle(el).animationName);
+      await page.getByRole("button", { name: t.copiar }).click();
+      await expect(page.getByRole("status")).toHaveText(t.copiado);
+      const anim = await page.getByRole("button", { name: t.copiar }).evaluate((el) => getComputedStyle(el).animationName);
       expect(anim).toBe("none");
       await ctx.close();
     });
@@ -108,7 +110,7 @@ for (const { path, pdf } of rotas) {
       const ctx = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"] });
       const page = await ctx.newPage();
       await page.goto(path);
-      const botao = page.getByRole("button", { name: "Copiar e-mail" });
+      const botao = page.getByRole("button", { name: t.copiar });
       await botao.click();
       await expect(botao).toHaveAttribute("data-copied", "true");
       expect(await botao.evaluate((el) => getComputedStyle(el).animationName)).toBe("pop");

@@ -55,6 +55,8 @@ export type Content = {
   };
   ui: {
     themeToggle: string;
+    /** Link pra rota equivalente na outra língua: o texto está na língua de destino ("English" / "Português"). */
+    otherLang: { label: string; href: string; lang: string };
   };
   carmine: {
     heading: string;

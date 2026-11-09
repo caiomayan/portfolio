@@ -30,7 +30,7 @@ O site **abre sempre no claro**. O escuro é uma escolha do visitante (botão no
 
 - Foto original inteira (quadrado, sem corte), cantos de 28 px, 360 px no desktop; no celular fica pequena ao lado do nome e da cidade.
 - Título (h1) em `--text-display` (até 104 px), peso 700, tracking −0,045em, com o ponto final em acento. Esse ponto é ornamento tipográfico, não texto: vem de `h1::after` (`content: "." / ""`, sem texto alternativo, então leitores de tela não o leem) e fica fora de `content/` de propósito, porque o título do copy deck não tem ponto e a frase de abertura (`openingLine`) o monta como "título. lead". Frase de abertura em `--text-lead`, cor `--soft`.
-- O canto superior esquerdo fica livre para a assinatura (tarefa futura); o botão de tema fica no canto superior direito.
+- O canto superior esquerdo fica livre para a assinatura (tarefa futura); no canto superior direito ficam o link de língua (pílula de 44 px de altura em `--surface`, com o nome da outra língua: "English" / "Português", texto vindo de `ui.otherLang` em `content/`; é um link comum pra rota equivalente, sem script e sem escolha automática por língua do navegador) e, ao lado, o botão de tema. O `hreflang` entre `/` e `/en` sai de `lib/page-metadata.ts` (`alternates.languages`).
 
 ## Contato
 

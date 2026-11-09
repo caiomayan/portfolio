@@ -59,7 +59,7 @@ export const pt: Content = {
       { title: "Inglês fluente", period: "C2, EF SET" },
     ],
   },
-  ui: { themeToggle: "Tema escuro" },
+  ui: { themeToggle: "Tema escuro", otherLang: { label: "English", href: "/en", lang: "en" } },
   carmine: {
     heading: "Carmine",
     note: "Projeto pessoal",

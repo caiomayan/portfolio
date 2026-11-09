@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
+import { rotasTexto, type RotaTexto } from "./textos";
 
 // Texto: docs/copy-deck.md (seções Experiência e Formação).
-for (const path of ["/", "/en"]) {
+for (const path of ["/", "/en"] as RotaTexto[]) {
+  const t = rotasTexto[path];
   test.describe(`experiência e formação em ${path}`, () => {
     test("a página inteira segue a ordem: apresentação, Carmine, experiência, formação, contato", async ({ page }) => {
       await page.goto(path);
@@ -14,15 +16,15 @@ for (const path of ["/", "/en"]) {
 
     test("experiência: TechEduConnect com as três linhas, depois o Hospital em uma linha", async ({ page }) => {
       await page.goto(path);
-      const sec = page.locator("section", { has: page.getByRole("heading", { name: "Experiência" }) });
-      await expect(sec.getByText("Estagiário de Engenharia de Software")).toBeVisible();
-      await expect(sec.getByText("out. 2026 – atual · remoto")).toBeVisible();
-      await expect(sec.getByText(/Plugin de correção de redações com IA para Moodle, em produção numa instituição de ensino superior\. A IA propõe a avaliação e o tutor revisa e aprova\./)).toBeVisible();
-      await expect(sec.getByText("Plataformas de ensino próprias em Next.js, React e TypeScript, e customizações e integrações para Moodle em PHP.")).toBeVisible();
-      await expect(sec.getByText("Desenvolvo com agentes de código (Claude Code com skills), a partir de specs, testes e quality gates.")).toBeVisible();
+      const sec = page.locator("section", { has: page.getByRole("heading", { name: t.exp.heading }) });
+      await expect(sec.getByText(t.exp.cargo)).toBeVisible();
+      await expect(sec.getByText(t.exp.periodo)).toBeVisible();
+      await expect(sec.getByText(t.exp.l1)).toBeVisible();
+      await expect(sec.getByText(t.exp.l2)).toBeVisible();
+      await expect(sec.getByText(t.exp.l3)).toBeVisible();
       await expect(sec.getByText("Hospital Napoleão Laureano")).toBeVisible();
-      await expect(sec.getByText("mai. 2024 – mai. 2025 · João Pessoa")).toBeVisible();
-      await expect(sec.getByText("Jovem Aprendiz, setor de Compras")).toBeVisible();
+      await expect(sec.getByText(t.exp.hospPeriodo)).toBeVisible();
+      await expect(sec.getByText(t.exp.hospCargo)).toBeVisible();
       // ordem: TechEduConnect antes do Hospital
       const text = await sec.innerText();
       expect(text.indexOf("TechEduConnect")).toBeLessThan(text.indexOf("Hospital Napoleão Laureano"));
@@ -30,20 +32,20 @@ for (const path of ["/", "/en"]) {
 
     test("formação: IFPB, monitoria e inglês C2", async ({ page }) => {
       await page.goto(path);
-      const sec = page.locator("section", { has: page.getByRole("heading", { name: "Formação" }) });
-      await expect(sec.getByText("Tecnologia em Sistemas para Internet")).toBeVisible();
-      await expect(sec.getByText("Instituto Federal da Paraíba (IFPB), campus João Pessoa")).toBeVisible();
-      await expect(sec.getByText("out. 2024 – jul. 2027 (previsão)")).toBeVisible();
-      await expect(sec.getByText("Monitor da disciplina de Segurança de Dados")).toBeVisible();
-      await expect(sec.getByText("semestre 2026.2")).toBeVisible();
-      await expect(sec.getByText("Inglês fluente")).toBeVisible();
+      const sec = page.locator("section", { has: page.getByRole("heading", { name: t.form.heading }) });
+      await expect(sec.getByText(t.form.curso)).toBeVisible();
+      await expect(sec.getByText(t.form.inst)).toBeVisible();
+      await expect(sec.getByText(t.form.periodo)).toBeVisible();
+      await expect(sec.getByText(t.form.monitor)).toBeVisible();
+      await expect(sec.getByText(t.form.semestre)).toBeVisible();
+      await expect(sec.getByText(t.form.ingles)).toBeVisible();
       await expect(sec.getByText("C2, EF SET")).toBeVisible();
     });
 
     test("logos reais da TechEduConnect e do IFPB carregam; o Hospital só tem o nome", async ({ page }) => {
       await page.goto(path);
-      const exp = page.locator("section", { has: page.getByRole("heading", { name: "Experiência" }) });
-      const form = page.locator("section", { has: page.getByRole("heading", { name: "Formação" }) });
+      const exp = page.locator("section", { has: page.getByRole("heading", { name: t.exp.heading }) });
+      const form = page.locator("section", { has: page.getByRole("heading", { name: t.form.heading }) });
       const logos = [exp.locator("img"), form.locator("img")];
       await expect(exp.locator("img")).toHaveCount(1);
       await expect(form.locator("img")).toHaveCount(1);

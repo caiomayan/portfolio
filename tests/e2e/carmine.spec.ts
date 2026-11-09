@@ -1,14 +1,16 @@
 import { expect, test } from "@playwright/test";
+import { rotasTexto, type RotaTexto } from "./textos";
 
-for (const path of ["/", "/en"]) {
+for (const path of ["/", "/en"] as RotaTexto[]) {
+  const t = rotasTexto[path].carmine;
   test.describe(`seção Carmine em ${path}`, () => {
     test("aparece depois da apresentação, com o texto do copy deck", async ({ page }) => {
       await page.goto(path);
       const secao = page.locator("#carmine");
       await expect(secao.getByRole("heading", { level: 2, name: "Carmine" })).toBeVisible();
-      await expect(secao.getByText("SaaS para jogadores e times competitivos de Counter-Strike 2.")).toBeVisible();
-      await expect(secao.getByText("Em desenvolvimento, lançamento previsto para 2027")).toBeVisible();
-      await expect(secao.getByText(/agentes de IA que abrem issues e pull requests/)).toBeVisible();
+      await expect(secao.getByText(t.what)).toBeVisible();
+      await expect(secao.getByText(t.status)).toBeVisible();
+      await expect(secao.getByText(t.how)).toBeVisible();
 
       const hero = await page.locator(".hero").boundingBox();
       const sec = await secao.boundingBox();
@@ -28,7 +30,7 @@ for (const path of ["/", "/en"]) {
     test("links apontam pro site e pro repositório", async ({ page }) => {
       await page.goto(path);
       await expect(page.locator("#carmine").getByRole("link", { name: /stcarmine\.com/ })).toHaveAttribute("href", "https://stcarmine.com");
-      await expect(page.locator("#carmine").getByRole("link", { name: /Repositório/ })).toHaveAttribute(
+      await expect(page.locator("#carmine").getByRole("link", { name: t.repo })).toHaveAttribute(
         "href",
         "https://github.com/caiomayan/carmine",
       );
@@ -40,17 +42,17 @@ for (const path of ["/", "/en"]) {
       await expect(abas).toHaveCount(2);
       const painel = page.locator("#carmine").getByRole("tabpanel");
       await expect(abas.nth(0)).toHaveAttribute("aria-selected", "true");
-      await expect(painel.getByRole("img")).toHaveAttribute("alt", /Inventário/);
+      await expect(painel.getByRole("img")).toHaveAttribute("alt", t.aba1);
 
       await abas.nth(1).click();
       await expect(abas.nth(1)).toHaveAttribute("aria-selected", "true");
-      await expect(painel.getByRole("img")).toHaveAttribute("alt", /Ranking/);
+      await expect(painel.getByRole("img")).toHaveAttribute("alt", t.aba2);
 
       await abas.nth(1).focus();
       await page.keyboard.press("ArrowLeft");
       await expect(abas.nth(0)).toBeFocused();
       await expect(abas.nth(0)).toHaveAttribute("aria-selected", "true");
-      await expect(painel.getByRole("img")).toHaveAttribute("alt", /Inventário/);
+      await expect(painel.getByRole("img")).toHaveAttribute("alt", t.aba1);
       await page.keyboard.press("End");
       await expect(abas.nth(1)).toHaveAttribute("aria-selected", "true");
       await page.keyboard.press("Home");

@@ -1,8 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { rotasTexto } from "./textos";
 
-const rotas = ["/", "/en"];
+const rotas = ["/", "/en"] as const;
 
 for (const path of rotas) {
+  const t = rotasTexto[path];
   test.describe(`tema em ${path}`, () => {
     test("abre no claro, mesmo com o sistema no escuro", async ({ browser }) => {
       const ctx = await browser.newContext({ colorScheme: "dark" });
@@ -16,7 +18,7 @@ for (const path of rotas) {
 
     test("o botão troca pro escuro e de volta", async ({ page }) => {
       await page.goto(path);
-      const botao = page.getByRole("button", { name: "Tema escuro" });
+      const botao = page.getByRole("button", { name: t.tema });
       await expect(botao).toHaveAttribute("aria-pressed", "false");
       await botao.click();
       await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
@@ -27,7 +29,7 @@ for (const path of rotas) {
 
     test("a escolha sobrevive a um recarregamento, sem piscar", async ({ page }) => {
       await page.goto(path);
-      await page.getByRole("button", { name: "Tema escuro" }).click();
+      await page.getByRole("button", { name: t.tema }).click();
       await page.reload({ waitUntil: "commit" });
       // Antes de qualquer script do React: o atributo já está no <html> em domcontentloaded.
       await page.waitForLoadState("domcontentloaded");
@@ -41,7 +43,7 @@ for (const path of rotas) {
 
     test("o escuro vale também na outra rota", async ({ page }) => {
       await page.goto(path);
-      await page.getByRole("button", { name: "Tema escuro" }).click();
+      await page.getByRole("button", { name: t.tema }).click();
       await page.goto(path === "/" ? "/en" : "/");
       await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
     });
