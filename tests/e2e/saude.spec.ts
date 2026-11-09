@@ -11,3 +11,10 @@ for (const path of ["/", "/en"]) {
     expect(problemas).toEqual([]);
   });
 }
+
+test("o ícone da aba existe (sem 404 de favicon)", async ({ page, request }) => {
+  await page.goto("/");
+  const href = await page.locator('head link[rel="icon"]').first().getAttribute("href");
+  expect(href).toBeTruthy();
+  expect((await request.get(href!)).status()).toBe(200);
+});
