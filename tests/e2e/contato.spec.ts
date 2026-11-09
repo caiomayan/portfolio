@@ -60,9 +60,11 @@ for (const { path, pdf } of rotas) {
     // Grava, quadro a quadro, quantos desenhos diferentes o ícone assume enquanto o hover acontece.
     const desenhosVistos = async (page: Page, alvo: Locator) => {
       await alvo.evaluate((el) => {
-        const w = window as unknown as { __vistos: Set<string>; __rodando: boolean };
-        w.__vistos = new Set();
-        w.__rodando = true;
+        const w = window as unknown as { __vistos: Set<string>; __rodando: number; __rodadas?: number };
+        const vistos = new Set<string>();
+        const rodada = (w.__rodadas = (w.__rodadas ?? 0) + 1); // cada medição tem a sua rodada: o laço da anterior não escreve na nova
+        w.__vistos = vistos;
+        w.__rodando = rodada;
         const snap = () =>
           [...el.querySelectorAll("svg *")]
             .map((n) => {
@@ -71,16 +73,16 @@ for (const { path, pdf } of rotas) {
             })
             .join(";");
         const tick = () => {
-          w.__vistos.add(snap());
-          if (w.__rodando) requestAnimationFrame(tick);
+          vistos.add(snap());
+          if (w.__rodando === rodada) requestAnimationFrame(tick);
         };
         tick();
       });
       await alvo.hover();
       await page.waitForTimeout(900); // mais que a mola/traço inteiro
       return alvo.evaluate(() => {
-        const w = window as unknown as { __vistos: Set<string>; __rodando: boolean };
-        w.__rodando = false;
+        const w = window as unknown as { __vistos: Set<string>; __rodando: number };
+        w.__rodando = 0;
         return w.__vistos.size;
       });
     };
@@ -98,6 +100,8 @@ for (const { path, pdf } of rotas) {
       const ctx = await browser.newContext({ reducedMotion: "reduce", permissions: ["clipboard-read", "clipboard-write"] });
       const page = await ctx.newPage();
       await page.goto(path);
+      await page.waitForLoadState("networkidle"); // hidratação concluída: os ícones já assumiram o estado inicial
+      await page.waitForTimeout(500);
       for (const alvo of alvos(page)) expect(await desenhosVistos(page, alvo)).toBe(1);
       await page.getByRole("button", { name: t.copiar }).click();
       await expect(page.getByRole("status")).toHaveText(t.copiado);
