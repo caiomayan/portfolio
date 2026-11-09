@@ -19,6 +19,12 @@
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --gutter: 24px;
   --max: 1120px;
+
+  /* Seção Carmine (ver DESIGN.md) */
+  --carmine-rail: 200px;
+  --carmine-gap: 40px;
+  --carmine-column: 640px;
+  --stack-row: 52px;
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
@@ -207,20 +213,20 @@ h1::after { content: "." / ""; color: var(--accent); }
   width: min(var(--max), 100% - 2 * var(--gutter));
   margin-inline: auto;
   display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
-  column-gap: 40px;
+  grid-template-columns: var(--carmine-rail) minmax(0, 1fr);
+  column-gap: var(--carmine-gap);
   padding-block: 24px 112px;
 }
-#carmine .rail h2 { margin: 0; font-size: var(--text-lead); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
-#carmine .railnote { margin: 8px 0 0; font-size: var(--text-small); color: var(--soft); }
-#carmine .col { min-width: 0; max-width: 640px; }
-#carmine .col p { margin: 0 0 1em; }
+#carmine .carmine-aside h2 { margin: 0; font-size: var(--text-lead); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
+#carmine .carmine-aside-note { margin: 8px 0 0; font-size: var(--text-small); color: var(--soft); }
+#carmine .carmine-body { min-width: 0; max-width: var(--carmine-column); }
+#carmine .carmine-body p { margin: 0 0 1em; }
 #carmine .soft { color: var(--soft); }
 #carmine .status { display: flex; align-items: center; gap: 10px; font-size: var(--text-small); color: var(--soft); margin: 0 0 20px; }
-#carmine .status i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
-#carmine .proj-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-#carmine .proj-head img { border-radius: 50%; }
-#carmine .proj-head b { font-size: var(--text-lead); font-weight: 700; line-height: 1; letter-spacing: -0.03em; }
+#carmine .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+#carmine .project-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+#carmine .project-head img { border-radius: 50%; }
+#carmine .project-name { font-size: var(--text-lead); font-weight: 700; line-height: 1; letter-spacing: -0.03em; }
 #carmine .shots { margin: 36px 0 0; }
 #carmine .tabs { display: inline-flex; gap: 2px; padding: 4px; margin-bottom: 14px; background: var(--surface); border-radius: 999px; }
 #carmine .tabs button {
@@ -241,17 +247,18 @@ h1::after { content: "." / ""; color: var(--accent); }
 #carmine .shots figcaption { margin-top: 12px; color: var(--soft); font-size: var(--text-small); }
 #carmine h3.label { font-size: var(--text-small); font-weight: 600; line-height: 1; color: var(--soft); margin: 48px 0 8px; }
 #carmine .stack { list-style: none; margin: 0; padding: 0; }
-#carmine .stack li { display: grid; grid-template-columns: 1fr auto; column-gap: 24px; align-items: center; min-height: 52px; padding-block: 10px; }
-#carmine .stack .l { display: flex; align-items: center; gap: 12px; min-width: 0; }
-#carmine .stack .v { color: var(--soft); font-size: var(--text-small); text-align: right; }
+#carmine .stack li { display: grid; grid-template-columns: 1fr auto; column-gap: 24px; align-items: center; min-height: var(--stack-row); padding-block: 10px; }
+#carmine .stack .stack-name { display: flex; align-items: center; gap: 12px; min-width: 0; }
+#carmine .stack .stack-role { color: var(--soft); font-size: var(--text-small); text-align: right; }
 #carmine .logo { flex: none; object-fit: contain; }
 :root[data-theme="dark"] #carmine .logo:not(.color) { filter: invert(1); }
-#carmine .noicon { width: 20px; flex: none; }
+#carmine .stack-logo-empty { width: 20px; flex: none; }
 #carmine .links { display: flex; gap: 28px; flex-wrap: wrap; margin-top: 28px; }
-#carmine .ul { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); transition: text-decoration-color 180ms; }
-#carmine .ul:hover { text-decoration-color: var(--accent); }
+#carmine .link-external { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); transition: text-decoration-color 180ms; }
+#carmine .link-external::after { content: " ↗" / ""; }
+#carmine .link-external:hover { text-decoration-color: var(--accent); }
 @media (max-width: 899px) {
-    #carmine { grid-template-columns: 1fr; row-gap: 24px; padding-block: 8px 80px; }
+  #carmine { grid-template-columns: 1fr; row-gap: 24px; padding-block: 8px 80px; }
   #carmine .stack li { grid-template-columns: 1fr; row-gap: 2px; }
-  #carmine .stack .v { text-align: left; padding-left: 32px; }
+  #carmine .stack .stack-role { text-align: left; padding-left: 32px; }
 }

@@ -57,6 +57,33 @@ for (const path of ["/", "/en"]) {
       await expect(abas.nth(0)).toHaveAttribute("aria-selected", "true");
     });
 
+    test("só a aba ativa entra na ordem de Tab e o painel inativo fica oculto", async ({ page }) => {
+      await page.goto(path);
+      const abas = page.locator("#carmine").getByRole("tab");
+      const paineis = page.locator("#carmine [role=tabpanel]");
+      await expect(abas.nth(0)).toHaveAttribute("tabindex", "0");
+      await expect(abas.nth(1)).toHaveAttribute("tabindex", "-1");
+      await expect(paineis.nth(0)).toBeVisible();
+      await expect(paineis.nth(1)).toHaveAttribute("hidden", "");
+      await expect(paineis.nth(1)).toBeHidden();
+
+      await abas.nth(1).click();
+      await expect(abas.nth(0)).toHaveAttribute("tabindex", "-1");
+      await expect(abas.nth(1)).toHaveAttribute("tabindex", "0");
+      await expect(paineis.nth(0)).toHaveAttribute("hidden", "");
+      await expect(paineis.nth(1)).toBeVisible();
+    });
+
+    test("os logos da stack carregam", async ({ page }) => {
+      await page.goto(path);
+      const logos = page.locator("#carmine .stack img");
+      await expect(logos).toHaveCount(5);
+      await logos.first().scrollIntoViewIfNeeded();
+      for (let i = 0; i < 5; i++) {
+        await expect.poll(() => logos.nth(i).evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+      }
+    });
+
     test("o print carrega e fica em tamanho moderado dentro da coluna", async ({ page }) => {
       await page.goto(path);
       const img = page.locator("#carmine").getByRole("tabpanel").getByRole("img");

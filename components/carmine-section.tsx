@@ -2,28 +2,20 @@ import Image from "next/image";
 import type { Content } from "@/content";
 import { CarmineShots } from "./carmine-shots";
 import carmineLogo from "@/assets/logos/carmine.svg";
-import nestjs from "@/assets/logos/nestjs.svg";
-import nextdotjs from "@/assets/logos/nextdotjs.svg";
-import valkey from "@/assets/logos/valkey.svg";
-import amazonec2 from "@/assets/logos/amazonec2.svg";
-import oracle from "@/assets/logos/oracle.svg";
-
-const logos = { nestjs, nextdotjs, valkey, amazonec2, oracle };
-/** Logos coloridas ficam como estão; as de uma cor só invertem no tema escuro. */
-const colored = new Set(["valkey"]);
+import { stackLogos } from "@/lib/stack-logos";
 
 export function CarmineSection({ content }: { content: Content["carmine"] }) {
   return (
     <section id="carmine" aria-labelledby="carmine-title">
-      <div className="rail">
+      <div className="carmine-aside">
         <h2 id="carmine-title">{content.heading}</h2>
-        <p className="railnote">{content.note}</p>
+        <p className="carmine-aside-note">{content.note}</p>
       </div>
-      <div className="col">
-        <p className="status"><i aria-hidden="true" />{content.status}</p>
-        <div className="proj-head">
+      <div className="carmine-body">
+        <p className="status"><span className="status-dot" aria-hidden="true" />{content.status}</p>
+        <div className="project-head">
           <Image src={carmineLogo} alt="" width={40} height={40} unoptimized />
-          <b>{content.name}</b>
+          <span className="project-name">{content.name}</span>
         </div>
         <p>{content.what}</p>
         <p className="soft">{content.how}</p>
@@ -34,22 +26,22 @@ export function CarmineSection({ content }: { content: Content["carmine"] }) {
         <ul className="stack">
           {content.stack.map((s) => (
             <li key={s.name}>
-              <span className="l">
+              <span className="stack-name">
                 {s.logo ? (
-                  <Image className={colored.has(s.logo) ? "logo color" : "logo"} src={logos[s.logo]} alt="" width={20} height={20} unoptimized />
+                  <Image className={stackLogos[s.logo].colored ? "logo color" : "logo"} src={stackLogos[s.logo].src} alt="" width={20} height={20} unoptimized />
                 ) : (
-                  <span className="noicon" aria-hidden="true" />
+                  <span className="stack-logo-empty" aria-hidden="true" />
                 )}
                 {s.name}
               </span>
-              <span className="v">{s.role}</span>
+              <span className="stack-role">{s.role}</span>
             </li>
           ))}
         </ul>
 
         <div className="links">
-          <a className="ul" href={content.links.site.href}>{content.links.site.label} <span aria-hidden="true">↗</span></a>
-          <a className="ul" href={content.links.repo.href}>{content.links.repo.label} <span aria-hidden="true">↗</span></a>
+          <a className="link-external" href={content.links.site.href}>{content.links.site.label}</a>
+          <a className="link-external" href={content.links.repo.href}>{content.links.repo.label}</a>
         </div>
       </div>
     </section>
