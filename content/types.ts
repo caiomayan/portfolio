@@ -1,7 +1,11 @@
+import type { OrgLogoId } from "@/lib/org-logos";
 import type { StackLogoId } from "@/lib/stack-logos";
 
 /** `external`: abre em outra aba (sai do site). */
 export type ContactLink = { label: string; href: string; external?: boolean };
+
+/** O que Experiência e Formação têm em comum: uma linha com período e, opcionalmente, o logo da instituição. */
+export type EntryBase = { period: string; logo?: OrgLogoId };
 
 /** Forma única do conteúdo: `pt` e `en` precisam satisfazer este tipo, ou o compilador acusa. */
 export type Content = {
@@ -29,6 +33,25 @@ export type Content = {
     github: ContactLink;
     /** `null` quando não há PDF nessa língua: o link não aparece. */
     resume: ContactLink | null;
+  };
+  experience: {
+    heading: string;
+    jobs: (EntryBase & {
+      company: string;
+      /** Só a TechEduConnect tem; o Hospital fica só com o nome. */
+      companyUrl?: string;
+      role: string;
+      about?: string;
+      lines: string[];
+    })[];
+  };
+  education: {
+    heading: string;
+    items: (EntryBase & {
+      title: string;
+      /** Segunda linha, mais discreta. */
+      detail?: string;
+    })[];
   };
   ui: {
     themeToggle: string;

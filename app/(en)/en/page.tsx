@@ -1,3 +1,5 @@
+import { Education } from "@/components/education";
+import { Experience } from "@/components/experience";
 import { Contact } from "@/components/contact";
 import { CarmineSection } from "@/components/carmine-section";
 import { Hero } from "@/components/hero";
@@ -11,6 +13,8 @@ export default function Page() {
     <>
       <Hero content={content.en} />
       <CarmineSection content={content.en.carmine} />
+      <Experience content={content.en} />
+      <Education content={content.en} />
       <Contact content={content.en} />
     </>
   );

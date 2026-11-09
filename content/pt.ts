@@ -19,6 +19,46 @@ export const pt: Content = {
     github: { label: "GitHub", href: "https://github.com/caiomayan", external: true },
     resume: { label: "Currículo (PDF)", href: "/caio-mayan-curriculo.pdf" },
   },
+  experience: {
+    heading: "Experiência",
+    jobs: [
+      {
+        company: "TechEduConnect",
+        logo: "techeduconnect",
+        companyUrl: "https://www.techeduconnect.com.br/",
+        role: "Estagiário de Engenharia de Software",
+        period: "out. 2026 – atual · remoto",
+        about:
+          "Edtech especializada em Moodle (implantação, plugins, integrações e hospedagem) para instituições de ensino e empresas.",
+        lines: [
+          "Plugin de correção de redações com IA para Moodle, em produção numa instituição de ensino superior. A IA propõe a avaliação e o tutor revisa e aprova.",
+          "Plataformas de ensino próprias em Next.js, React e TypeScript, e customizações e integrações para Moodle em PHP.",
+          "Desenvolvo com agentes de código (Claude Code com skills), a partir de specs, testes e quality gates.",
+        ],
+      },
+      {
+        company: "Hospital Napoleão Laureano",
+        role: "Jovem Aprendiz, setor de Compras",
+        period: "mai. 2024 – mai. 2025 · João Pessoa",
+        lines: [
+          "Compras de EPIs, engenharia clínica e TI, contratos e fornecedores, num hospital especializado em oncologia.",
+        ],
+      },
+    ],
+  },
+  education: {
+    heading: "Formação",
+    items: [
+      {
+        title: "Tecnologia em Sistemas para Internet",
+        logo: "ifpb",
+        detail: "Instituto Federal da Paraíba (IFPB), campus João Pessoa",
+        period: "out. 2024 – jul. 2027 (previsão)",
+      },
+      { title: "Monitor da disciplina de Segurança de Dados", period: "semestre 2026.2" },
+      { title: "Inglês fluente", period: "C2, EF SET" },
+    ],
+  },
   ui: { themeToggle: "Tema escuro" },
   carmine: {
     heading: "Carmine",
