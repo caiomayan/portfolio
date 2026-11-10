@@ -1,0 +1,72 @@
+import { expect, test } from "@playwright/test";
+import { rotasTexto, type RotaTexto } from "./textos";
+
+// Texto: docs/copy-deck.md (seções Tecnologias e Contato). Issue #27.
+for (const path of ["/", "/en"] as RotaTexto[]) {
+  const t = rotasTexto[path];
+  test.describe(`tecnologias e línguas em ${path}`, () => {
+    test("seção Tecnologias entre Formação e Contato, só ícones, na ordem do currículo", async ({ page }) => {
+      await page.goto(path);
+      const sec = page.locator("#tecnologias");
+      await expect(sec.getByRole("heading", { name: t.tecnologias.heading })).toBeVisible();
+      const itens = sec.locator(".stack li");
+      await expect(itens).toHaveCount(t.tecnologias.nomes.length);
+      for (const [i, nome] of t.tecnologias.nomes.entries()) {
+        const item = itens.nth(i);
+        await expect(item).toHaveText(""); // nada escrito
+        await expect(item.getByRole("img", { name: nome, exact: true })).toBeVisible();
+        expect(await item.locator("img, svg.fallback-icon").count()).toBe(1); // logo OU ícone de reserva
+      }
+      const tops = await Promise.all([page.locator("#formacao"), sec, page.locator(".contact")].map(async (l) => (await l.boundingBox())!.y));
+      expect(tops).toEqual([...tops].sort((a, b) => a - b));
+    });
+
+    test("os logos carregam e o tooltip mostra o nome no hover e no foco, com Esc", async ({ page }) => {
+      await page.goto(path);
+      for (const img of await page.locator("#tecnologias .stack img").all()) {
+        await expect(img).toBeVisible();
+        expect(await img.evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth > 0)).toBe(true);
+      }
+      const tip = page.locator("#tecnologias .tip");
+      await expect(tip).toHaveCount(0);
+      await page.locator("#tecnologias .stack li").nth(1).hover();
+      await expect(tip).toHaveText("Spring Boot");
+      await expect(tip).toHaveAttribute("aria-hidden", "true");
+      await page.mouse.move(2, 2);
+      await expect(tip).toHaveCount(0);
+      await page.locator("#tecnologias .stack-icon").nth(16).focus();
+      await expect(tip).toHaveText("Oracle Cloud");
+      await page.keyboard.press("Escape");
+      await expect(tip).toHaveCount(0);
+    });
+
+    test("logos pretos invertem no tema escuro; o do Valkey, colorido, não", async ({ page }) => {
+      await page.goto(path);
+      await page.getByRole("button", { name: t.tema }).click();
+      const filtros = await page.locator("#tecnologias .stack img").evaluateAll((els) => els.map((el) => getComputedStyle(el).filter));
+      const nomes = t.tecnologias.nomes.filter((n) => n !== "Java");
+      nomes.forEach((n, i) => (n === "Valkey" ? expect(filtros[i]).toBe("none") : expect(filtros[i]).toContain("invert")));
+    });
+
+    test("línguas no Contato, discretas, junto da cidade e da hora local", async ({ page }) => {
+      await page.goto(path);
+      const linguas = page.locator(".contact .contact-languages");
+      await expect(linguas).toHaveText(t.linguas);
+      // As partes entram em sequência (reveal): espera o layout assentar antes de medir.
+      await expect
+        .poll(async () => {
+          const cidade = (await page.locator(".contact-map-caption").boundingBox())!;
+          const l = (await linguas.boundingBox())!;
+          return l.y > cidade.y && l.y - (cidade.y + cidade.height) < 24;
+        })
+        .toBe(true);
+    });
+
+    test("não rola na horizontal a 375 px", async ({ page }) => {
+      await page.setViewportSize({ width: 375, height: 812 });
+      await page.goto(path);
+      const { sw, cw } = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
+      expect(sw).toBeLessThanOrEqual(cw);
+    });
+  });
+}

@@ -32,7 +32,13 @@ export const rotasTexto = {
       periodo: "out. 2024 – jul. 2027 (previsão)",
       monitor: "Monitor da disciplina de Segurança de Dados",
       semestre: "semestre 2026.2",
+      descricao: "Onde construí e sigo fortalecendo minha base: Java e Spring Boot, bancos de dados, estrutura de dados e segurança da informação.",
       ingles: "Inglês fluente",
+    },
+    linguas: "Português (nativo) · Inglês (fluente, C2)",
+    tecnologias: {
+      heading: "Tecnologias",
+      nomes: ["Java", "Spring Boot", "Node.js", "TypeScript", "Nest.js", "Express", "PHP", "Python", "React", "Next.js", "PostgreSQL", "Redis", "Valkey", "MongoDB", "Docker", "AWS", "Oracle Cloud", "Vercel", "Cloudflare", "Git"],
     },
   },
   "/en": {
@@ -67,7 +73,13 @@ export const rotasTexto = {
       periodo: "Oct. 2024 – Jul. 2027 (expected)",
       monitor: "Teaching Assistant: Data Security course",
       semestre: "2026.2 semester",
+      descricao: "Where I built, and keep strengthening, my foundation: Java and Spring Boot, databases, data structures and information security.",
       ingles: "Fluent English",
+    },
+    linguas: "Portuguese (native) · English (fluent, C2)",
+    tecnologias: {
+      heading: "Technologies",
+      nomes: ["Java", "Spring Boot", "Node.js", "TypeScript", "Nest.js", "Express", "PHP", "Python", "React", "Next.js", "PostgreSQL", "Redis", "Valkey", "MongoDB", "Docker", "AWS", "Oracle Cloud", "Vercel", "Cloudflare", "Git"],
     },
   },
 } as const;

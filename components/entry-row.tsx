@@ -10,6 +10,8 @@ type Props = {
   sub?: string;
   about?: string;
   lines?: string[];
+  /** Subitens subordinados à linha (ex.: a monitoria dentro do curso): recuados, menores, com o próprio período. */
+  subitems?: { title: string; period: string }[];
   period: string;
   /** Logo OU ícone de reserva: um dos dois, sempre. */
   logo?: OrgLogoId;
@@ -17,13 +19,13 @@ type Props = {
 };
 
 /** Linha de duas pontas, igual em Experiência e Formação: texto à esquerda, período à direita. */
-export function EntryRow({ title, titleUrl, sub, about, lines, period, logo, icon }: Props) {
+export function EntryRow({ title, titleUrl, sub, about, lines, subitems, period, logo, icon }: Props) {
   const l = logo ? orgLogos[logo] : null;
   return (
     <li className="entry" data-reveal-part>
       <div className="entry-main">
         {l ? (
-          <Image className="entry-logo" src={l.src} alt="" width={40} height={l.height} unoptimized />
+          <Image className="entry-logo" data-colored={l.colored ? "" : undefined} src={l.src} alt="" width={40} height={l.height} unoptimized />
         ) : (
           <span className="entry-logo-gap">{icon && <FallbackIcon id={icon} />}</span>
         )}
@@ -35,6 +37,16 @@ export function EntryRow({ title, titleUrl, sub, about, lines, period, logo, ico
             <ul className="entry-lines">
               {lines.map((line) => (
                 <li key={line}>{line}</li>
+              ))}
+            </ul>
+          )}
+          {subitems && (
+            <ul className="entry-children">
+              {subitems.map((s) => (
+                <li key={s.title} className="entry-child">
+                  <span className="entry-child-title">{s.title}</span>
+                  <span className="entry-child-period">{s.period}</span>
+                </li>
               ))}
             </ul>
           )}

@@ -102,6 +102,7 @@ export function Contact({ content }: { content: Content }) {
         )}
       </ul>
       <ContactMap map={c.map} />
+      <p className="contact-languages" data-reveal-part>{c.languages}</p>
     </section>
   );
 }
