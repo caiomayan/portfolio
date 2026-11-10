@@ -368,10 +368,11 @@ h1::after { content: "." / ""; }
     40% { transform: scale(1.14); }
   }
   .copy-button[data-copied="true"] { animation: pop 320ms var(--ease); }
-  .who, h1, .lead, .place { animation: rise 700ms var(--ease) both; }
+  .who, h1, .lead, .place, .to-contact { animation: rise 700ms var(--ease) both; }
   h1 { animation-delay: 80ms; }
   .lead { animation-delay: 180ms; }
   .place { animation-delay: 240ms; }
+  .to-contact { animation-delay: 300ms; }
 
   /* Botões da barra do topo e de copiar: só transform e opacity (a cor muda sem transição). */
   a.lang-option, .theme-toggle { transition: transform 160ms var(--ease), opacity 160ms var(--ease); }

@@ -38,8 +38,15 @@ for (const r of rotas) {
       const link = page.locator(".hero").getByRole("link", { name: r.contato, exact: true });
       await expect(link).toHaveAttribute("href", "#contato");
       await expect(link).toContainText("↓");
-      const [place, box] = await Promise.all([page.locator(".place").boundingBox(), link.boundingBox()]);
-      expect(box!.y).toBeGreaterThan(place!.y + place!.height - 1);
+      // Posição de layout (offsetTop), não boundingBox: o lugar entra com `rise` (translateY) e, no CI lento, ainda estaria em movimento.
+      const m = await page.evaluate(() => {
+        const place = document.querySelector<HTMLElement>(".place")!;
+        const a = document.querySelector<HTMLElement>(".hero .to-contact")!;
+        const parent = place.offsetParent;
+        return { placeBottom: place.offsetTop + place.offsetHeight, linkTop: a.offsetTop, mesmoPai: a.offsetParent === parent };
+      });
+      expect(m.mesmoPai).toBe(true);
+      expect(m.linkTop).toBeGreaterThanOrEqual(m.placeBottom); // a caixa do link (com o padding) começa depois do lugar: sem sobreposição
       // Texto simples: sem ícone, sem fundo, sem borda.
       expect(await link.locator("svg, img").count()).toBe(0);
       await expect(link).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
@@ -74,6 +81,7 @@ for (const r of rotas) {
         const ctx = await browser.newContext({ viewport: vp });
         const page = await ctx.newPage();
         await page.goto(r.path);
+        await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity)); // a entrada (translateY) acabou
         const h1 = (await page.locator("h1").boundingBox())!;
         const link = (await page.locator(".to-contact").boundingBox())!;
         expect(h1.y + h1.height).toBeLessThan(vp.height);
