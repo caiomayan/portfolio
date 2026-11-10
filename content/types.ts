@@ -2,6 +2,7 @@ import type { Lang } from "@/lib/locales";
 import type { OrgLogoId } from "@/lib/org-logos";
 import type { FallbackIconId } from "@/lib/fallback-icons";
 import type { StackLogoId } from "@/lib/stack-logos";
+import type { WeatherKind } from "@/lib/weather";
 
 /** `external`: abre em outra aba (sai do site). */
 export type ContactLink = { label: string; href: string; external?: boolean };
@@ -41,6 +42,8 @@ export type Content = {
     resume: ContactLink | null;
     /** Cidade ao lado do mapa e fuso da hora local (a hora em si vem do relógio, não daqui). */
     map: { place: string; offset: string };
+    /** Clima ao lado da hora (#28): nome de cada tempo (lido por leitor de tela) e o crédito do Open-Meteo (CC BY 4.0). */
+    weather: { labels: Record<WeatherKind, string>; credit: { prefix: string; name: string; href: string } };
   };
   experience: {
     heading: string;
@@ -73,6 +76,8 @@ export type Content = {
       country: string;
     };
   };
+  /** Gráfico de contribuições do GitHub (#28). `total`: `one` com 1, `other` nos demais; `{n}` vira o número. */
+  activity: { heading: string; total: { one: string; other: string } };
   carmine: {
     heading: string;
     note: string;

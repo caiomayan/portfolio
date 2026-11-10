@@ -1,0 +1,24 @@
+/* Dados ao vivo (#28): clima ao lado da hora, no Contato, e gráfico de contribuições do GitHub. Preto e branco: só tons do tema. */
+
+/* Clima: renderizado no servidor, ao lado da hora (que entra no cliente). */
+.contact-map-weather { display: inline-flex; align-items: center; gap: 6px; color: var(--soft); font-variant-numeric: tabular-nums; }
+.weather-icon { flex: none; color: var(--soft); }
+.weather-credit { margin: 12px 0 0; font-size: var(--text-small); color: var(--soft); }
+.weather-credit a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+.weather-credit a:hover { color: var(--ink); text-decoration-color: var(--ink); }
+
+/* Atividade: depois das seções de conteúdo e antes do Contato. */
+.activity { width: min(var(--max), 100% - 2 * var(--gutter)); margin: 0 auto; padding-block: 96px 0; }
+.activity h2 { margin: 0 0 8px; font-size: var(--text-lead); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
+.activity-total { margin: 0 0 24px; font-size: var(--text-small); color: var(--soft); font-variant-numeric: tabular-nums; }
+
+/* A grade rola dentro do próprio bloco (a página não rola de lado). O contêiner é rtl só pra rolagem abrir no fim (semanas mais recentes);
+   a grade volta a ltr e, quando cabe, fica à esquerda (margem automática). */
+.activity-scroll { direction: rtl; overflow-x: auto; overscroll-behavior-x: contain; padding-block: 4px; border-radius: 6px; }
+.activity-grid { --cell: 11px; --gap: 3px; direction: ltr; display: flex; gap: var(--gap); width: max-content; margin-inline-end: auto; }
+.activity-week { display: grid; grid-template-rows: repeat(7, var(--cell)); gap: var(--gap); }
+.activity-day { width: var(--cell); height: var(--cell); border-radius: 2px; background: var(--surface); }
+.activity-day[data-level="1"] { background: color-mix(in srgb, var(--ink) 22%, var(--bg)); }
+.activity-day[data-level="2"] { background: color-mix(in srgb, var(--ink) 45%, var(--bg)); }
+.activity-day[data-level="3"] { background: color-mix(in srgb, var(--ink) 70%, var(--bg)); }
+.activity-day[data-level="4"] { background: var(--ink); }

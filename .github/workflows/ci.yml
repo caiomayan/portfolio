@@ -57,9 +57,33 @@ jobs:
       - name: Teste da verificação de termos (termo inventado)
         run: npm run test:terms
 
+      - name: Testes das buscas de dados ao vivo (sem token, API fora)
+        run: npm run test:dados
+
       - run: npm run typecheck
       - run: npm run lint
-      - run: npm run build
+
+      # Dados ao vivo (#28): o build lê o Open-Meteo e o GitHub de variáveis de ambiente. Nos testes elas apontam pra um servidor falso
+      # local (tests/fixtures/apis.mjs), então o resultado não depende da rede nem do token de verdade (o token abaixo é só do falso, não é segredo).
+      - name: Servidor falso das APIs
+        run: |
+          node tests/fixtures/apis.mjs &
+          for i in $(seq 1 20); do curl -fs http://127.0.0.1:3199/health && break; sleep 0.5; done
+
+      - name: Build (APIs respondendo)
+        run: npm run build
+        env:
+          OPEN_METEO_URL: http://127.0.0.1:3199/weather
+          GITHUB_GRAPHQL_URL: http://127.0.0.1:3199/github
+          GITHUB_TOKEN: token-de-teste-nao-e-segredo
+
+      - name: Build (as duas APIs falhando)
+        run: npm run build
+        env:
+          NEXT_DIST_DIR: .next-falha
+          OPEN_METEO_URL: http://127.0.0.1:3199/weather-erro
+          GITHUB_GRAPHQL_URL: http://127.0.0.1:3199/github-erro
+          GITHUB_TOKEN: token-de-teste-nao-e-segredo
 
       - name: Versão do Playwright
         id: pw

@@ -20,6 +20,10 @@ export const en: Content = {
     github: { label: "GitHub", href: "https://github.com/caiomayan", external: true },
     resume: { label: "Resume (PDF)", href: "/caio-mayan-resume.pdf" },
     map: { place: "João Pessoa, Brazil", offset: "UTC−3" },
+    weather: {
+      labels: { clear: "Clear sky", partly: "Partly cloudy", cloudy: "Cloudy", fog: "Fog", rain: "Rain", storm: "Thunderstorm" },
+      credit: { prefix: "Weather data by", name: "Open-Meteo.com", href: "https://open-meteo.com/" },
+    },
   },
   experience: {
     heading: "Experience",
@@ -63,6 +67,7 @@ export const en: Content = {
     ],
   },
   ui: { themeToggle: "Dark theme", otherLang: { label: "Português", href: locales.pt.path, lang: "pt", flag: "BR", country: "Brazil" } },
+  activity: { heading: "Activity", total: { one: "{n} contribution in the last year", other: "{n} contributions in the last year" } },
   carmine: {
     heading: "Carmine",
     note: "Personal project",

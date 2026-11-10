@@ -58,6 +58,11 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 - GitHub: https://github.com/caiomayan
 - Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en). Só ícone no site (#18): o rótulo "Currículo (PDF)" vira tooltip e nome acessível, assim como "LinkedIn" e "GitHub". O e-mail continua escrito.
 - Mapa (#24): faixa de mapa-múndi decorativa com um pino em João Pessoa. Texto ao lado: "João Pessoa, Brasil" e a hora local, no formato "14:32 (UTC−3)" (24 h, fuso America/Fortaleza, atualizada a cada minuto; a hora não vem no HTML do servidor).
+- Clima (#28, proposto, o Caio revisa): ao lado da hora, ícone do tempo e temperatura atual de João Pessoa, por exemplo "14:32 (UTC−3)  ☁ 28°C". O nome do tempo só é lido por leitor de tela: "Céu limpo", "Parcialmente nublado", "Nublado", "Neblina", "Chuva", "Tempestade". Crédito discreto embaixo do mapa (licença CC BY 4.0 do Open-Meteo): "Dados do clima por Open-Meteo.com" (o nome é um link). Se a API falha, nada disso aparece.
+
+## Atividade (#28, proposto, o Caio revisa)
+
+- Bloco curto entre Formação e Contato (depois de Tecnologias, quando essa seção existir): título "Atividade" e o total do ano em texto, "1.234 contribuições no último ano" (singular: "1 contribuição no último ano"), com a grade de contribuições do GitHub do usuário caiomayan embaixo. Sem token ou com a API fora, o bloco inteiro não aparece.
 
 ## Interface
 
@@ -123,6 +128,11 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 - Email: mail@caiomayan.com (with copy button)
 - Resume (PDF): icon only (#18); "Resume (PDF)" is the tooltip and accessible name, file `caio-mayan-resume.pdf`. Email stays as text.
 - Map (#24): decorative world-map strip with a pin on João Pessoa. Text next to it: "João Pessoa, Brazil" and the local time, formatted "14:32 (UTC−3)" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML).
+- Weather (#28, proposed, Caio reviews): next to the time, a weather icon and the current temperature in João Pessoa, e.g. "14:32 (UTC−3)  ☁ 28°C". The weather name is read by screen readers only: "Clear sky", "Partly cloudy", "Cloudy", "Fog", "Rain", "Thunderstorm". Discreet credit below the map (Open-Meteo CC BY 4.0): "Weather data by Open-Meteo.com" (the name is a link). If the API fails, none of this shows.
+
+### Activity (#28, proposed, Caio reviews)
+
+- Short block between Education and Contact (after Technologies once that section exists): heading "Activity" and the yearly total as text, "1,234 contributions in the last year" (singular: "1 contribution in the last year"), with the GitHub contribution grid for user caiomayan below. Without a token or with the API down, the whole block is absent.
 
 ### Interface
 

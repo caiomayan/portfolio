@@ -7,6 +7,7 @@ import { useIconHover, type IconComponent, type IconHandle } from "@/lib/icon-ho
 import { prefersReducedMotion } from "@/lib/motion";
 import { Tooltip } from "./tooltip";
 import { ContactMap } from "./contact-map";
+import type { WeatherSlots } from "./weather";
 import { CheckIcon } from "./icons/check";
 import { CopyIcon } from "./icons/copy";
 import { FileTextIcon } from "./icons/file-text";
@@ -77,7 +78,8 @@ function CopyButton({ text, label, doneLabel }: { text: string; label: string; d
   );
 }
 
-export function Contact({ content }: { content: Content }) {
+/** `weather`: clima já renderizado no servidor (#28); `null` quando a API falhou, e o resto segue igual. */
+export function Contact({ content, weather = null }: { content: Content; weather?: WeatherSlots | null }) {
   const c = content.contact;
   return (
     <section className="contact" aria-labelledby="contato">
@@ -101,7 +103,7 @@ export function Contact({ content }: { content: Content }) {
           </li>
         )}
       </ul>
-      <ContactMap map={c.map} />
+      <ContactMap map={c.map} weather={weather} />
     </section>
   );
 }
