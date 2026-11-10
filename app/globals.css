@@ -216,6 +216,23 @@ h1::after { content: "." / ""; }
 .tip-below { bottom: auto; top: 100%; left: auto; right: 0; translate: none; padding: 6px 0 0; }
 .tip-bubble { display: block; padding: 6px 10px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: var(--text-small); font-weight: 500; line-height: 1.2; white-space: nowrap; }
 
+/* Preview do site do Carmine no hover do link (components/hover-link-preview.tsx, #21). Só mouse; o motion move x/y/rotate/opacity. */
+.link-preview {
+  position: fixed;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  width: 192px;
+  height: 112px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.link-preview img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
 /* Experiência e formação: linhas de duas pontas (texto à esquerda, período à direita). */
 :is(#experiencia, #formacao) {
   width: min(var(--max), 100% - 2 * var(--gutter));
