@@ -9,7 +9,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 - Nome: Caio Mayan
 - Título: Engenheiro de Software
 - Frase de abertura: Engenheiro de Software. Construo produtos com IA aplicada, sobre uma base sólida de backend.
-- Local: João Pessoa, PB (linha discreta embaixo da frase de abertura; #18, proposto, o Caio revisa)
+- Lugar (#29, no lugar da linha "João Pessoa, PB"): mapa de pontos compacto (recorte das Américas e do Atlântico, com o pino em João Pessoa), decorativo, e ao lado, em texto, "João Pessoa, Brasil", a hora local, no formato "14:32 (UTC−3)" (24 h, fuso America/Fortaleza, atualizada a cada minuto; a hora não vem no HTML do servidor), e o clima (abaixo). Fica embaixo da frase de abertura, na primeira tela.
 - Foto: `assets/foto-original.jpg`
 
 ## Carmine
@@ -62,9 +62,9 @@ Seção entre Formação e Contato, só ícones (o nome é o tooltip e o nome ac
 - LinkedIn: https://www.linkedin.com/in/caiomayan/
 - GitHub: https://github.com/caiomayan
 - Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en). Só ícone no site (#18): o rótulo "Currículo (PDF)" vira tooltip e nome acessível, assim como "LinkedIn" e "GitHub". O e-mail continua escrito.
-- Mapa (#24): faixa de mapa-múndi decorativa com um pino em João Pessoa. Texto ao lado: "João Pessoa, Brasil" e a hora local, no formato "14:32 (UTC−3)" (24 h, fuso America/Fortaleza, atualizada a cada minuto; a hora não vem no HTML do servidor).
-- Clima (#28, proposto, o Caio revisa): ao lado da hora, ícone do tempo e temperatura atual de João Pessoa, por exemplo "14:32 (UTC−3)  ☁ 28°C". O nome do tempo só é lido por leitor de tela: "Céu limpo", "Parcialmente nublado", "Nublado", "Neblina", "Chuva", "Tempestade". Crédito discreto embaixo do mapa (licença CC BY 4.0 do Open-Meteo): "Dados do clima por Open-Meteo.com" (o nome é um link). Se a API falha, nada disso aparece.
-- Idiomas (#27), grupo pequeno embaixo da cidade e da hora: rótulo "Idiomas" e duas linhas, nome à esquerda e nível à direita: Português — nativo; Inglês — fluente · C2, EF SET.
+- Mapa e hora (#24): a partir da #29 estão na primeira tela (ver Apresentação); o Contato não tem mais mapa.
+- Clima (#28, proposto, o Caio revisa; na primeira tela desde a #29): ao lado da hora, ícone do tempo e temperatura atual de João Pessoa, por exemplo "14:32 (UTC−3)  ☁ 28°C". O nome do tempo só é lido por leitor de tela: "Céu limpo", "Parcialmente nublado", "Nublado", "Neblina", "Chuva", "Tempestade". Crédito discreto embaixo da cidade e da hora (licença CC BY 4.0 do Open-Meteo): "Dados do clima por Open-Meteo.com" (o nome é um link). Se a API falha, nada disso aparece.
+- Idiomas (#27), grupo pequeno no Contato, embaixo dos ícones: rótulo "Idiomas" e duas linhas, nome à esquerda e nível à direita: Português — nativo; Inglês — fluente · C2, EF SET.
 
 ## Atividade (#28, proposto, o Caio revisa)
 
@@ -72,7 +72,7 @@ Seção entre Formação e Contato, só ícones (o nome é o tooltip e o nome ac
 
 ## Interface
 
-- Troca de língua (#24): só a bandeira do país da língua de destino (EUA na página em português, Brasil na página em inglês). Nome acessível e `lang`: a própria língua ("English" / "Português"). Tooltip: o nome do país, "Estados Unidos" (na página em português; em inglês a bandeira é a do Brasil e o tooltip é "Brazil").
+- Troca de língua (#24, #29): as duas bandeiras lado a lado, sempre na mesma ordem (Brasil, EUA). A da língua atual fica em destaque (cor cheia e uma marca sutil), com `aria-current="page"`, e não é link; a outra fica apagada e é o link pra rota equivalente. Nome acessível e `lang` do link: a língua de destino ("English" na página em português, "Português" na página em inglês); a atual tem o nome da própria língua só pra leitor de tela. Tooltip de cada bandeira: o nome do país, em português "Brasil" e "Estados Unidos"; em inglês "Brazil" e "United States".
 - Botão de copiar e-mail: "Copiar e-mail" → "Copiado".
 - Botão de tema (nome acessível; proposto pelo build, o Caio revisa): "Tema escuro" (pt). Em inglês: "Dark theme" (seção English).
 - Título da aba (proposto, o Caio revisa): "Caio Mayan — Engenheiro de Software".
@@ -86,7 +86,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 - Name: Caio Mayan
 - Title: Software Engineer
 - Opening line: Software Engineer. I build products on applied AI, on a solid backend foundation.
-- Location: João Pessoa, Brazil (#18, proposed, Caio reviews)
+- Place (#29, replaces the "João Pessoa, Brazil" line): compact dot map (crop of the Americas and the Atlantic, with a pin on João Pessoa), decorative, and next to it, as text, "João Pessoa, Brazil", the local time, formatted "14:32 (UTC−3)" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML), and the weather (below). Sits under the opening line, on the first screen.
 - Photo alt: "Portrait of Caio Mayan"
 
 ### Carmine
@@ -138,9 +138,9 @@ Section between Education and Contact, icons only (the name is the tooltip and t
 - Heading: Contact
 - Email: mail@caiomayan.com (with copy button)
 - Resume (PDF): icon only (#18); "Resume (PDF)" is the tooltip and accessible name, file `caio-mayan-resume.pdf`. Email stays as text.
-- Map (#24): decorative world-map strip with a pin on João Pessoa. Text next to it: "João Pessoa, Brazil" and the local time, formatted "14:32 (UTC−3)" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML).
-- Weather (#28, proposed, Caio reviews): next to the time, a weather icon and the current temperature in João Pessoa, e.g. "14:32 (UTC−3)  ☁ 28°C". The weather name is read by screen readers only: "Clear sky", "Partly cloudy", "Cloudy", "Fog", "Rain", "Thunderstorm". Discreet credit below the map (Open-Meteo CC BY 4.0): "Weather data by Open-Meteo.com" (the name is a link). If the API fails, none of this shows.
-- Languages (#27), small group under the city and time: label "Languages" and two lines, name left and level right: Portuguese — native; English — fluent · C2, EF SET.
+- Map and time (#24): since #29 they are on the first screen (see Presentation); Contact no longer has a map.
+- Weather (#28, proposed, Caio reviews; on the first screen since #29): next to the time, a weather icon and the current temperature in João Pessoa, e.g. "14:32 (UTC−3)  ☁ 28°C". The weather name is read by screen readers only: "Clear sky", "Partly cloudy", "Cloudy", "Fog", "Rain", "Thunderstorm". Discreet credit below the city and time (Open-Meteo CC BY 4.0): "Weather data by Open-Meteo.com" (the name is a link). If the API fails, none of this shows.
+- Languages (#27), small group in Contact, under the icons: label "Languages" and two lines, name left and level right: Portuguese — native; English — fluent · C2, EF SET.
 
 ### Activity (#28, proposed, Caio reviews)
 
@@ -148,7 +148,7 @@ Section between Education and Contact, icons only (the name is the tooltip and t
 
 ### Interface
 
-- Language switch (#24): flag only (US on the Portuguese page, Brazil on the English one). Accessible name and `lang`: the language ("English" / "Português"). Tooltip: the country name, "Brazil" (on the English page; on the Portuguese page the flag is the US one and the tooltip is "Estados Unidos").
+- Language switch (#24, #29): both flags side by side, always in the same order (Brazil, US). The current language’s flag is highlighted (full color and a subtle mark), with `aria-current="page"`, and is not a link; the other is dimmed and is the link to the equivalent route. The link’s accessible name and `lang`: the target language ("English" on the Portuguese page, "Português" on the English page); the current one carries its own language name for screen readers only. Tooltip on each flag: the country name, in Portuguese "Brasil" and "Estados Unidos"; in English "Brazil" and "United States".
 - Copy email button: "Copy email" → "Copied".
 - Theme button (accessible name): "Dark theme".
 - Tab title: "Caio Mayan — Software Engineer".
