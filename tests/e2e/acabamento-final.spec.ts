@@ -35,8 +35,8 @@ for (const path of ["/", "/en"]) {
       expect(await page.locator("#carmine .stack img.color").evaluate((el) => getComputedStyle(el).filter)).toContain("brightness(0)");
     });
 
-    test("mapa da primeira tela: maior no desktop (216 px), compacto no celular", async ({ browser }) => {
-      for (const [w, h, min, max] of [[1440, 900, 210, 220], [390, 844, 100, 144]] as const) {
+    test("mapa da primeira tela: 144 px no desktop e compacto no celular, com os pontos do mesmo tamanho de antes (#34)", async ({ browser }) => {
+      for (const [w, h, min, max] of [[1440, 900, 140, 148], [390, 844, 66, 96]] as const) {
         const ctx = await browser.newContext({ viewport: { width: w, height: h } });
         const p = await ctx.newPage();
         await p.goto(path);

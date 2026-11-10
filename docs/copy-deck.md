@@ -9,12 +9,14 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 - Nome: Caio Mayan
 - Título: Engenheiro de Software
 - Frase de abertura: Engenheiro de Software. Construo produtos com IA aplicada, sobre uma base sólida de backend.
-- Lugar (#29, no lugar da linha "João Pessoa, PB"): mapa de pontos compacto (recorte das Américas e do Atlântico, com o pino em João Pessoa), decorativo, e ao lado, em texto, "João Pessoa, Brasil", a hora local, no formato "14:32 (UTC−3)" (24 h, fuso America/Fortaleza, atualizada a cada minuto; a hora não vem no HTML do servidor), e o clima (abaixo). Fica embaixo da frase de abertura, na primeira tela.
+- Lugar (#29, no lugar da linha "João Pessoa, PB"): mapa de pontos compacto (recorte das Américas até logo depois do Brasil, com o pino em João Pessoa), decorativo, e ao lado, em texto, "João Pessoa, Brasil", a hora local, no formato "14:32 (UTC−3)" (24 h, fuso America/Fortaleza, atualizada a cada minuto; a hora não vem no HTML do servidor), e o clima (abaixo). Fica embaixo da frase de abertura, na primeira tela.
+- Link para o Contato (#34): "Contato ↓", texto simples embaixo do lugar, leva à seção Contato.
 - Foto: `assets/foto-original.jpg`
 
 ## Carmine
 
 - Nome: Carmine
+- Ordem na tela (#34): o que é, como é feito (os dois em tom principal), situação, stack e links. Os textos abaixo não mudaram, só a ordem.
 - O que é: SaaS para jogadores e times competitivos de Counter-Strike 2.
 - Situação: em desenvolvimento, lançamento previsto para 2027.
 - Como é feito: desenvolvido com agentes de IA que abrem issues e pull requests e mantêm as specs e o backlog em dia, com homologação separada da produção.
@@ -98,13 +100,15 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 - Name: Caio Mayan
 - Title: Software Engineer
 - Opening line: Software Engineer. I build applied AI products on a solid backend foundation.
-- Place (#29, replaces the "João Pessoa, Brazil" line): compact dot map (crop of the Americas and the Atlantic, with a pin on João Pessoa), decorative, and next to it, as text, "João Pessoa, Brazil", the local time, formatted "14:32 (UTC−3)" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML), and the weather (below). Sits under the opening line, on the first screen.
+- Place (#29, replaces the "João Pessoa, Brazil" line): compact dot map (crop of the Americas up to just past Brazil, with a pin on João Pessoa), decorative, and next to it, as text, "João Pessoa, Brazil", the local time, formatted "14:32 (UTC−3)" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML), and the weather (below). Sits under the opening line, on the first screen.
+- Link to Contact (#34): "Contact ↓", plain text under the place, leads to the Contact section.
 - Photo alt: "Portrait of Caio Mayan"
 
 ### Carmine
 
 - Name: Carmine
 - Section title (#29): the name "Carmine", in the same large heading as the other sections (logo before the name), and below it, discreet, "Personal project". Then status, what it is, how it is built, stack and links.
+- Order on screen (#34): what it is, how it is built (both in the main tone), status, stack and links. The texts below did not change, only the order.
 - What it is: SaaS for competitive Counter-Strike 2 players and teams.
 - Status: In development, launch expected in 2027
 - How it is built: Built with AI agents that open issues and pull requests and keep the specs and the backlog up to date, with a staging environment separate from production.

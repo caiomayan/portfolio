@@ -7,8 +7,8 @@ const rotas = [
   { path: "/en", atual: "US", paisAtual: "United States", outra: "BR", pais: "Brazil", destino: "/", lang: "pt", linguaAtual: "English", cidade: "João Pessoa, Brazil" },
 ] as const;
 
-// Recorte do mapa na primeira tela (lib/map-crop.ts): longitude -100 a 20, latitude 48 a -42.
-const recorte = { lonMin: -100, lonMax: 20, latTop: 48, latBottom: -42 };
+// Recorte do mapa na primeira tela (lib/map-crop.ts): longitude -100 a -20 (#34), latitude 48 a -42.
+const recorte = { lonMin: -100, lonMax: -20, latTop: 48, latBottom: -42 };
 
 for (const r of rotas) {
   const t = rotasTexto[r.path];

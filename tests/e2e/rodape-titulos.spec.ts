@@ -7,7 +7,7 @@ const rotas = [
 ] as const;
 
 // Parte opaca do recorte, em fração (iguais a --fade-x, --fade-right e --fade-y em app/globals.css): tem que conter o pino com folga pro pulso.
-const fade = { esquerda: 0.14, direita: 0.34, vertical: 0.16 };
+const fade = { esquerda: 0.21, direita: 0.1, vertical: 0.16 };
 
 for (const r of rotas) {
   test.describe(`revisão de frontend em ${r.path}`, () => {
@@ -19,8 +19,8 @@ for (const r of rotas) {
         return { img: cs.maskImage || cs.webkitMaskImage, comp: cs.maskComposite || cs.webkitMaskComposite };
       });
       expect(m.img.match(/linear-gradient/g)).toHaveLength(4);
-      // O fade de cada borda (o navegador pode reescrever "to left" como ângulo, então confere as larguras): 14 %, 34 % (direita) e 16 % (cima e baixo).
-      for (const pct of ["14%", "34%", "16%"]) expect(m.img).toContain(pct);
+      // O fade de cada borda (o navegador pode reescrever "to left" como ângulo, então confere as larguras): 21 % (esquerda), 10 % (direita, só há oceano) e 16 % (cima e baixo).
+      for (const pct of ["21%", "10%", "16%"]) expect(m.img).toContain(pct);
       expect(m.comp).toMatch(/intersect|source-in/);
       const box = (await mapa.boundingBox())!;
       const pin = (await page.locator(".place-pin").boundingBox())!;

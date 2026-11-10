@@ -17,9 +17,9 @@ export function CarmineSection({ content }: { content: Content["carmine"] }) {
         <p className="carmine-note">{content.note}</p>
       </div>
       <div className="carmine-body">
-        <p className="status" data-reveal-part><span className="status-dot" aria-hidden="true" />{content.status}</p>
         <p data-reveal-part>{content.what}</p>
-        <p className="soft" data-reveal-part>{content.how}</p>
+        <p data-reveal-part>{content.how}</p>
+        <p className="status" data-reveal-part><span className="status-dot" aria-hidden="true" />{content.status}</p>
 
         <IconRow list={content.stack} data-reveal-part />
 

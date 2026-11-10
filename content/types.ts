@@ -30,6 +30,8 @@ export type Content = {
     lead: string;
     /** Lugar embaixo da frase de abertura (#29): cidade ao lado do mapa compacto e fuso da hora local (a hora em si vem do relógio). */
     place: { city: string; offset: string };
+    /** Link de texto embaixo do lugar (#34), leva a `#contato`; a seta ↓ é ornamento e não faz parte do nome. */
+    toContact: string;
     photoAlt: string;
   };
   contact: {

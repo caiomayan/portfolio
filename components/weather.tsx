@@ -25,6 +25,7 @@ export function weatherSlots(weather: Weather | null, w: Content["contact"]["wea
   return {
     now: (
       <span className="place-weather">
+        <span className="place-sep" aria-hidden="true">·</span>
         <Icon className="weather-icon" size={16} strokeWidth={1.75} aria-hidden="true" focusable="false" />
         <span className="sr-only">{w.labels[weather.kind]}, </span>
         {`${weather.temperature}°C`}
