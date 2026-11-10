@@ -33,20 +33,21 @@ async function abrir(page: Page, path: string, tema: (typeof temas)[number]) {
 
 for (const r of rotas) {
   test.describe(`ajustes da revisão 2 em ${r.path}`, () => {
-    test("o link de texto leva a #contato, em --soft, embaixo do lugar", async ({ page }) => {
+    test("o link de texto leva a #contato, em --soft, à direita do lugar na faixa de baixo (#36)", async ({ page }) => {
       await page.goto(r.path);
       const link = page.locator(".hero").getByRole("link", { name: r.contato, exact: true });
       await expect(link).toHaveAttribute("href", "#contato");
       await expect(link).toContainText("↓");
-      // Posição de layout (offsetTop), não boundingBox: o lugar entra com `rise` (translateY) e, no CI lento, ainda estaria em movimento.
+      // Posição de layout (offset), não boundingBox: o lugar entra com `rise` (translateY) e, no CI lento, ainda estaria em movimento.
       const m = await page.evaluate(() => {
+        const strip = document.querySelector<HTMLElement>(".hero-strip")!;
         const place = document.querySelector<HTMLElement>(".place")!;
         const a = document.querySelector<HTMLElement>(".hero .to-contact")!;
-        const parent = place.offsetParent;
-        return { placeBottom: place.offsetTop + place.offsetHeight, linkTop: a.offsetTop, mesmoPai: a.offsetParent === parent };
+        return { mesmaFaixa: a.parentElement === strip && place.parentElement === strip, placeRight: place.offsetLeft + place.offsetWidth, linkLeft: a.offsetLeft, linkRight: a.offsetLeft + a.offsetWidth, stripW: strip.clientWidth };
       });
-      expect(m.mesmoPai).toBe(true);
-      expect(m.linkTop).toBeGreaterThanOrEqual(m.placeBottom); // a caixa do link (com o padding) começa depois do lugar: sem sobreposição
+      expect(m.mesmaFaixa).toBe(true);
+      expect(m.linkLeft).toBeGreaterThanOrEqual(m.placeRight); // o link fica depois do lugar, na mesma linha: sem sobreposição
+      expect(m.stripW - m.linkRight).toBeLessThanOrEqual(1); // e encostado na borda direita da faixa
       // Texto simples: sem ícone, sem fundo, sem borda.
       expect(await link.locator("svg, img").count()).toBe(0);
       await expect(link).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
@@ -125,30 +126,39 @@ for (const r of rotas) {
       await ctx.close();
     });
 
-    test("o separador da hora e do clima nunca abre uma linha: quando o clima quebra, o separador fica fora do bloco", async ({ browser }) => {
+    test("o separador nunca abre uma linha: quando um item da linha do lugar quebra, o separador fica fora do bloco", async ({ browser }) => {
       for (const width of [320, 360, 390]) {
         const ctx = await browser.newContext({ viewport: { width, height: 700 } });
         const page = await ctx.newPage();
         await page.goto(r.path);
         // Texto maior (como o zoom de 200 %) força a quebra em qualquer largura.
         for (const px of [14, 28]) {
-          await page.addStyleTag({ content: `.place-now{font-size:${px}px}` });
+          await page.addStyleTag({ content: `.place-line{font-size:${px}px}` });
           const m = await page.evaluate(() => {
-            const now = document.querySelector(".place-now")!.getBoundingClientRect();
-            const t = document.querySelector(".place-time")!.getBoundingClientRect();
-            const w = document.querySelector(".place-weather")!.getBoundingClientRect();
-            const s = document.querySelector(".place-sep")!.getBoundingClientRect();
-            return { quebrou: w.top > t.top + t.height / 2, noInicio: s.right <= now.left + 0.5, depoisDaHora: s.left >= t.right - 0.5 };
+            const box = (s: string) => document.querySelector(s)!.getBoundingClientRect();
+            const line = box(".place-line");
+            const itens = [
+              { item: box(".place-city"), sep: null, antes: null },
+              { item: box(".place-clock"), sep: box(".place-clock .place-sep"), antes: box(".place-city") },
+              { item: box(".place-weather"), sep: box(".place-weather .place-sep"), antes: box(".place-clock") },
+            ];
+            return itens.slice(1).map(({ item, sep, antes }) => ({
+              quebrou: item.top > antes!.top + antes!.height / 2,
+              noInicio: sep!.right <= line.left + 0.5,
+              depoisDoAnterior: sep!.left >= antes!.right - 0.5,
+            }));
           });
-          if (m.quebrou) expect(m.noInicio, `${width}px, fonte ${px}`).toBe(true);
-          else expect(m.depoisDaHora, `${width}px, fonte ${px}`).toBe(true);
+          for (const x of m) {
+            if (x.quebrou) expect(x.noInicio, `${width}px, fonte ${px}`).toBe(true);
+            else expect(x.depoisDoAnterior, `${width}px, fonte ${px}`).toBe(true);
+          }
         }
         await ctx.close();
       }
     });
 
     test("o mapa termina depois do Brasil (sem a África), com os pontos do mesmo tamanho e o texto perto do pino", async ({ browser }) => {
-      for (const [w, esperado] of [[1440, 144], [375, 75]] as const) {
+      for (const [w, esperado] of [[1440, 85], [375, 64]] as const) {
         const ctx = await browser.newContext({ viewport: { width: w, height: 800 } });
         const page = await ctx.newPage();
         await page.goto(r.path);
@@ -156,7 +166,7 @@ for (const r of rotas) {
           const vb = document.querySelector(".place-art svg")!.getAttribute("viewBox")!.split(" ").map(Number);
           const art = document.querySelector(".place-art")!.getBoundingClientRect();
           const pin = document.querySelector(".place-pin")!.getBoundingClientRect();
-          const txt = document.querySelector(".place-text")!.getBoundingClientRect();
+          const txt = document.querySelector(".place-line")!.getBoundingClientRect();
           return { vbW: vb[2], vbH: vb[3], w: art.width, h: art.height, pinX: pin.x + pin.width / 2, pinDir: pin.right, artX: art.x, artDir: art.right, txtX: txt.x };
         });
         // O recorte tem 90° de altura; a largura em graus sai da proporção do viewBox. Começa em −100°, então termina em −100 + largura.
@@ -165,9 +175,8 @@ for (const r of rotas) {
         expect(lonMax).toBeGreaterThan(-34.88); // e depois de João Pessoa
         // A caixa acompanha o recorte (sem vão vazio): mesma proporção do viewBox.
         expect(m.w / m.h).toBeCloseTo(m.vbW / m.vbH, 1);
-        expect(Math.abs(m.w - esperado), `${w}px`).toBeLessThanOrEqual(w === 1440 ? 2 : 14);
-        // Tamanho dos pontos igual ao de antes: no desktop 1,8 px por grau (era 216 px para 120°).
-        if (w === 1440) expect(m.w / (lonMax + 100)).toBeCloseTo(1.8, 1);
+        // #36: a altura é a da faixa (96 px no desktop, 72 no celular) e a largura sai do recorte.
+        expect(Math.abs(m.w - esperado), `${w}px`).toBeLessThanOrEqual(2);
         // O pino fica dentro da caixa e o texto começa perto dele (antes do #34 eram ~123 px; agora bem menos).
         expect(m.pinDir).toBeLessThanOrEqual(m.artDir);
         expect(m.txtX - m.pinX, `${w}px: pino até o texto`).toBeLessThan(w === 1440 ? 70 : 50);

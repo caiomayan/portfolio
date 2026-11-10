@@ -25,18 +25,24 @@ export function SiteHeader({ content }: { content: Content }) {
 export function Hero({ content, weather = null }: { content: Content; weather?: WeatherSlots | null }) {
   return (
     <section className="hero" aria-labelledby="hero-title">
-      <figure className="who">
-        <Image
-          className="photo"
-          src={foto}
-          alt={content.hero.photoAlt}
-          sizes="(min-width: 900px) 360px, 160px"
-          preload
-        />
-      </figure>
-      <div className="intro">
-        <h1 id="hero-title">{content.hero.title}</h1>
-        <p className="lead">{content.hero.lead}</p>
+      {/* Meio (#36): foto e título lado a lado, centrados entre o topo e a faixa de baixo. */}
+      <div className="hero-main">
+        <figure className="who">
+          <Image
+            className="photo"
+            src={foto}
+            alt={content.hero.photoAlt}
+            sizes="(min-width: 900px) 360px, 160px"
+            preload
+          />
+        </figure>
+        <div className="intro">
+          <h1 id="hero-title">{content.hero.title}</h1>
+          <p className="lead">{content.hero.lead}</p>
+        </div>
+      </div>
+      {/* Faixa de baixo (#36): presa à base da primeira tela; lugar à esquerda, Contato à direita. */}
+      <div className="hero-strip">
         <Place place={content.hero.place} weather={weather} />
         <a className="to-contact" href="#contato">
           {content.hero.toContact}

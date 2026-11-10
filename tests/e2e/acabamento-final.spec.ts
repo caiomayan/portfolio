@@ -35,14 +35,15 @@ for (const path of ["/", "/en"]) {
       expect(await page.locator("#carmine .stack img.color").evaluate((el) => getComputedStyle(el).filter)).toContain("brightness(0)");
     });
 
-    test("mapa da primeira tela: 144 px no desktop e compacto no celular, com os pontos do mesmo tamanho de antes (#34)", async ({ browser }) => {
-      for (const [w, h, min, max] of [[1440, 900, 140, 148], [390, 844, 66, 96]] as const) {
+    test("mapa da primeira tela: tem a altura da faixa de baixo (96 px no desktop, 72 no celular) e a largura vem do recorte (#36)", async ({ browser }) => {
+      for (const [w, h, altura] of [[1440, 900, 96], [390, 844, 72]] as const) {
         const ctx = await browser.newContext({ viewport: { width: w, height: h } });
         const p = await ctx.newPage();
         await p.goto(path);
         const box = (await p.locator(".place-art").boundingBox())!;
-        expect(box.width, `${w}px`).toBeGreaterThanOrEqual(min);
-        expect(box.width, `${w}px`).toBeLessThanOrEqual(max);
+        expect(Math.abs(box.height - altura), `${w}px: altura`).toBeLessThanOrEqual(1);
+        const [vbW, vbH] = await p.locator(".place-art svg").evaluate((el) => el.getAttribute("viewBox")!.split(" ").slice(2).map(Number));
+        expect(box.width / box.height, `${w}px: proporção do recorte`).toBeCloseTo(vbW / vbH, 1);
         await ctx.close();
       }
     });

@@ -3,8 +3,9 @@
 /* Clima: renderizado no servidor, ao lado da hora (que entra no cliente). */
 /* Hora e clima na mesma linha, juntos, alinhados pela linha de base: "07:02 (UTC−3) · ☁ 28°C". O separador é ornamento (sem texto alternativo). */
 /* O separador (#34) mora no espaço à esquerda do clima (position absolute, right: 100%), e o contêiner corta o que passa da borda: se o clima quebrar pra linha de baixo, o separador cai fora e a linha nunca começa com "·". */
-.place-now { display: flex; flex-wrap: wrap; align-items: baseline; white-space: nowrap; overflow-x: clip; }
-.place-now .place-time { margin-inline-end: 16px; }
+/* #36: a linha do lugar é uma só (cidade · hora · clima); cada item pendura o próprio separador à esquerda, e o contêiner corta o que passa da borda. */
+.place-line { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 16px; white-space: nowrap; overflow-x: clip; }
+.place-clock { position: relative; }
 .place-weather { position: relative; display: inline-flex; align-items: baseline; gap: 6px; color: var(--soft); font-variant-numeric: tabular-nums; }
 .place-sep { position: absolute; right: 100%; width: 16px; text-align: center; }
 .weather-icon { flex: none; align-self: center; color: var(--soft); }
