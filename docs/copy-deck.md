@@ -57,10 +57,11 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 - LinkedIn: https://www.linkedin.com/in/caiomayan/
 - GitHub: https://github.com/caiomayan
 - Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en). Só ícone no site (#18): o rótulo "Currículo (PDF)" vira tooltip e nome acessível, assim como "LinkedIn" e "GitHub". O e-mail continua escrito.
+- Mapa (#24): faixa de mapa-múndi decorativa com um pino em João Pessoa. Texto ao lado: "João Pessoa, Brasil" e a hora local, no formato "14:32 (UTC−3)" (24 h, fuso America/Fortaleza, atualizada a cada minuto; a hora não vem no HTML do servidor).
 
 ## Interface
 
-- Troca de língua: "English" na página em português, "Português" na página em inglês.
+- Troca de língua (#24): só a bandeira do país da língua de destino (EUA na página em português, Brasil na página em inglês). Nome acessível e `lang`: a própria língua ("English" / "Português"). Tooltip: o nome do país, "Estados Unidos" (na página em português; em inglês a bandeira é a do Brasil e o tooltip é "Brazil").
 - Botão de copiar e-mail: "Copiar e-mail" → "Copiado".
 - Botão de tema (nome acessível; proposto pelo build, o Caio revisa): "Tema escuro" (pt). Em inglês: "Dark theme" (seção English).
 - Título da aba (proposto, o Caio revisa): "Caio Mayan — Engenheiro de Software".
@@ -121,10 +122,11 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 - Heading: Contact
 - Email: mail@caiomayan.com (with copy button)
 - Resume (PDF): icon only (#18); "Resume (PDF)" is the tooltip and accessible name, file `caio-mayan-resume.pdf`. Email stays as text.
+- Map (#24): decorative world-map strip with a pin on João Pessoa. Text next to it: "João Pessoa, Brazil" and the local time, formatted "14:32 (UTC−3)" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML).
 
 ### Interface
 
-- Language switch: "Português".
+- Language switch (#24): flag only (US on the Portuguese page, Brazil on the English one). Accessible name and `lang`: the language ("English" / "Português"). Tooltip: the country name, "Brazil" (on the English page; on the Portuguese page the flag is the US one and the tooltip is "Estados Unidos").
 - Copy email button: "Copy email" → "Copied".
 - Theme button (accessible name): "Dark theme".
 - Tab title: "Caio Mayan — Software Engineer".

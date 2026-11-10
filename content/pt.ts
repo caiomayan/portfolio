@@ -19,6 +19,7 @@ export const pt: Content = {
     linkedin: { label: "LinkedIn", href: "https://www.linkedin.com/in/caiomayan/", external: true },
     github: { label: "GitHub", href: "https://github.com/caiomayan", external: true },
     resume: { label: "Currículo (PDF)", href: "/caio-mayan-curriculo.pdf" },
+    map: { place: "João Pessoa, Brasil", offset: "UTC−3" },
   },
   experience: {
     heading: "Experiência",
@@ -61,7 +62,7 @@ export const pt: Content = {
       { title: "Inglês fluente", icon: "languages", period: "C2, EF SET" },
     ],
   },
-  ui: { themeToggle: "Tema escuro", otherLang: { label: "English", href: locales.en.path, lang: "en" } },
+  ui: { themeToggle: "Tema escuro", otherLang: { label: "English", href: locales.en.path, lang: "en", flag: "US", country: "Estados Unidos" } },
   carmine: {
     heading: "Carmine",
     note: "Projeto pessoal",

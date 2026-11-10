@@ -6,6 +6,7 @@ import type { ContactLink } from "@/content/types";
 import { useIconHover, type IconComponent, type IconHandle } from "@/lib/icon-hover";
 import { prefersReducedMotion } from "@/lib/motion";
 import { Tooltip } from "./tooltip";
+import { ContactMap } from "./contact-map";
 import { CheckIcon } from "./icons/check";
 import { CopyIcon } from "./icons/copy";
 import { FileTextIcon } from "./icons/file-text";
@@ -100,6 +101,7 @@ export function Contact({ content }: { content: Content }) {
           </li>
         )}
       </ul>
+      <ContactMap map={c.map} />
     </section>
   );
 }

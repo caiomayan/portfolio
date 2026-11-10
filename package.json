@@ -12,10 +12,12 @@
     "test:terms": "node --test scripts/check-forbidden-terms.test.mjs",
     "check:terms": "node scripts/check-forbidden-terms.mjs",
     "prepare": "node scripts/install-hooks.mjs",
-    "signature": "node scripts/generate-signature.mjs"
+    "signature": "node scripts/generate-signature.mjs",
+    "world-map": "node scripts/generate-world-map.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
+    "country-flag-icons": "^1.6.20",
     "lenis": "^1.3.27",
     "lucide-react": "^1.70.0",
     "motion": "^14.11.1",
