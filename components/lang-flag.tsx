@@ -1,7 +1,7 @@
 import { BR, US } from "country-flag-icons/react/3x2";
 import type { Content } from "@/content";
 
-// Bandeiras do country-flag-icons (MIT, SVG): só as duas usadas entram no bundle. Decorativa: o nome do link é a língua.
+// Bandeiras do country-flag-icons (MIT, © 2020 @catamphetamine; SVG): só as duas usadas entram no bundle. Decorativa: o nome do link é a língua.
 const flags = { US, BR };
 
 export function LangFlag({ code }: { code: Content["ui"]["otherLang"]["flag"] }) {
