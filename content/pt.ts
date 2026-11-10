@@ -44,7 +44,7 @@ export const pt: Content = {
           "Edtech especializada em Moodle (implantação, plugins, integrações e hospedagem) para instituições de ensino e empresas.",
         lines: [
           "Plugin de correção de redações com IA para Moodle, em produção numa instituição de ensino superior. A IA propõe a avaliação e o tutor revisa e aprova.",
-          "Plataformas de ensino próprias em Next.js, React e TypeScript, e customizações e integrações para Moodle em PHP.",
+          "Plataformas de ensino próprias em Next.js e TypeScript, e customizações e integrações para Moodle em PHP.",
           "Desenvolvo com agentes de código (Claude Code com skills), a partir de specs, testes e quality gates.",
         ],
         stack: {
@@ -102,16 +102,31 @@ export const pt: Content = {
   activity: { heading: "Atividade", total: { one: "{n} contribuição no último ano", other: "{n} contribuições no último ano" } },
   foundations: {
     heading: "Fundamentos",
-    items: [
-      "Estruturas de dados",
-      "Bancos de dados e modelagem",
-      "Análise e projeto de sistemas",
-      "Segurança da informação",
-      "Backend e APIs",
-      "Testes e qualidade: TDD, quality gates",
-      "Desenvolvimento guiado por especificação (SDD)",
-      "IA aplicada: integração de LLMs e orquestração de agentes",
-      "Infraestrutura e entrega: containers, cloud e CI/CD",
+    groups: [
+      {
+        label: "Base",
+        items: [
+          { name: "Estruturas de dados" },
+          { name: "Bancos de dados e modelagem" },
+          { name: "Análise e projeto de sistemas" },
+        ],
+      },
+      {
+        label: "Engenharia",
+        items: [
+          { name: "Backend e APIs" },
+          { name: "Segurança da informação" },
+          { name: "Infraestrutura e entrega", detail: "containers, cloud, CI/CD" },
+        ],
+      },
+      {
+        label: "Método e IA",
+        items: [
+          { name: "Testes e qualidade", detail: "TDD, quality gates" },
+          { name: "Desenvolvimento guiado por especificação", detail: "SDD" },
+          { name: "IA aplicada", detail: "LLMs e agentes" },
+        ],
+      },
     ],
   },
   footer: { copyright: "© {year} Caio Mayan" },

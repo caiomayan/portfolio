@@ -90,8 +90,8 @@ export type Content = {
   };
   /** Gráfico de contribuições do GitHub (#28). `total`: `one` com 1, `other` nos demais; `{n}` vira o número. */
   activity: { heading: string; total: { one: string; other: string } };
-  /** Fundamentos: o que ele sabe de base, só texto, na ordem do copy deck. */
-  foundations: { heading: string; items: string[] };
+  /** Fundamentos: o que ele sabe de base, só texto, em três grupos, na ordem do copy deck. */
+  foundations: { heading: string; groups: { label: string; items: { name: string; detail?: string }[] }[] };
   /** Rodapé mínimo (#29): `{year}` vira o ano corrente, calculado ao gerar a página. O crédito do clima fica em `contact.weather.credit`. */
   footer: { copyright: string };
   carmine: {

@@ -37,7 +37,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 - Sobre a empresa: edtech especializada em Moodle (implantação, plugins, integrações e hospedagem) para instituições de ensino e empresas. Site: https://www.techeduconnect.com.br/
 - Linhas:
   - Plugin de correção de redações com IA para Moodle, em produção numa instituição de ensino superior. A IA propõe a avaliação e o tutor revisa e aprova.
-  - Plataformas de ensino próprias em Next.js, React e TypeScript, e customizações e integrações para Moodle em PHP.
+  - Plataformas de ensino próprias em Next.js e TypeScript, e customizações e integrações para Moodle em PHP.
   - Desenvolvo com agentes de código (Claude Code com skills), a partir de specs, testes e quality gates.
   - Linha de ícones "Feito com" (#29), depois das linhas, só ícones (nome no tooltip): Next.js, TypeScript, PHP, Moodle.
 
@@ -56,17 +56,11 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 
 ## Fundamentos (#29)
 
-Seção entre Formação e Contato, só texto, sem ícones: o que ele sabe de base (as ferramentas mudam; elas aparecem só onde têm contexto, em Formação, Experiência e Carmine). Título: "Fundamentos". Itens, nesta ordem (pedido do Caio; o texto de cada item é dele):
+Seção entre Formação e Contato, só texto, sem ícones: o que ele sabe de base (as ferramentas mudam; elas aparecem só onde têm contexto, em Formação, Experiência e Carmine). Título: "Fundamentos". Três grupos lado a lado no desktop e empilhados no celular; cada grupo tem um rótulo pequeno e 3 itens, cada item com o nome e, quando houver, o detalhe numa linha menor embaixo (pedido do Caio; o texto de cada item é dele):
 
-- Estruturas de dados
-- Bancos de dados e modelagem
-- Análise e projeto de sistemas
-- Segurança da informação
-- Backend e APIs
-- Testes e qualidade: TDD, quality gates
-- Desenvolvimento guiado por especificação (SDD)
-- IA aplicada: integração de LLMs e orquestração de agentes
-- Infraestrutura e entrega: containers, cloud e CI/CD
+- **Base:** Estruturas de dados · Bancos de dados e modelagem · Análise e projeto de sistemas
+- **Engenharia:** Backend e APIs · Segurança da informação · Infraestrutura e entrega (detalhe: containers, cloud, CI/CD)
+- **Método e IA:** Testes e qualidade (detalhe: TDD, quality gates) · Desenvolvimento guiado por especificação (detalhe: SDD) · IA aplicada (detalhe: LLMs e agentes)
 
 ## Contato
 
@@ -132,7 +126,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 - About the company: Edtech specialized in Moodle (deployment, plugins, integrations and hosting) for educational institutions and companies.
 - Lines:
   - AI-powered essay grading plugin for Moodle, in production at a higher-education institution. The AI proposes the assessment and the tutor reviews and approves it.
-  - In-house learning platforms in Next.js, React and TypeScript, plus Moodle customizations and integrations in PHP.
+  - In-house learning platforms in Next.js and TypeScript, plus Moodle customizations and integrations in PHP.
   - I develop with coding agents (Claude Code with skills), working from specs, tests and quality gates.
   - Icon row "Built with" (#29), after the lines, icons only (name in the tooltip): Next.js, TypeScript, PHP, Moodle.
 
@@ -151,17 +145,11 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 
 ### Foundations (#29)
 
-Section between Education and Contact, text only, no icons: what he knows at the base (tools change; they appear only where they have context: Education, Experience and Carmine). Title: "Foundations". Items, in this order:
+Section between Education and Contact, text only, no icons: what he knows at the base (tools change; they appear only where they have context: Education, Experience and Carmine). Title: "Foundations". Three groups side by side on desktop and stacked on mobile; each group has a small label and 3 items, each with the name and, when there is one, a detail on a smaller line below. The first group's label is "Core" (not "Foundations", to avoid repeating the title):
 
-- Data structures
-- Databases and data modeling
-- Systems analysis and design
-- Information security
-- Backend and APIs
-- Testing and quality: TDD, quality gates
-- Spec-driven development (SDD)
-- Applied AI: LLM integration and agent orchestration
-- Infrastructure and delivery: containers, cloud and CI/CD
+- **Core:** Data structures · Databases and data modeling · Systems analysis and design
+- **Engineering:** Backend and APIs · Information security · Infrastructure and delivery (detail: containers, cloud, CI/CD)
+- **Method and AI:** Testing and quality (detail: TDD, quality gates) · Spec-driven development (detail: SDD) · Applied AI (detail: LLMs and agents)
 
 ### Contact
 

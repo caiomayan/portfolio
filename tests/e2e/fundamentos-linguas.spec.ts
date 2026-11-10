@@ -5,11 +5,24 @@ import { rotasTexto, type RotaTexto } from "./textos";
 for (const path of ["/", "/en"] as RotaTexto[]) {
   const t = rotasTexto[path];
   test.describe(`fundamentos, ícones e línguas em ${path}`, () => {
-    test("seção Fundamentos entre Formação e Contato: só texto, na ordem do copy deck, sem ícones", async ({ page }) => {
+    test("seção Fundamentos entre Formação e Contato: três grupos de texto, na ordem do copy deck, sem ícones", async ({ page }) => {
       await page.goto(path);
       const sec = page.locator("#fundamentos");
       await expect(sec.getByRole("heading", { level: 2, name: t.fundamentos.heading })).toBeVisible();
-      await expect(sec.locator("li")).toHaveText([...t.fundamentos.itens]);
+      const grupos = sec.locator(".foundation-group");
+      await expect(grupos).toHaveCount(3);
+      for (const [i, g] of t.fundamentos.grupos.entries()) {
+        const grupo = grupos.nth(i);
+        await expect(grupo.getByRole("heading", { level: 3 })).toHaveText(g.rotulo);
+        await expect(grupo.locator("li")).toHaveCount(3);
+        for (const [j, [nome, detalhe]] of g.itens.entries()) {
+          const li = grupo.locator("li").nth(j);
+          await expect(li.locator(".foundation-name")).toHaveText(nome);
+          if (detalhe) await expect(li.locator(".foundation-detail")).toHaveText(detalhe);
+          else await expect(li.locator(".foundation-detail")).toHaveCount(0);
+        }
+      }
+      expect(t.fundamentos.grupos[0].rotulo).not.toBe(t.fundamentos.heading);
       await expect(sec.locator("img, svg")).toHaveCount(0);
       await expect(page.locator("#tecnologias")).toHaveCount(0);
       const tops = await Promise.all([page.locator("#formacao"), sec, page.locator(".contact")].map(async (l) => (await l.boundingBox())!.y));

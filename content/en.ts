@@ -44,7 +44,7 @@ export const en: Content = {
           "Edtech specialized in Moodle (deployment, plugins, integrations and hosting) for educational institutions and companies.",
         lines: [
           "AI-powered essay grading plugin for Moodle, in production at a higher-education institution. The AI proposes the assessment and the tutor reviews and approves it.",
-          "In-house learning platforms in Next.js, React and TypeScript, plus Moodle customizations and integrations in PHP.",
+          "In-house learning platforms in Next.js and TypeScript, plus Moodle customizations and integrations in PHP.",
           "I develop with coding agents (Claude Code with skills), working from specs, tests and quality gates.",
         ],
         stack: {
@@ -102,16 +102,31 @@ export const en: Content = {
   activity: { heading: "Activity", total: { one: "{n} contribution in the last year", other: "{n} contributions in the last year" } },
   foundations: {
     heading: "Foundations",
-    items: [
-      "Data structures",
-      "Databases and data modeling",
-      "Systems analysis and design",
-      "Information security",
-      "Backend and APIs",
-      "Testing and quality: TDD, quality gates",
-      "Spec-driven development (SDD)",
-      "Applied AI: LLM integration and agent orchestration",
-      "Infrastructure and delivery: containers, cloud and CI/CD",
+    groups: [
+      {
+        label: "Core",
+        items: [
+          { name: "Data structures" },
+          { name: "Databases and data modeling" },
+          { name: "Systems analysis and design" },
+        ],
+      },
+      {
+        label: "Engineering",
+        items: [
+          { name: "Backend and APIs" },
+          { name: "Information security" },
+          { name: "Infrastructure and delivery", detail: "containers, cloud, CI/CD" },
+        ],
+      },
+      {
+        label: "Method and AI",
+        items: [
+          { name: "Testing and quality", detail: "TDD, quality gates" },
+          { name: "Spec-driven development", detail: "SDD" },
+          { name: "Applied AI", detail: "LLMs and agents" },
+        ],
+      },
     ],
   },
   footer: { copyright: "© {year} Caio Mayan" },

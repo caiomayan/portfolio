@@ -310,11 +310,15 @@ h1::after { content: "." / ""; }
   :is(#experiencia, #formacao) .entry-child-period { grid-column: 2; white-space: normal; }
 }
 
-/* Fundamentos: linhas de texto, sem ícone. Duas colunas lidas de cima pra baixo (5 + 4) no desktop, uma no celular. */
-#fundamentos .foundations { list-style: none; margin: 0; padding: 0; display: grid; column-gap: 48px; font-size: var(--text-body); line-height: 1.5; }
-#fundamentos .foundations li { padding-block: 6px; max-width: var(--measure); }
-@media (min-width: 700px) {
-  #fundamentos .foundations { grid-auto-flow: column; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(5, auto); }
+/* Fundamentos: três grupos (rótulo em --soft, 3 itens, detalhe em --soft embaixo), sem cartões, bordas nem marcadores. Três colunas no desktop, empilhados no celular. */
+#fundamentos .foundations { display: grid; gap: 32px 48px; font-size: var(--text-body); line-height: 1.5; }
+#fundamentos .foundation-group h3 { margin: 0 0 8px; font-size: var(--text-small); font-weight: 500; color: var(--soft); }
+#fundamentos .foundation-group ul { list-style: none; margin: 0; padding: 0; }
+#fundamentos .foundation-group li { padding-block: 6px; display: flex; flex-direction: column; }
+#fundamentos .foundation-name { color: var(--ink); }
+#fundamentos .foundation-detail { font-size: var(--text-small); color: var(--soft); }
+@media (min-width: 900px) {
+  #fundamentos .foundations { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 /* Idiomas: rótulo em --soft e linhas de duas pontas (bandeira e nome em --ink, nível em --soft), como as outras linhas do site. */
 .contact-languages { margin-top: 40px; max-width: 400px; font-size: var(--text-small); }

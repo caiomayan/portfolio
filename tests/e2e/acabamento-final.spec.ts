@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-// Issue #29, acabamento: medida de leitura, stack do Carmine mais leve, mapa maior no desktop e Fundamentos em duas colunas (#29).
+// Issue #29, acabamento: medida de leitura, stack do Carmine mais leve, mapa maior no desktop e Fundamentos em três grupos (#29).
 for (const path of ["/", "/en"]) {
   test.describe(`acabamento em ${path}`, () => {
     test("textos de apoio ficam numa medida de leitura (até 75 caracteres), o período segue à direita", async ({ browser }) => {
@@ -59,27 +59,26 @@ for (const path of ["/", "/en"]) {
       }
     });
 
-    test("Fundamentos: duas colunas no desktop (5 + 4, lidas de cima pra baixo), uma no celular", async ({ browser }) => {
-      const colunas = async (w: number) => {
+    test("Fundamentos: três grupos lado a lado no desktop, empilhados no celular", async ({ browser }) => {
+      const grupos = async (w: number) => {
         const ctx = await browser.newContext({ viewport: { width: w, height: 800 } });
         const p = await ctx.newPage();
         await p.goto(path);
-        const lefts = await p.locator("#fundamentos .foundations li").evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().left)));
-        const tops = await p.locator("#fundamentos .foundations li").evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().top)));
+        const boxes = await p.locator("#fundamentos .foundation-group").evaluateAll((els) => els.map((e) => { const r = e.getBoundingClientRect(); return { left: Math.round(r.left), top: Math.round(r.top) }; }));
         const scroll = await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
         await ctx.close();
-        return { lefts, tops, scroll };
+        return { boxes, scroll };
       };
       for (const w of [375, 390]) {
-        const r = await colunas(w);
-        expect(new Set(r.lefts).size, `${w}px`).toBe(1);
+        const r = await grupos(w);
+        expect(new Set(r.boxes.map((b) => b.left)).size, `${w}px`).toBe(1);
+        expect(new Set(r.boxes.map((b) => b.top)).size, `${w}px`).toBe(3);
         expect(r.scroll).toBe(true);
       }
-      const d = await colunas(1440);
-      expect(new Set(d.lefts).size).toBe(2);
-      expect(d.lefts.slice(0, 5).every((l) => l === d.lefts[0])).toBe(true);
-      expect(d.lefts.slice(5).every((l) => l === d.lefts[5])).toBe(true);
-      expect(d.tops[5]).toBe(d.tops[0]); // a segunda coluna começa na altura da primeira
+      const d = await grupos(1440);
+      expect(d.boxes).toHaveLength(3);
+      expect(new Set(d.boxes.map((b) => b.left)).size).toBe(3);
+      expect(new Set(d.boxes.map((b) => b.top)).size).toBe(1);
       expect(d.scroll).toBe(true);
     });
   });
