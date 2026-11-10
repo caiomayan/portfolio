@@ -4,6 +4,8 @@ import carmineLogo from "@/assets/logos/carmine.svg";
 import { FallbackIcon } from "./fallback-icon";
 import { stackLogos } from "@/lib/stack-logos";
 import { Tooltip } from "./tooltip";
+import { HoverLinkPreview } from "./hover-link-preview";
+import carminePreview from "@/assets/carmine-preview.webp";
 
 export function CarmineSection({ content }: { content: Content["carmine"] }) {
   return (
@@ -40,7 +42,7 @@ export function CarmineSection({ content }: { content: Content["carmine"] }) {
         </ul>
 
         <div className="links" data-reveal-part>
-          <a className="link-external" href={content.links.site.href}>{content.links.site.label}</a>
+          <HoverLinkPreview className="link-external" href={content.links.site.href} image={carminePreview}>{content.links.site.label}</HoverLinkPreview>
           <a className="link-external" href={content.links.repo.href}>{content.links.repo.label}</a>
         </div>
       </div>
