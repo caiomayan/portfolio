@@ -26,8 +26,8 @@ for (const r of rotas) {
       const pin = (await page.locator(".place-pin").boundingBox())!;
       const x = (pin.x + pin.width / 2 - box.x) / box.width;
       const y = (pin.y + pin.height / 2 - box.y) / box.height;
-      const folgaX = 10 / box.width; // raio do pulso, ~8,4 px
-      const folgaY = 10 / box.height;
+      const folgaX = (pin.width / 2 + 1) / box.width; // o ponto do pino (o anel do pulso pode entrar no fade)
+      const folgaY = (pin.height / 2 + 1) / box.height;
       expect(x - folgaX).toBeGreaterThan(fade.esquerda);
       expect(x + folgaX).toBeLessThan(1 - fade.direita);
       expect(y - folgaY).toBeGreaterThan(fade.vertical);

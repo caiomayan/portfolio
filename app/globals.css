@@ -16,6 +16,7 @@
   --font: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
   --gutter: 24px;
   --max: 1120px;
+  --photo: clamp(256px, 30vw, 360px); /* foto da primeira tela no desktop (#36) */
 
   /* Seção Carmine (ver DESIGN.md) */
   --carmine-column: 640px;
@@ -107,18 +108,30 @@ a.lang-option:focus-visible, .theme-toggle:focus-visible, .copy-button:focus-vis
 :root[data-theme="dark"] .theme-toggle .icon-sun { opacity: 1; transform: none; }
 :root[data-theme="dark"] .theme-toggle .icon-moon { opacity: 0; transform: rotate(60deg) scale(0.6); }
 
-/* Primeira tela */
+/* Primeira tela (#36, moldura): meio (foto e título lado a lado) e, logo abaixo, a faixa de lugar e Contato (sem linha); o conjunto fica centrado na altura da primeira tela. */
 .hero {
   width: min(var(--max), 100% - 2 * var(--gutter));
   margin-inline: auto;
   min-height: calc(100svh - 84px);
-  display: grid;
-  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
-  column-gap: clamp(48px, 6vw, 88px);
-  align-items: center;
-  padding-block: 24px 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* meio + faixa formam um conjunto só, centrado na altura da primeira tela; as sobras se dividem em cima e embaixo */
 }
-.who { margin: 0; }
+.hero-main {
+  display: grid;
+  grid-template-columns: minmax(0, var(--photo)) minmax(0, 1fr);
+  column-gap: clamp(40px, 6vw, 88px);
+}
+/* O bloco de texto tem a altura da foto: o topo das maiúsculas do título bate com o topo da foto e a linha de base da última linha da frase com a base dela. */
+.intro { display: flex; flex-direction: column; justify-content: space-between; }
+.hero-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-top: 56px; /* vão do fim da foto e da frase até a faixa: parecido com o do título até a frase */
+}
+.who { margin: 0; align-self: start; }
 .photo {
   width: 100%;
   aspect-ratio: 1;
@@ -136,11 +149,12 @@ h1 {
   /* Com texto grande no celular "Engenheiro" não cabe: hifeniza (pela língua da página) e, em último caso, quebra. */
   hyphens: auto;
   overflow-wrap: anywhere;
+  margin-top: -0.127em; /* o topo da caixa fica acima das maiúsculas (meia-entrelinha + ascendente − altura das maiúsculas do Inter): sobe isso pro topo das letras bater com o topo da foto */
 }
 /* Ponto final do título: ornamento tipográfico (ver DESIGN.md), fora da árvore de acessibilidade. */
 h1::after { content: "." / ""; }
 .lead {
-  margin: clamp(20px, 3vw, 36px) 0 0;
+  margin: clamp(20px, 3vw, 36px) 0 -0.286em; /* embaixo: sobe a caixa até a linha de base da última linha, que bate com a base da foto */
   max-width: 24ch;
   font-size: var(--text-lead);
   font-weight: 400;
@@ -149,10 +163,10 @@ h1::after { content: "." / ""; }
   color: var(--soft);
   text-wrap: pretty;
 }
-/* Lugar (#29): mapa compacto à esquerda e, ao lado, cidade, hora e clima. Pontos em tons do tema, pino em João Pessoa. Decorativo; largura fixa por clamp, então não rola de lado. */
-.place { display: flex; align-items: center; gap: 16px; margin: clamp(16px, 2.4vw, 28px) 0 0; font-size: var(--text-small); color: var(--soft); }
+/* Lugar (#29, #36): mapa compacto à esquerda (a altura da faixa) e, ao lado, uma linha só com cidade, hora e clima. Pontos em tons do tema, pino em João Pessoa. Decorativo. */
+.place { display: flex; align-items: center; gap: 16px; min-width: 0; margin: 0; font-size: var(--text-small); color: var(--soft); }
 .place-art {
-  position: relative; flex: none; width: clamp(69px, 20vw, 96px); /* #34: recorte de 80° (era 120°), então 2/3 da largura de antes: os pontos têm o mesmo tamanho */
+  position: relative; flex: none; height: 96px; /* a largura vem do aspect-ratio do recorte (inline) */
   /* Sem corte seco: as quatro bordas somem num fade (a da direita é curta: ali só há oceano). A máscara age na transparência, então vale nos dois temas.
      O pino (x ≈ 81%, y ≈ 61% do recorte) fica sempre na parte opaca: um teste confere. */
   --fade-x: 21%; --fade-right: 10%; --fade-y: 16%;
@@ -163,8 +177,6 @@ h1::after { content: "." / ""; }
 }
 @media (min-width: 900px) {
   .place { gap: 24px; }
-  .place-art { width: 144px; }
-  .place-pin { width: 9px; height: 9px; }
 }
 .place-art svg { display: block; width: 100%; height: 100%; overflow: hidden; }
 .place-art path { fill: none; stroke: var(--soft); stroke-opacity: 0.5; stroke-width: 3.2; stroke-linecap: round; }
@@ -173,14 +185,13 @@ h1::after { content: "." / ""; }
 .place-dot { background: var(--ink); }
 /* Em repouso (movimento reduzido ou sem animação) o anel fica parado; o pulso é só de quem aceita movimento. */
 .place-pulse { background: var(--ink); opacity: 0.18; transform: scale(2.4); }
-.place-text { min-width: 0; flex: 1 1 0; display: flex; flex-direction: column; gap: 2px; }
-.place-text p { margin: 0; }
+.place-line { margin: 0; min-width: 0; flex: 1 1 0; }
 .place-city { color: var(--ink); font-weight: 500; }
 /* Espaço reservado pra hora (14:32 (UTC−3)): ela entra no cliente sem mover nada. */
 .place-time { display: inline-block; min-width: 11.5ch; min-height: 1.2em; color: var(--soft); font-variant-numeric: tabular-nums; }
 
 /* Link "Contato ↓" (#34): texto simples em --soft, no padrão dos outros links (sublinhado fino que ganha --ink no hover e no foco). Alvo de 44 px de altura por padding, sem mudar a medida da linha. */
-.to-contact { display: inline-block; margin: 4px 0 -12px; padding-block: 12px; color: var(--soft); font-size: var(--text-small); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+.to-contact { flex: none; display: inline-block; padding-block: 12px; margin-block: -12px; color: var(--soft); font-size: var(--text-small); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); white-space: nowrap; }
 .to-contact:is(:hover, :focus-visible) { color: var(--ink); text-decoration-color: var(--ink); }
 
 /* Contato */
@@ -347,15 +358,22 @@ h1::after { content: "." / ""; }
 .notfound h1 { font-size: var(--text-display); }
 .notfound h1::after { content: none; }
 
-/* Telas muito estreitas (320 px): o mapa encolhe pra hora e o clima caberem na mesma linha. */
+/* Telas muito estreitas (320 px): o mapa encolhe pra linha do lugar caber melhor. */
 @media (max-width: 359px) {
   .place { gap: 12px; }
-  .place-art { width: 53px; }
+  .place-art { height: 64px; }
 }
 @media (max-width: 899px) {
-  .hero { grid-template-columns: minmax(0, 1fr); row-gap: 40px; align-content: start; min-height: 0; padding-block: 8px 64px; }
+  .hero { min-height: 0; justify-content: flex-start; padding-block: 8px 24px; }
+  .hero-main { grid-template-columns: minmax(0, 1fr); row-gap: 40px; align-content: start; }
+  .intro { display: block; }
   .photo { width: clamp(104px, 32vw, 144px); border-radius: 20px; flex: none; }
+  .hero-strip { flex-wrap: wrap; margin-top: 40px; }
+  .place { flex: 1 1 100%; }
+  .place-art { height: 72px; }
+  .to-contact { margin-inline-start: auto; }
 }
+@media (max-width: 359px) { .place-art { height: 64px; } }
 
 /* Movimento: só transform e opacity; tudo desligado com prefers-reduced-motion. */
 @media (prefers-reduced-motion: no-preference) {

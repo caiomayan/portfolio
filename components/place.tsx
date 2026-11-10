@@ -27,14 +27,16 @@ export function Place({ place, weather }: { place: Content["hero"]["place"]; wea
           <span className="place-dot" />
         </span>
       </div>
-      <div className="place-text">
-        <p className="place-city">{place.city}</p>
-        {/* Hora e clima andam juntos: se faltar espaço, o par inteiro desce, nunca só o clima. */}
-        <p className="place-now">
+      {/* Uma linha só (#36): cidade · hora · clima. Os separadores "·" são ornamento e ficam pendurados à esquerda de cada item,
+          então, se a linha quebrar, nenhuma linha começa com "·". */}
+      <p className="place-line">
+        <span className="place-city">{place.city}</span>
+        <span className="place-clock">
+          <span className="place-sep" aria-hidden="true">·</span>
           <LocalTime offset={place.offset} />
-          {weather?.now}
-        </p>
-      </div>
+        </span>
+        {weather?.now}
+      </p>
     </div>
   );
 }
