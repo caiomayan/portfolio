@@ -9,8 +9,10 @@ import type { IconList } from "@/content/types";
 type Props = {
   title: string;
   titleUrl?: string;
-  /** Segunda linha: cargo ou descrição curta. */
+  /** Segunda linha: descrição curta (em Formação). */
   sub?: string;
+  /** Cargo (#34): segunda linha com estilo próprio, em --ink e peso 500, não o da descrição. */
+  role?: string;
   about?: string;
   lines?: string[];
   /** Subitens subordinados à linha (ex.: a monitoria dentro do curso): recuados, menores, com o próprio período. */
@@ -24,7 +26,7 @@ type Props = {
 };
 
 /** Linha de duas pontas, igual em Experiência e Formação: texto à esquerda, período à direita. */
-export function EntryRow({ title, titleUrl, sub, about, lines, subitems, stack, period, logo, icon }: Props) {
+export function EntryRow({ title, titleUrl, sub, role, about, lines, subitems, stack, period, logo, icon }: Props) {
   const l = logo ? orgLogos[logo] : null;
   return (
     <li className="entry" data-reveal-part>
@@ -36,6 +38,7 @@ export function EntryRow({ title, titleUrl, sub, about, lines, subitems, stack, 
         )}
         <div>
           <h3>{titleUrl ? <a href={titleUrl}>{title}</a> : title}</h3>
+          {role && <p className="entry-role">{role}</p>}
           {sub && <p className="entry-sub">{sub}</p>}
         </div>
       </div>

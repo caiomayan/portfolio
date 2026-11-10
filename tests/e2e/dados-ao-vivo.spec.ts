@@ -32,7 +32,8 @@ for (const r of rotas) {
       expect(c!.x).toBeGreaterThan(t!.x);
       // Juntos na mesma linha, com um separador discreto: o vão entre o fim da hora e o início do clima é curto (sem o buraco de antes).
       expect(c!.x - (t!.x + t!.width)).toBeLessThan(32);
-      expect(await clima.evaluate((e) => getComputedStyle(e, "::before").content)).toContain("·");
+      await expect(clima.locator(".place-sep")).toHaveText("·"); // separador ornamental (#34), aria-hidden
+      await expect(clima.locator(".place-sep")).toHaveAttribute("aria-hidden", "true");
       // Crédito CC BY 4.0 do Open-Meteo: no rodapé (nunca na primeira tela nem no Contato), depois das línguas.
       await expect(page.locator(".hero .weather-credit, .contact .weather-credit")).toHaveCount(0);
       const credito = page.locator("footer .weather-credit");

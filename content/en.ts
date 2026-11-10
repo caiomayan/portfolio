@@ -9,6 +9,7 @@ export const en: Content = {
     title: "Software Engineer",
     lead: "I build applied AI products on a solid backend foundation.",
     place: { city: "João Pessoa, Brazil", offset: "UTC−3" },
+    toContact: "Contact",
     photoAlt: "Portrait of Caio Mayan",
   },
   contact: {

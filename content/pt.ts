@@ -9,6 +9,7 @@ export const pt: Content = {
     title: "Engenheiro de Software",
     lead: "Construo produtos com IA aplicada, sobre uma base sólida de backend.",
     place: { city: "João Pessoa, Brasil", offset: "UTC−3" },
+    toContact: "Contato",
     photoAlt: "Retrato de Caio Mayan",
   },
   contact: {

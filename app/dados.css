@@ -2,9 +2,11 @@
 
 /* Clima: renderizado no servidor, ao lado da hora (que entra no cliente). */
 /* Hora e clima na mesma linha, juntos, alinhados pela linha de base: "07:02 (UTC−3) · ☁ 28°C". O separador é ornamento (sem texto alternativo). */
-.place-now { display: flex; flex-wrap: wrap; align-items: baseline; white-space: nowrap; }
-.place-weather { display: inline-flex; align-items: baseline; gap: 6px; color: var(--soft); font-variant-numeric: tabular-nums; }
-.place-weather::before { content: "·" / ""; margin-inline: 8px 2px; }
+/* O separador (#34) mora no espaço à esquerda do clima (position absolute, right: 100%), e o contêiner corta o que passa da borda: se o clima quebrar pra linha de baixo, o separador cai fora e a linha nunca começa com "·". */
+.place-now { display: flex; flex-wrap: wrap; align-items: baseline; white-space: nowrap; overflow-x: clip; }
+.place-now .place-time { margin-inline-end: 16px; }
+.place-weather { position: relative; display: inline-flex; align-items: baseline; gap: 6px; color: var(--soft); font-variant-numeric: tabular-nums; }
+.place-sep { position: absolute; right: 100%; width: 16px; text-align: center; }
 .weather-icon { flex: none; align-self: center; color: var(--soft); }
 /* Crédito do Open-Meteo no rodapé (CC BY 4.0). */
 .weather-credit { margin: 0; font-size: var(--text-small); color: var(--soft); }
@@ -21,8 +23,9 @@
 .activity-scroll { direction: rtl; overflow-x: auto; overscroll-behavior-x: contain; padding-block: 4px; border-radius: 6px; }
 .activity-grid { --cell: 11px; --gap: 3px; direction: ltr; display: flex; gap: var(--gap); width: max-content; margin-inline-end: auto; }
 .activity-week { display: grid; grid-template-rows: repeat(7, var(--cell)); gap: var(--gap); }
-.activity-day { width: var(--cell); height: var(--cell); border-radius: 2px; background: var(--surface); }
-.activity-day[data-level="1"] { background: color-mix(in srgb, var(--ink) 22%, var(--bg)); }
-.activity-day[data-level="2"] { background: color-mix(in srgb, var(--ink) 45%, var(--bg)); }
-.activity-day[data-level="3"] { background: color-mix(in srgb, var(--ink) 70%, var(--bg)); }
+/* Rampa (#34): o nível 0 não é mais o --surface (quase igual ao fundo): é --ink a 12 %, então o dia sem atividade se lê como célula e o nível 1 se separa dele. Mesmas porcentagens nos dois temas. */
+.activity-day { width: var(--cell); height: var(--cell); border-radius: 2px; background: color-mix(in srgb, var(--ink) 12%, var(--bg)); }
+.activity-day[data-level="1"] { background: color-mix(in srgb, var(--ink) 34%, var(--bg)); }
+.activity-day[data-level="2"] { background: color-mix(in srgb, var(--ink) 56%, var(--bg)); }
+.activity-day[data-level="3"] { background: color-mix(in srgb, var(--ink) 76%, var(--bg)); }
 .activity-day[data-level="4"] { background: var(--ink); }

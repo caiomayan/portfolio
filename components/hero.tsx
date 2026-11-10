@@ -38,6 +38,10 @@ export function Hero({ content, weather = null }: { content: Content; weather?: 
         <h1 id="hero-title">{content.hero.title}</h1>
         <p className="lead">{content.hero.lead}</p>
         <Place place={content.hero.place} weather={weather} />
+        <a className="to-contact" href="#contato">
+          {content.hero.toContact}
+          <span aria-hidden="true"> ↓</span>
+        </a>
       </div>
     </section>
   );

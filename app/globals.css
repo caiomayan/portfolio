@@ -166,7 +166,8 @@ h1::after { content: "." / ""; }
   .place-art { width: 216px; }
   .place-pin { width: 9px; height: 9px; }
 }
-.place-art svg { display: block; width: 100%; height: 100%; overflow: hidden; }
+/* #34: a ponta oeste da África (Dacar, 17,5° O) cabia no recorte e aparecia como uma mancha na borda direita. O recorte corta em 20° O (66,6 % da largura): o Brasil é a terra mais a leste, então nada é cortado a seco; o pino (54 %) fica de fora. */
+.place-art svg { display: block; width: 100%; height: 100%; overflow: hidden; clip-path: inset(0 33.4% 0 0); }
 .place-art path { fill: none; stroke: var(--soft); stroke-opacity: 0.5; stroke-width: 3.2; stroke-linecap: round; }
 .place-pin { position: absolute; width: 7px; height: 7px; translate: -50% -50%; }
 .place-dot, .place-pulse { position: absolute; inset: 0; border-radius: 50%; }
@@ -178,6 +179,10 @@ h1::after { content: "." / ""; }
 .place-city { color: var(--ink); font-weight: 500; }
 /* Espaço reservado pra hora (14:32 (UTC−3)): ela entra no cliente sem mover nada. */
 .place-time { display: inline-block; min-width: 11.5ch; min-height: 1.2em; color: var(--soft); font-variant-numeric: tabular-nums; }
+
+/* Link "Contato ↓" (#34): texto simples em --soft, no padrão dos outros links (sublinhado fino que ganha --ink no hover e no foco). Alvo de 44 px de altura por padding, sem mudar a medida da linha. */
+.to-contact { display: inline-block; margin: 4px 0 -12px; padding-block: 12px; color: var(--soft); font-size: var(--text-small); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+.to-contact:is(:hover, :focus-visible) { color: var(--ink); text-decoration-color: var(--ink); }
 
 /* Contato */
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
@@ -289,6 +294,8 @@ h1::after { content: "." / ""; }
 :is(#experiencia, #formacao) .entry-sub,
 :is(#experiencia, #formacao) .entry-period { margin: 0; color: var(--soft); font-size: var(--text-small); line-height: 1.5; }
 :is(#experiencia, #formacao) .entry-sub { margin-top: 2px; }
+/* Cargo (#34): --ink e peso 500, no tamanho pequeno da segunda linha; a descrição da empresa segue em --soft. */
+:is(#experiencia, #formacao) .entry-role { margin: 2px 0 0; color: var(--ink); font-size: var(--text-small); font-weight: 500; line-height: 1.5; }
 /* Medida de leitura: o texto de apoio não ocupa a linha toda; o período segue à direita (coluna própria da grade). */
 :is(#experiencia, #formacao) .entry-sub,
 :is(#experiencia, #formacao) .entry-lines li { max-width: var(--measure); }
@@ -391,9 +398,9 @@ h1::after { content: "." / ""; }
 #carmine .carmine-note { margin: 8px 0 0; font-size: var(--text-small); color: var(--soft); }
 #carmine .carmine-body { min-width: 0; max-width: var(--carmine-column); }
 #carmine .carmine-body p { margin: 0 0 1em; max-width: var(--measure); }
-#carmine .soft { color: var(--soft); }
-#carmine .status { display: flex; align-items: center; gap: 10px; font-size: var(--text-small); color: var(--soft); margin: 0 0 20px; }
-#carmine .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); flex: none; }
+#carmine .status { display: flex; align-items: flex-start; gap: 10px; font-size: var(--text-small); line-height: 1.5; color: var(--soft); margin: 0 0 20px; }
+/* #34: o ponto fica no meio da primeira linha, mesmo quando o texto quebra no celular. */
+#carmine .status-dot { width: 8px; height: 8px; margin-top: calc((1lh - 8px) / 2); border-radius: 50%; background: var(--ink); flex: none; }
 /* Linha de ícones discreta (components/icon-row.tsx), a mesma no Carmine, no curso e na TechEduConnect: ícones de 16 px em --soft a 60 %, alvos de 44 px sem espaço entre eles. */
 .icon-row { margin-top: 20px; }
 .icon-row-label { margin: 0 0 4px; font-size: var(--text-small); font-weight: 600; line-height: 1; color: var(--soft); }
