@@ -41,8 +41,11 @@ for (const path of ["/", "/en"]) {
       }
     });
 
-    test("logos de experiência e formação invertem a luminosidade", async ({ page }) => {
-      const logos = page.locator("#experiencia img.entry-logo, #formacao img.entry-logo");
+    test("logos pretos de experiência e formação invertem a luminosidade; o verde do Hospital não", async ({ page }) => {
+      const hospital = page.locator("#experiencia img.entry-logo[data-colored]");
+      await expect(hospital).toHaveCount(1);
+      await expect(hospital).toHaveCSS("filter", "none");
+      const logos = page.locator("#experiencia img.entry-logo:not([data-colored]), #formacao img.entry-logo:not([data-colored])");
       expect(await logos.count()).toBeGreaterThan(0);
       for (const f of await logos.evaluateAll((els) => els.map((el) => getComputedStyle(el).filter))) {
         expect(f).toContain("invert");

@@ -1,6 +1,8 @@
 import { Education } from "@/components/education";
 import { Experience } from "@/components/experience";
+import { Technologies } from "@/components/technologies";
 import { Contact } from "@/components/contact";
+import { ContactLanguages } from "@/components/contact-languages";
 import { CarmineSection } from "@/components/carmine-section";
 import { Hero } from "@/components/hero";
 import { content } from "@/content";
@@ -15,7 +17,10 @@ export default function Page() {
       <CarmineSection content={content.pt.carmine} />
       <Experience content={content.pt} />
       <Education content={content.pt} />
-      <Contact content={content.pt} />
+      <Technologies content={content.pt} />
+      <Contact content={content.pt}>
+        <ContactLanguages languages={content.pt.contact.languages} />
+      </Contact>
     </>
   );
 }

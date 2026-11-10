@@ -47,9 +47,14 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 
 ## Formação
 
-- Tecnologia em Sistemas para Internet, Instituto Federal da Paraíba (IFPB), campus João Pessoa. Out. 2024 – jul. 2027 (previsão).
-- Monitor da disciplina de Segurança de Dados, semestre 2026.2.
-- Inglês fluente (C2, EF SET).
+- Tecnologia em Sistemas para Internet, Instituto Federal da Paraíba (IFPB), campus João Pessoa. Out. 2024 – jul. 2027 (previsão). (#27)
+  - Descrição curta embaixo (#27, proposto, o Caio revisa): "Onde construí e sigo fortalecendo minha base: Java e Spring Boot, bancos de dados, estrutura de dados e segurança da informação."
+  - Subitem (filho do curso): rótulo "Monitoria" + título "Disciplina de Segurança de Dados", período "semestre 2026.2". Sem dizer "atividade do curso".
+- "Inglês fluente" saiu de Formação (#27): as línguas vão pro Contato.
+
+## Tecnologias (#27)
+
+Seção entre Formação e Contato, só ícones (o nome é o tooltip e o nome acessível, como a stack do Carmine). Título: "Tecnologias". Ordem do currículo: Java, Spring Boot, Node.js, TypeScript, Nest.js, Express, PHP, Python · React, Next.js · PostgreSQL, Redis, Valkey, MongoDB · Docker, AWS, Oracle Cloud, Vercel, Cloudflare, Git.
 
 ## Contato
 
@@ -58,6 +63,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 - GitHub: https://github.com/caiomayan
 - Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en). Só ícone no site (#18): o rótulo "Currículo (PDF)" vira tooltip e nome acessível, assim como "LinkedIn" e "GitHub". O e-mail continua escrito.
 - Mapa (#24): faixa de mapa-múndi decorativa com um pino em João Pessoa. Texto ao lado: "João Pessoa, Brasil" e a hora local, no formato "14:32 (UTC−3)" (24 h, fuso America/Fortaleza, atualizada a cada minuto; a hora não vem no HTML do servidor).
+- Idiomas (#27), grupo pequeno embaixo da cidade e da hora: rótulo "Idiomas" e duas linhas, nome à esquerda e nível à direita: Português — nativo; Inglês — fluente · C2, EF SET.
 
 ## Interface
 
@@ -114,8 +120,13 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 ### Education
 
 - Associate Degree in Internet Systems Technology, Federal Institute of Paraíba (IFPB), João Pessoa campus. Oct. 2024 – Jul. 2027 (expected).
-- Teaching Assistant: Data Security course, 2026.2 semester.
-- Fluent English (C2, EF SET).
+  - Short description below (#27, proposed, Caio reviews): "Where I built, and keep strengthening, my foundation: Java and Spring Boot, databases, data structures and information security."
+  - Sub-item (child of the course): label "Teaching assistant" + title "Data Security course", period "2026.2 semester".
+- "Fluent English" left Education (#27): languages moved to Contact.
+
+### Technologies (#27)
+
+Section between Education and Contact, icons only (the name is the tooltip and the accessible name). Title: "Technologies". Same list and order as the Portuguese one; names do not change.
 
 ### Contact
 
@@ -123,6 +134,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 - Email: mail@caiomayan.com (with copy button)
 - Resume (PDF): icon only (#18); "Resume (PDF)" is the tooltip and accessible name, file `caio-mayan-resume.pdf`. Email stays as text.
 - Map (#24): decorative world-map strip with a pin on João Pessoa. Text next to it: "João Pessoa, Brazil" and the local time, formatted "14:32 (UTC−3)" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML).
+- Languages (#27), small group under the city and time: label "Languages" and two lines, name left and level right: Portuguese — native; English — fluent · C2, EF SET.
 
 ### Interface
 
@@ -130,4 +142,4 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 - Copy email button: "Copy email" → "Copied".
 - Theme button (accessible name): "Dark theme".
 - Tab title: "Caio Mayan — Software Engineer".
-- Section headings: "Experience", "Education".
+- Section headings: "Experience", "Education", "Technologies".
