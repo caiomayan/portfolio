@@ -46,8 +46,11 @@ export function ContactMap({ map, weather }: { map: Content["contact"]["map"]; w
       </div>
       <p className="contact-map-caption">
         <span className="contact-map-place">{map.place}</span>
-        <LocalTime offset={map.offset} />
-        {weather?.now}
+        {/* Hora e clima andam juntos: se faltar espaço, o par inteiro desce, nunca só o clima. */}
+        <span className="contact-map-now">
+          <LocalTime offset={map.offset} />
+          {weather?.now}
+        </span>
       </p>
       {weather?.credit}
     </div>

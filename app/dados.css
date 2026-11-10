@@ -1,6 +1,7 @@
 /* Dados ao vivo (#28): clima ao lado da hora, no Contato, e gráfico de contribuições do GitHub. Preto e branco: só tons do tema. */
 
 /* Clima: renderizado no servidor, ao lado da hora (que entra no cliente). */
+.contact-map-now { display: inline-flex; flex-wrap: nowrap; align-items: baseline; gap: 12px; }
 .contact-map-weather { display: inline-flex; align-items: center; gap: 6px; color: var(--soft); font-variant-numeric: tabular-nums; }
 .weather-icon { flex: none; color: var(--soft); }
 .weather-credit { margin: 12px 0 0; font-size: var(--text-small); color: var(--soft); }
