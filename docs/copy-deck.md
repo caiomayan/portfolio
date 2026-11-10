@@ -39,7 +39,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
   - Plugin de correção de redações com IA para Moodle, em produção numa instituição de ensino superior. A IA propõe a avaliação e o tutor revisa e aprova.
   - Plataformas de ensino próprias em Next.js, React e TypeScript, e customizações e integrações para Moodle em PHP.
   - Desenvolvo com agentes de código (Claude Code com skills), a partir de specs, testes e quality gates.
-  - Linha de ícones "Feito com" (#29), depois das linhas, só ícones (nome no tooltip): Next.js, React, TypeScript, PHP, Moodle.
+  - Linha de ícones "Feito com" (#29), depois das linhas, só ícones (nome no tooltip): Next.js, TypeScript, PHP, Moodle.
 
 ### Hospital Napoleão Laureano
 - Cargo: Jovem Aprendiz, setor de Compras
@@ -50,7 +50,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 
 - Tecnologia em Sistemas para Internet, Instituto Federal da Paraíba (IFPB), campus João Pessoa. Out. 2024 – jul. 2027 (previsão). (#27)
   - Descrição curta embaixo (#27, proposto, o Caio revisa): "Onde construí e sigo fortalecendo minha base: Java e Spring Boot, bancos de dados, estrutura de dados e segurança da informação."
-  - Linha de ícones "No curso" (#29), embaixo da descrição, só ícones (nome no tooltip): Java, Spring Boot, Node.js, TypeScript, Python, PostgreSQL, MongoDB, React, Angular, Docker, Git.
+  - Linha de ícones "No curso" (#29), embaixo da descrição, só ícones (nome no tooltip): Java, Spring Boot, Node.js, TypeScript, Python, PostgreSQL, MongoDB, Next.js, Angular, Docker, Git.
   - Subitem (filho do curso): rótulo "Monitoria" + título "Disciplina de Segurança de Dados", período "semestre 2026.2". Sem dizer "atividade do curso".
 - "Inglês fluente" saiu de Formação (#27): as línguas vão pro Contato.
 
@@ -134,7 +134,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
   - AI-powered essay grading plugin for Moodle, in production at a higher-education institution. The AI proposes the assessment and the tutor reviews and approves it.
   - In-house learning platforms in Next.js, React and TypeScript, plus Moodle customizations and integrations in PHP.
   - I develop with coding agents (Claude Code with skills), working from specs, tests and quality gates.
-  - Icon row "Built with" (#29), after the lines, icons only (name in the tooltip): Next.js, React, TypeScript, PHP, Moodle.
+  - Icon row "Built with" (#29), after the lines, icons only (name in the tooltip): Next.js, TypeScript, PHP, Moodle.
 
 #### Hospital Napoleão Laureano
 - Role: Apprentice – Procurement
@@ -145,7 +145,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 
 - Associate Degree in Internet Systems Technology, Federal Institute of Paraíba (IFPB), João Pessoa campus. Oct. 2024 – Jul. 2027 (expected).
   - Short description below (#27, proposed, Caio reviews): "Where I built, and keep strengthening, my foundation: Java and Spring Boot, databases, data structures and information security."
-  - Icon row "In the course" (#29), below the description, icons only (name in the tooltip): Java, Spring Boot, Node.js, TypeScript, Python, PostgreSQL, MongoDB, React, Angular, Docker, Git.
+  - Icon row "In the course" (#29), below the description, icons only (name in the tooltip): Java, Spring Boot, Node.js, TypeScript, Python, PostgreSQL, MongoDB, Next.js, Angular, Docker, Git.
   - Sub-item (child of the course): label "Teaching assistant" + title "Data Security course", period "2026.2 semester".
 - "Fluent English" left Education (#27): languages moved to Contact.
 

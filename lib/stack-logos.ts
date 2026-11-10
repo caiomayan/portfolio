@@ -13,7 +13,6 @@ import oracle from "@/assets/logos/oracle.svg";
 import php from "@/assets/logos/php.svg";
 import postgresql from "@/assets/logos/postgresql.svg";
 import python from "@/assets/logos/python.svg";
-import react from "@/assets/logos/react.svg";
 import springboot from "@/assets/logos/springboot.svg";
 import typescript from "@/assets/logos/typescript.svg";
 import valkey from "@/assets/logos/valkey.svg";
@@ -37,7 +36,6 @@ export const stackLogos = {
   typescript: { src: typescript, colored: false },
   php: { src: php, colored: false },
   python: { src: python, colored: false },
-  react: { src: react, colored: false },
   postgresql: { src: postgresql, colored: false },
   mongodb: { src: mongodb, colored: false },
   docker: { src: docker, colored: false },

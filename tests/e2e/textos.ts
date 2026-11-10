@@ -41,8 +41,8 @@ export const rotasTexto = {
       heading: "Fundamentos",
       itens: ["Estruturas de dados", "Bancos de dados e modelagem", "Análise e projeto de sistemas", "Segurança da informação", "Backend e APIs", "Testes e qualidade: TDD, quality gates", "Desenvolvimento guiado por especificação (SDD)", "IA aplicada: integração de LLMs e orquestração de agentes", "Infraestrutura e entrega: containers, cloud e CI/CD"],
     },
-    noCurso: { rotulo: "No curso", nomes: ["Java", "Spring Boot", "Node.js", "TypeScript", "Python", "PostgreSQL", "MongoDB", "React", "Angular", "Docker", "Git"] },
-    feitoCom: { rotulo: "Feito com", nomes: ["Next.js", "React", "TypeScript", "PHP", "Moodle"] },
+    noCurso: { rotulo: "No curso", nomes: ["Java", "Spring Boot", "Node.js", "TypeScript", "Python", "PostgreSQL", "MongoDB", "Next.js", "Angular", "Docker", "Git"] },
+    feitoCom: { rotulo: "Feito com", nomes: ["Next.js", "TypeScript", "PHP", "Moodle"] },
   },
   "/en": {
     titulo: "Software Engineer",
@@ -85,8 +85,8 @@ export const rotasTexto = {
       heading: "Foundations",
       itens: ["Data structures", "Databases and data modeling", "Systems analysis and design", "Information security", "Backend and APIs", "Testing and quality: TDD, quality gates", "Spec-driven development (SDD)", "Applied AI: LLM integration and agent orchestration", "Infrastructure and delivery: containers, cloud and CI/CD"],
     },
-    noCurso: { rotulo: "In the course", nomes: ["Java", "Spring Boot", "Node.js", "TypeScript", "Python", "PostgreSQL", "MongoDB", "React", "Angular", "Docker", "Git"] },
-    feitoCom: { rotulo: "Built with", nomes: ["Next.js", "React", "TypeScript", "PHP", "Moodle"] },
+    noCurso: { rotulo: "In the course", nomes: ["Java", "Spring Boot", "Node.js", "TypeScript", "Python", "PostgreSQL", "MongoDB", "Next.js", "Angular", "Docker", "Git"] },
+    feitoCom: { rotulo: "Built with", nomes: ["Next.js", "TypeScript", "PHP", "Moodle"] },
   },
 } as const;
 export type RotaTexto = keyof typeof rotasTexto;

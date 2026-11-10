@@ -51,7 +51,6 @@ export const en: Content = {
           label: "Built with",
           items: [
             { name: "Next.js", logo: "nextdotjs" },
-            { name: "React", logo: "react" },
             { name: "TypeScript", logo: "typescript" },
             { name: "PHP", logo: "php" },
             { name: "Moodle", logo: "moodle" },
@@ -90,7 +89,7 @@ export const en: Content = {
             { name: "Python", logo: "python" },
             { name: "PostgreSQL", logo: "postgresql" },
             { name: "MongoDB", logo: "mongodb" },
-            { name: "React", logo: "react" },
+            { name: "Next.js", logo: "nextdotjs" },
             { name: "Angular", logo: "angular" },
             { name: "Docker", logo: "docker" },
             { name: "Git", logo: "git" },
