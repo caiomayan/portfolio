@@ -108,22 +108,19 @@ a.lang-option:focus-visible, .theme-toggle:focus-visible, .copy-button:focus-vis
 :root[data-theme="dark"] .theme-toggle .icon-sun { opacity: 1; transform: none; }
 :root[data-theme="dark"] .theme-toggle .icon-moon { opacity: 0; transform: rotate(60deg) scale(0.6); }
 
-/* Primeira tela (#36, moldura): meio (foto e título lado a lado, centrados) e faixa de baixo presa à base, com uma linha fina em cima. */
+/* Primeira tela (#36, moldura): meio (foto e título lado a lado) e, logo abaixo, a faixa de lugar e Contato (sem linha); o conjunto fica centrado na altura da primeira tela. */
 .hero {
   width: min(var(--max), 100% - 2 * var(--gutter));
   margin-inline: auto;
   min-height: calc(100svh - 84px);
   display: flex;
   flex-direction: column;
-  padding-block: 0 20px;
+  justify-content: center; /* meio + faixa formam um conjunto só, centrado na altura da primeira tela; as sobras se dividem em cima e embaixo */
 }
 .hero-main {
-  flex: 1;
   display: grid;
   grid-template-columns: minmax(0, var(--photo)) minmax(0, 1fr);
   column-gap: clamp(40px, 6vw, 88px);
-  align-content: center;
-  padding-block: 32px;
 }
 /* O bloco de texto tem a altura da foto: o topo das maiúsculas do título bate com o topo da foto e a linha de base da última linha da frase com a base dela. */
 .intro { display: flex; flex-direction: column; justify-content: space-between; }
@@ -132,8 +129,7 @@ a.lang-option:focus-visible, .theme-toggle:focus-visible, .copy-button:focus-vis
   align-items: center;
   justify-content: space-between;
   gap: 8px 24px;
-  padding-top: 16px;
-  border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  margin-top: 56px; /* vão do fim da foto e da frase até a faixa: parecido com o do título até a frase */
 }
 .who { margin: 0; align-self: start; }
 .photo {
@@ -368,11 +364,11 @@ h1::after { content: "." / ""; }
   .place-art { height: 64px; }
 }
 @media (max-width: 899px) {
-  .hero { min-height: 0; padding-block: 8px 24px; }
-  .hero-main { grid-template-columns: minmax(0, 1fr); row-gap: 40px; align-content: start; padding-block: 0 40px; }
+  .hero { min-height: 0; justify-content: flex-start; padding-block: 8px 24px; }
+  .hero-main { grid-template-columns: minmax(0, 1fr); row-gap: 40px; align-content: start; }
   .intro { display: block; }
   .photo { width: clamp(104px, 32vw, 144px); border-radius: 20px; flex: none; }
-  .hero-strip { flex-wrap: wrap; }
+  .hero-strip { flex-wrap: wrap; margin-top: 40px; }
   .place { flex: 1 1 100%; }
   .place-art { height: 72px; }
   .to-contact { margin-inline-start: auto; }

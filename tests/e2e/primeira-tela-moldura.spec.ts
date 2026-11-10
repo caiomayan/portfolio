@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-// Primeira tela em moldura (#36): foto e título alinhados no meio, faixa de lugar e Contato presa à base.
+// Primeira tela em moldura (#36): foto e título alinhados no meio e, logo abaixo, a faixa de lugar e Contato (sem linha em cima); o conjunto fica centrado na primeira tela.
 // Movimento reduzido: a entrada (`rise`, translateY) não desloca as caixas durante a medida.
 const rotas = ["/", "/en"];
 
@@ -37,33 +37,42 @@ async function medir(page: import("@playwright/test").Page) {
 for (const path of rotas) {
   test.describe(`primeira tela em moldura em ${path}`, () => {
     for (const [w, h] of [[1920, 900], [1440, 900]] as const) {
-      test(`${w}×${h}: o topo da foto bate com o topo das maiúsculas do título, a base com o fim da frase, e a faixa está presa à base`, async ({ browser }) => {
+      test(`${w}×${h}: o topo da foto bate com o topo das maiúsculas do título, a base com o fim da frase`, async ({ browser }) => {
         const ctx = await browser.newContext({ viewport: { width: w, height: h }, reducedMotion: "reduce" });
         const page = await ctx.newPage();
         await page.goto(path);
         const m = await medir(page);
         expect(Math.abs(m.fotoTopo - m.topoMaiusculas), "topo").toBeLessThanOrEqual(4);
         expect(Math.abs(m.fotoBase - m.baseFrase), "base").toBeLessThanOrEqual(4);
-        // A faixa fica na borda de baixo da primeira tela (que tem a altura cheia da janela).
+        // A primeira tela continua com a altura cheia da janela.
         expect(Math.abs(m.heroBase - m.janela)).toBeLessThanOrEqual(1);
-        expect(m.heroBase - m.faixaBase).toBeLessThanOrEqual(24);
         expect(m.largura).toBeLessThanOrEqual(m.vw);
         await ctx.close();
       });
     }
 
-    test("a foto e o título ficam lado a lado e o conjunto fica centrado entre o topo e a faixa", async ({ browser }) => {
-      const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
-      const page = await ctx.newPage();
-      await page.goto(path);
-      const m = await page.evaluate(() => {
-        const box = (s: string) => document.querySelector(s)!.getBoundingClientRect();
-        const header = box(".top");
-        return { fotoDir: box(".photo").right, tituloEsq: box("h1").left, acima: box(".photo").top - header.bottom, abaixo: box(".hero-strip").top - box(".photo").bottom };
-      });
-      expect(m.tituloEsq).toBeGreaterThan(m.fotoDir);
-      expect(Math.abs(m.acima - m.abaixo)).toBeLessThanOrEqual(4);
-      await ctx.close();
+    test("foto e título lado a lado; a faixa vem logo abaixo (48–64 px da foto), sem borda, e o conjunto fica centrado na primeira tela", async ({ browser }) => {
+      for (const [w, h] of [[1920, 900], [1440, 900], [1280, 720]] as const) {
+        const ctx = await browser.newContext({ viewport: { width: w, height: h }, reducedMotion: "reduce" });
+        const page = await ctx.newPage();
+        await page.goto(path);
+        const m = await page.evaluate(() => {
+          const box = (s: string) => document.querySelector(s)!.getBoundingClientRect();
+          const faixa = getComputedStyle(document.querySelector(".hero-strip")!);
+          return {
+            fotoDir: box(".photo").right, tituloEsq: box("h1").left,
+            acima: box(".photo").top - box(".top").bottom, abaixo: box(".hero").bottom - box(".hero-strip").bottom,
+            vao: box(".hero-strip").top - box(".photo").bottom,
+            bordas: ["Top", "Right", "Bottom", "Left"].map((l) => faixa.getPropertyValue(`border-${l.toLowerCase()}-width`)),
+          };
+        });
+        expect(m.tituloEsq).toBeGreaterThan(m.fotoDir);
+        expect(m.bordas, `${w}×${h}: sem borda`).toEqual(["0px", "0px", "0px", "0px"]);
+        expect(m.vao, `${w}×${h}: vão meio→faixa`).toBeGreaterThanOrEqual(48);
+        expect(m.vao, `${w}×${h}: vão meio→faixa`).toBeLessThanOrEqual(64);
+        expect(Math.abs(m.acima - m.abaixo), `${w}×${h}: centrado`).toBeLessThanOrEqual(4);
+        await ctx.close();
+      }
     });
 
     test("janelas baixas (1440×760 e 1280×720): nada se sobrepõe e a faixa continua embaixo", async ({ browser }) => {
