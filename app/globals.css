@@ -7,7 +7,7 @@
   --soft: #6e6e73;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 40px -12px rgb(0 0 0 / 0.18);
 
-  /* Escala de tipo: no máximo 5 tamanhos. */
+  /* Escala de tipo: no máximo 4 tamanhos. */
   --text-small: 0.875rem;
   --text-body: 1.0625rem;
   --text-lead: clamp(1.375rem, 1.05rem + 1.4vw, 2rem);
@@ -133,6 +133,9 @@ h1 {
   line-height: 0.98;
   letter-spacing: -0.045em;
   text-wrap: balance;
+  /* Com texto grande no celular "Engenheiro" não cabe: hifeniza (pela língua da página) e, em último caso, quebra. */
+  hyphens: auto;
+  overflow-wrap: anywhere;
 }
 /* Ponto final do título: ornamento tipográfico (ver DESIGN.md), fora da árvore de acessibilidade. */
 h1::after { content: "." / ""; }
@@ -170,7 +173,7 @@ h1::after { content: "." / ""; }
 .place-dot { background: var(--ink); }
 /* Em repouso (movimento reduzido ou sem animação) o anel fica parado; o pulso é só de quem aceita movimento. */
 .place-pulse { background: var(--ink); opacity: 0.18; transform: scale(2.4); }
-.place-text { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.place-text { min-width: 0; flex: 1 1 0; display: flex; flex-direction: column; gap: 2px; }
 .place-text p { margin: 0; }
 .place-city { color: var(--ink); font-weight: 500; }
 /* Espaço reservado pra hora (14:32 (UTC−3)): ela entra no cliente sem mover nada. */
@@ -207,6 +210,7 @@ h1::after { content: "." / ""; }
   color: var(--soft);
   cursor: pointer;
 }
+.copy-note { font-size: var(--text-small); color: var(--soft); }
 .copy-button > div { display: grid; line-height: 0; }
 .contact-link .icon svg, .copy-button svg, .theme-toggle svg { width: var(--icon-ui); height: var(--icon-ui); }
 .fallback-icon { width: 100%; height: 100%; }
@@ -271,14 +275,15 @@ h1::after { content: "." / ""; }
   padding-block: 18px;
 }
 :is(#experiencia, #formacao) .entry-main { display: flex; gap: var(--entry-gap); min-width: 0; }
+:is(#experiencia, #formacao) .entry-body { min-width: 0; padding-left: calc(var(--entry-logo) + var(--entry-gap)); }
 :is(#experiencia, #formacao) .entry-logo,
 :is(#experiencia, #formacao) .entry-logo-gap { flex: none; width: var(--entry-logo); display: grid; place-items: center; align-self: flex-start; height: 28px; color: var(--soft); line-height: 0; }
 :is(#experiencia, #formacao) .entry-logo { height: auto; align-self: flex-start; }
 /* Logos coloridos sem fundo: no escuro, inverte a luminosidade e devolve o matiz (preto vira branco, cores seguem as mesmas). */
 :root[data-theme="dark"] :is(#experiencia, #formacao) .entry-logo:not([data-colored]) { filter: invert(1) hue-rotate(180deg); }
-:is(#experiencia, #formacao) h3 { margin: 0; font-size: var(--text-body); font-weight: 600; letter-spacing: -0.01em; line-height: 1.4; }
+:is(#experiencia, #formacao) h3 { overflow-wrap: anywhere; margin: 0; font-size: var(--text-body); font-weight: 600; letter-spacing: -0.01em; line-height: 1.4; }
 :is(#experiencia, #formacao) h3 a { position: relative; color: inherit; text-decoration: none; }
-/* Sublinhado em acento: desenhado com transform (composição), não com background-size. */
+/* Sublinhado dos títulos com link: desenhado com transform (composição), não com background-size. */
 :is(#experiencia, #formacao) h3 a::after { content: "" / ""; position: absolute; inset: auto 0 0; height: 1px; background: var(--ink); transform: scaleX(0); transform-origin: left; }
 :is(#experiencia, #formacao) h3 a:is(:hover, :focus-visible)::after { transform: scaleX(1); }
 :is(#experiencia, #formacao) .entry-sub,
@@ -293,8 +298,11 @@ h1::after { content: "." / ""; }
 
 @media (max-width: 899px) {
   :is(#experiencia, #formacao) .entry { grid-template-columns: 1fr; row-gap: 4px; }
-  :is(#experiencia, #formacao) .entry-children { order: 3; }
+    /* Ordem no celular: título e cargo, data, depois descrição, linhas e ícones, e por fim os subitens. */
+  :is(#experiencia, #formacao) .entry-main { order: 1; }
   :is(#experiencia, #formacao) .entry-period { white-space: normal; padding: 0 0 0 calc(var(--entry-logo) + var(--entry-gap)); order: 2; }
+  :is(#experiencia, #formacao) .entry-body { order: 3; }
+  :is(#experiencia, #formacao) .entry-children { order: 4; }
 }
 
 /* Subitem subordinado (monitoria dentro do curso): mesma borda esquerda do texto do curso (a coluna do logo guarda só o ícone de hierarquia),
@@ -339,7 +347,7 @@ h1::after { content: "." / ""; }
   .place-art { width: 80px; }
 }
 @media (max-width: 899px) {
-  .hero { grid-template-columns: 1fr; row-gap: 40px; align-content: start; min-height: 0; padding-block: 8px 64px; }
+  .hero { grid-template-columns: minmax(0, 1fr); row-gap: 40px; align-content: start; min-height: 0; padding-block: 8px 64px; }
   .photo { width: clamp(104px, 32vw, 144px); border-radius: 20px; flex: none; }
 }
 
@@ -386,11 +394,17 @@ h1::after { content: "." / ""; }
 #carmine .soft { color: var(--soft); }
 #carmine .status { display: flex; align-items: center; gap: 10px; font-size: var(--text-small); color: var(--soft); margin: 0 0 20px; }
 #carmine .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); flex: none; }
-#carmine h3.label { font-size: var(--text-small); font-weight: 600; line-height: 1; color: var(--soft); margin: 32px 0 4px; }
 /* Linha de ícones discreta (components/icon-row.tsx), a mesma no Carmine, no curso e na TechEduConnect: ícones de 16 px em --soft a 60 %, alvos de 44 px sem espaço entre eles. */
 .icon-row { margin-top: 20px; }
 .icon-row-label { margin: 0 0 4px; font-size: var(--text-small); font-weight: 600; line-height: 1; color: var(--soft); }
 .icon-row .stack { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; }
+/* Celular: colunas fixas, pra nunca sobrar um ícone sozinho na última linha (11 ícones: 4/4/3 até 374 px, 6/5 daí em diante; 6 ícones: 4/2 e 6). O tamanho dos ícones não muda. */
+@media (max-width: 899px) {
+  .icon-row .stack { display: grid; grid-template-columns: repeat(4, 44px); }
+}
+@media (min-width: 375px) and (max-width: 899px) {
+  .icon-row .stack { grid-template-columns: repeat(6, 44px); }
+}
 .icon-row .stack-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; }
 .icon-row .logo { flex: none; object-fit: contain; width: var(--icon-stack); height: var(--icon-stack); opacity: 0.6; }
 .icon-row .stack-logo-empty, .icon-row .stack-logo-empty .fallback-icon { display: grid; width: var(--icon-stack); height: var(--icon-stack); flex: none; color: var(--soft); line-height: 0; }

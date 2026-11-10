@@ -37,6 +37,12 @@ export function EntryRow({ title, titleUrl, sub, about, lines, subitems, stack, 
         <div>
           <h3>{titleUrl ? <a href={titleUrl}>{title}</a> : title}</h3>
           {sub && <p className="entry-sub">{sub}</p>}
+        </div>
+      </div>
+      <span className="entry-period">{period}</span>
+      {/* Descrição, linhas e ícones: irmão do título e do período. No celular a ordem é título, data, corpo; no desktop o corpo fica sob o texto, na coluna do texto. */}
+      {(about || lines || stack) && (
+        <div className="entry-body">
           {about && <p className="entry-sub">{about}</p>}
           {lines && (
             <ul className="entry-lines">
@@ -47,8 +53,7 @@ export function EntryRow({ title, titleUrl, sub, about, lines, subitems, stack, 
           )}
           {stack && <IconRow list={stack} />}
         </div>
-      </div>
-      <span className="entry-period">{period}</span>
+      )}
       {/* Irmão do texto e do período, na largura toda: o período do subitem alinha com o da linha, e o da linha não cai embaixo dele no celular. */}
       {subitems && (
         <ul className="entry-children">

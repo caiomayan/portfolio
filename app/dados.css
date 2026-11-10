@@ -2,7 +2,7 @@
 
 /* Clima: renderizado no servidor, ao lado da hora (que entra no cliente). */
 /* Hora e clima na mesma linha, juntos, alinhados pela linha de base: "07:02 (UTC−3) · ☁ 28°C". O separador é ornamento (sem texto alternativo). */
-.place-now { display: flex; align-items: baseline; white-space: nowrap; }
+.place-now { display: flex; flex-wrap: wrap; align-items: baseline; white-space: nowrap; }
 .place-weather { display: inline-flex; align-items: baseline; gap: 6px; color: var(--soft); font-variant-numeric: tabular-nums; }
 .place-weather::before { content: "·" / ""; margin-inline: 8px 2px; }
 .weather-icon { flex: none; align-self: center; color: var(--soft); }

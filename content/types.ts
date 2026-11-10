@@ -39,6 +39,8 @@ export type Content = {
     copyEmail: string;
     /** Confirmação anunciada por leitor de tela depois de copiar. */
     copied: string;
+    /** Falha ao copiar: anunciada pela região de status e mostrada discreta; o e-mail fica selecionado. */
+    copyFailed: string;
     linkedin: ContactLink;
     github: ContactLink;
     /** `null` quando não há PDF nessa língua: o link não aparece. */

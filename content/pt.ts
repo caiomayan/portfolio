@@ -16,6 +16,7 @@ export const pt: Content = {
     email: "mail@caiomayan.com",
     copyEmail: "Copiar e-mail",
     copied: "Copiado",
+    copyFailed: "Não deu pra copiar. Selecione o e-mail.",
     linkedin: { label: "LinkedIn", href: "https://www.linkedin.com/in/caiomayan/", external: true },
     github: { label: "GitHub", href: "https://github.com/caiomayan", external: true },
     resume: { label: "Currículo (PDF)", href: "/caio-mayan-curriculo.pdf" },

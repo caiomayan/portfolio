@@ -9,6 +9,7 @@ export const rotasTexto = {
     local: "João Pessoa, Brasil",
     copiar: "Copiar e-mail",
     copiado: "Copiado",
+    copiarFalha: "Não deu pra copiar. Selecione o e-mail.",
     carmine: {
       what: "SaaS para jogadores e times competitivos de Counter-Strike 2.",
       status: "Em desenvolvimento, lançamento previsto para 2027",
@@ -46,13 +47,14 @@ export const rotasTexto = {
   },
   "/en": {
     titulo: "Software Engineer",
-    lead: "I build products on applied AI, on a solid backend foundation.",
+    lead: "I build applied AI products on a solid backend foundation.",
     foto: /Portrait of Caio Mayan/,
     outraLingua: "Português",
     tema: "Dark theme",
     local: "João Pessoa, Brazil",
     copiar: "Copy email",
     copiado: "Copied",
+    copiarFalha: "Couldn't copy. Select the email.",
     carmine: {
       what: "SaaS for competitive Counter-Strike 2 players and teams.",
       status: "In development, launch expected in 2027",
@@ -76,7 +78,7 @@ export const rotasTexto = {
       periodo: "Oct. 2024 – Jul. 2027 (expected)",
       monitoria: "Teaching assistant",
       monitor: "Data Security course",
-      semestre: "2026.2 semester",
+      semestre: "2nd semester of 2026",
       descricao: "Where I built, and keep strengthening, my foundation: Java and Spring Boot, databases, data structures and information security.",
       ingles: "Fluent English",
     },

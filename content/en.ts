@@ -7,7 +7,7 @@ export const en: Content = {
   hero: {
     name: "Caio Mayan",
     title: "Software Engineer",
-    lead: "I build products on applied AI, on a solid backend foundation.",
+    lead: "I build applied AI products on a solid backend foundation.",
     place: { city: "João Pessoa, Brazil", offset: "UTC−3" },
     photoAlt: "Portrait of Caio Mayan",
   },
@@ -16,6 +16,7 @@ export const en: Content = {
     email: "mail@caiomayan.com",
     copyEmail: "Copy email",
     copied: "Copied",
+    copyFailed: "Couldn't copy. Select the email.",
     linkedin: { label: "LinkedIn", href: "https://www.linkedin.com/in/caiomayan/", external: true },
     github: { label: "GitHub", href: "https://github.com/caiomayan", external: true },
     resume: { label: "Resume (PDF)", href: "/caio-mayan-resume.pdf" },
@@ -78,7 +79,7 @@ export const en: Content = {
         description:
           "Where I built, and keep strengthening, my foundation: Java and Spring Boot, databases, data structures and information security.",
         period: "Oct. 2024 – Jul. 2027 (expected)",
-        children: [{ label: "Teaching assistant", title: "Data Security course", period: "2026.2 semester" }],
+        children: [{ label: "Teaching assistant", title: "Data Security course", period: "2nd semester of 2026" }],
         stack: {
           label: "In the course",
           items: [

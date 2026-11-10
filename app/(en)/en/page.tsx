@@ -4,7 +4,7 @@ import { Foundations } from "@/components/foundations";
 import { Contact } from "@/components/contact";
 import { ContactLanguages } from "@/components/contact-languages";
 import { CarmineSection } from "@/components/carmine-section";
-import { Hero } from "@/components/hero";
+import { Hero, SiteHeader } from "@/components/hero";
 import { SiteFooter } from "@/components/site-footer";
 import { Activity } from "@/components/activity";
 import { weatherSlots } from "@/components/weather";
@@ -23,15 +23,18 @@ export default async function Page() {
   const clima = weatherSlots(weather, content.en.contact.weather);
   return (
     <>
-      <Hero content={content.en} weather={clima} />
-      <CarmineSection content={content.en.carmine} />
-      <Experience content={content.en} />
-      <Education content={content.en} />
-      <Foundations content={content.en} />
-      <Activity content={content.en.activity} data={activity} lang="en" />
-      <Contact content={content.en}>
-        <ContactLanguages languages={content.en.contact.languages} />
-      </Contact>
+      <SiteHeader content={content.en} />
+      <main>
+        <Hero content={content.en} weather={clima} />
+        <CarmineSection content={content.en.carmine} />
+        <Experience content={content.en} />
+        <Education content={content.en} />
+        <Foundations content={content.en} />
+        <Activity content={content.en.activity} data={activity} lang="en" />
+        <Contact content={content.en}>
+          <ContactLanguages languages={content.en.contact.languages} />
+        </Contact>
+      </main>
       {/* Crédito do Open-Meteo (CC BY 4.0) à direita do rodapé, só quando há clima. */}
       <SiteFooter footer={content.en.footer} credit={clima?.credit} />
     </>

@@ -85,7 +85,7 @@ Seção entre Formação e Contato, só texto, sem ícones: o que ele sabe de ba
 ## Interface
 
 - Troca de língua (#24, #29): as duas bandeiras lado a lado, sempre na mesma ordem (Brasil, EUA). A da língua atual fica em destaque (cor cheia e uma marca sutil), com `aria-current="page"`, e não é link; a outra fica apagada e é o link pra rota equivalente. Nome acessível e `lang` do link: a língua de destino ("English" na página em português, "Português" na página em inglês); a atual tem o nome da própria língua só pra leitor de tela. Tooltip de cada bandeira: o nome do país, em português "Brasil" e "Estados Unidos"; em inglês "Brazil" e "United States".
-- Botão de copiar e-mail: "Copiar e-mail" → "Copiado".
+- Botão de copiar e-mail: "Copiar e-mail" → "Copiado". Se a cópia falhar: "Não deu pra copiar. Selecione o e-mail." (anunciada e discreta na tela; o e-mail fica selecionado).
 - Botão de tema (nome acessível; proposto pelo build, o Caio revisa): "Tema escuro" (pt). Em inglês: "Dark theme" (seção English).
 - Título da aba (proposto, o Caio revisa): "Caio Mayan — Engenheiro de Software".
 
@@ -97,7 +97,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 
 - Name: Caio Mayan
 - Title: Software Engineer
-- Opening line: Software Engineer. I build products on applied AI, on a solid backend foundation.
+- Opening line: Software Engineer. I build applied AI products on a solid backend foundation.
 - Place (#29, replaces the "João Pessoa, Brazil" line): compact dot map (crop of the Americas and the Atlantic, with a pin on João Pessoa), decorative, and next to it, as text, "João Pessoa, Brazil", the local time, formatted "14:32 (UTC−3)" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML), and the weather (below). Sits under the opening line, on the first screen.
 - Photo alt: "Portrait of Caio Mayan"
 
@@ -140,7 +140,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 - Associate Degree in Internet Systems Technology, Federal Institute of Paraíba (IFPB), João Pessoa campus. Oct. 2024 – Jul. 2027 (expected).
   - Short description below (#27, proposed, Caio reviews): "Where I built, and keep strengthening, my foundation: Java and Spring Boot, databases, data structures and information security."
   - Icon row "In the course" (#29), below the description, icons only (name in the tooltip): Java, Spring Boot, Node.js, TypeScript, Python, PostgreSQL, MongoDB, Next.js, Angular, Docker, Git.
-  - Sub-item (child of the course): label "Teaching assistant" + title "Data Security course", period "2026.2 semester".
+  - Sub-item (child of the course): label "Teaching assistant" + title "Data Security course", period "2nd semester of 2026".
 - "Fluent English" left Education (#27): languages moved to Contact.
 
 ### Foundations (#29)
@@ -171,7 +171,7 @@ Section between Education and Contact, text only, no icons: what he knows at the
 ### Interface
 
 - Language switch (#24, #29): both flags side by side, always in the same order (Brazil, US). The current language’s flag is highlighted (full color and a subtle mark), with `aria-current="page"`, and is not a link; the other is dimmed and is the link to the equivalent route. The link’s accessible name and `lang`: the target language ("English" on the Portuguese page, "Português" on the English page); the current one carries its own language name for screen readers only. Tooltip on each flag: the country name, in Portuguese "Brasil" and "Estados Unidos"; in English "Brazil" and "United States".
-- Copy email button: "Copy email" → "Copied".
+- Copy email button: "Copy email" → "Copied". If copying fails: "Couldn't copy. Select the email." (announced and shown discreetly; the email is selected).
 - Theme button (accessible name): "Dark theme".
 - Tab title: "Caio Mayan — Software Engineer".
 - Section headings: "Experience", "Education", "Foundations".

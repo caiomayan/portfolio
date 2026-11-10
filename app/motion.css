@@ -21,7 +21,8 @@
   flex: none;
   height: 40px;
   width: auto;
-  max-width: calc(100vw - 2 * var(--gutter) - 44px - 16px);
+  /* Reserva o que fica à direita: duas bandeiras (28 px + 2 × 10 de respiro), o espaço de 8 px e o botão de tema (44 px), mais 16 px de folga. */
+  max-width: calc(100vw - 2 * var(--gutter) - (2 * (28px + 20px) + 8px + 44px) - 16px);
   overflow: visible;
   color: var(--ink);
 }

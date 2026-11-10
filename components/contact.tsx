@@ -31,8 +31,10 @@ function IconLink({ Icon, label, href, external }: { Icon: IconComponent } & Con
   );
 }
 
-function CopyButton({ text, label, doneLabel }: { text: string; label: string; doneLabel: string }) {
+/** Copia o e-mail. Se a área de transferência falhar, avisa (mesma região de status) e seleciona o texto do e-mail, pra copiar à mão. */
+function CopyButton({ text, label, doneLabel, failedLabel, source }: { text: string; label: string; doneLabel: string; failedLabel: string; source: React.RefObject<HTMLElement | null> }) {
   const [copied, setCopied] = useState(false);
+  const [failed, setFailed] = useState(false);
   const copy = useRef<IconHandle>(null);
   const check = useRef<IconHandle>(null);
   const { play, handlers } = useIconHover([copy]);
@@ -49,8 +51,16 @@ function CopyButton({ text, label, doneLabel }: { text: string; label: string; d
     try {
       await navigator.clipboard.writeText(text);
     } catch {
-      return; // sem permissão ou sem clipboard: não finge que copiou
+      // Sem permissão ou sem clipboard: não finge que copiou. Avisa e deixa o e-mail selecionado.
+      setCopied(false);
+      setFailed(true);
+      const el = source.current;
+      if (el) window.getSelection()?.selectAllChildren(el);
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => setFailed(false), 6000);
+      return;
     }
+    setFailed(false);
     setCopied(true);
     clearTimeout(timer.current);
     timer.current = setTimeout(() => setCopied(false), 2000);
@@ -68,9 +78,9 @@ function CopyButton({ text, label, doneLabel }: { text: string; label: string; d
       >
         {copied ? <CheckIcon ref={check} /> : <CopyIcon ref={copy} />}
       </button>
-      {/* Região sempre presente: o leitor de tela anuncia a troca de texto. */}
-      <span role="status" className="sr-only">
-        {copied ? doneLabel : ""}
+      {/* Região sempre presente: o leitor de tela anuncia a troca de texto. A falha também aparece, discreta, na tela. */}
+      <span role="status" className={failed ? "copy-note" : "sr-only"}>
+        {failed ? failedLabel : copied ? doneLabel : ""}
       </span>
     </>
   );
@@ -79,14 +89,15 @@ function CopyButton({ text, label, doneLabel }: { text: string; label: string; d
 /** `children`: blocos de servidor (as línguas, com bandeira) que entram no fim do Contato sem puxar a biblioteca de bandeiras pro cliente. */
 export function Contact({ content, children }: { content: Content; children?: React.ReactNode }) {
   const c = content.contact;
+  const address = useRef<HTMLAnchorElement>(null);
   return (
     <section className="contact" aria-labelledby="contato">
       <h2 id="contato" data-reveal-part>{c.heading}</h2>
       <div className="mail" data-reveal-part>
-        <a className="mail-address" href={`mailto:${c.email}`}>
+        <a ref={address} className="mail-address" href={`mailto:${c.email}`}>
           {c.email}
         </a>
-        <CopyButton text={c.email} label={c.copyEmail} doneLabel={c.copied} />
+        <CopyButton text={c.email} label={c.copyEmail} doneLabel={c.copied} failedLabel={c.copyFailed} source={address} />
       </div>
       <ul className="contact-links" data-reveal-part>
         <li>

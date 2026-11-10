@@ -19,10 +19,14 @@ export function Reveal() {
     if (prefersReducedMotion() || !("IntersectionObserver" in window)) return;
 
     // Só o que está inteiro abaixo da tela entra escondido: o que já aparece no carregamento nunca some e volta (isso atrasaria o LCP).
+    // Duas fases, sem intercalar leitura e escrita de layout: primeiro todas as leituras, depois todas as escritas.
+    const viewportHeight = window.innerHeight;
+    const below = Array.from(document.querySelectorAll<HTMLElement>(REVEAL_PART_SELECTOR)).filter(
+      (el) => el.getBoundingClientRect().top >= viewportHeight, // o que já aparece (ou está acima) fica como está
+    );
     const hidden: HTMLElement[] = [];
     const partsHiddenBySection = new Map<Element, number>(); // seção → quantas partes já têm atraso
-    document.querySelectorAll<HTMLElement>(REVEAL_PART_SELECTOR).forEach((el) => {
-      if (el.getBoundingClientRect().top < window.innerHeight) return; // já aparece (ou está acima): fica como está
+    below.forEach((el) => {
       const section = el.closest("section") ?? document.body;
       const n = partsHiddenBySection.get(section) ?? 0;
       partsHiddenBySection.set(section, n + 1);
