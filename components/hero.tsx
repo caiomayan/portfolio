@@ -3,7 +3,9 @@ import type { Content } from "@/content";
 import { locales } from "@/lib/locales";
 import foto from "@/assets/foto-original.jpg";
 import { Signature } from "./signature";
+import { Tooltip } from "./tooltip";
 import { ThemeToggle } from "./theme-toggle";
+import { LangFlag } from "./lang-flag";
 
 export function Hero({ content }: { content: Content }) {
   return (
@@ -12,9 +14,18 @@ export function Hero({ content }: { content: Content }) {
         <Signature name={content.hero.name} />
         <div className="top-actions">
           {/* Link comum, sem script: leva à rota equivalente; nenhuma escolha automática por língua do navegador. */}
-          <a className="lang-switch" href={content.ui.otherLang.href} lang={content.ui.otherLang.lang} hrefLang={locales[content.ui.otherLang.lang].hreflang}>
-            {content.ui.otherLang.label}
-          </a>
+          {/* Só a bandeira (#24): o nome acessível e o `lang` são a língua; o tooltip mostra o país. */}
+          <Tooltip label={content.ui.otherLang.country} below>
+            <a
+              className="lang-switch"
+              href={content.ui.otherLang.href}
+              lang={content.ui.otherLang.lang}
+              hrefLang={locales[content.ui.otherLang.lang].hreflang}
+              aria-label={content.ui.otherLang.label}
+            >
+              <LangFlag code={content.ui.otherLang.flag} />
+            </a>
+          </Tooltip>
           <ThemeToggle label={content.ui.themeToggle} />
         </div>
       </header>

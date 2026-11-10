@@ -29,7 +29,12 @@
 @media (prefers-reduced-motion: no-preference) {
   /* Tooltip: entra com fade e 4 px de deslocamento (transform/opacity); fecha na hora. Sem movimento reduzido, só aparece. */
   @keyframes tip-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  /* Pulso do pino no mapa (#24): só transform e opacity. */
+  @keyframes pin-pulse { from { opacity: 0.4; transform: scale(1); } to { opacity: 0; transform: scale(3.2); } }
+  .contact-map-pulse { animation: pin-pulse 2.4s var(--ease) infinite; }
+  @keyframes tip-in-below { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
   .tip { animation: tip-in 140ms var(--ease) both; }
+  .tip-below { animation-name: tip-in-below; }
 
   /* A versão pronta (render do servidor) fica escondida até o script trocar pela animada; sem script, sem assinatura. */
   .signature[data-static] { visibility: hidden; }

@@ -21,3 +21,5 @@ test-results/
 
 # Fonte da assinatura: baixada pelo script, nunca versionada (licença não confirmada)
 scripts/fonts/
+
+scripts/data/

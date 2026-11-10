@@ -69,14 +69,14 @@ img { display: block; max-width: 100%; height: auto; }
   display: inline-flex;
   align-items: center;
   height: 44px;
-  padding-inline: 16px;
+  padding-inline: 14px;
   border-radius: 22px;
   background: transparent;
   color: var(--ink);
-  font-size: 0.9375rem;
-  font-weight: 500;
   text-decoration: none;
 }
+/* Bandeira: a única cor da barra do topo (decisão do Caio, #24). Proporção 3:2, cantos suaves. */
+.lang-flag { display: block; width: 28px; height: auto; border-radius: 4px; }
 /* Sem fundo em repouso; o fundo aparece no hover e no foco (o contorno do foco continua). A cor muda sem transição. */
 .lang-switch:focus-visible, .theme-toggle:focus-visible, .copy-button:focus-visible { background: var(--surface); }
 /* Hover só com mouse: no toque o :hover fica preso depois do toque e deixaria o fundo em repouso. */
@@ -195,9 +195,25 @@ h1::after { content: "." / ""; }
 .contact-link .icon { display: grid; line-height: 0; color: var(--soft); }
 .contact-link:hover .icon, .contact-link:focus-visible .icon { color: var(--ink); }
 
+/* Mapa do Contato (#24): pontos em tons do tema, pino em João Pessoa. Decorativo; sem rolagem lateral (largura 100%). */
+.contact-map { margin-top: 64px; max-width: 640px; }
+.contact-map-art { position: relative; width: 100%; aspect-ratio: 720 / 272; }
+.contact-map-art svg { display: block; width: 100%; height: 100%; overflow: hidden; }
+.contact-map-art path { fill: none; stroke: var(--soft); stroke-opacity: 0.5; stroke-width: 3.4; stroke-linecap: round; }
+.contact-map-pin { position: absolute; width: 10px; height: 10px; translate: -50% -50%; }
+.contact-map-dot, .contact-map-pulse { position: absolute; inset: 0; border-radius: 50%; }
+.contact-map-dot { background: var(--ink); }
+/* Em repouso (movimento reduzido ou sem animação) o anel fica parado; o pulso é só de quem aceita movimento. */
+.contact-map-pulse { background: var(--ink); opacity: 0.18; transform: scale(2.4); }
+.contact-map-caption { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin: 20px 0 0; font-size: var(--text-small); }
+.contact-map-place { color: var(--ink); font-weight: 500; }
+/* Espaço reservado pra hora (14:32 (UTC−3)): ela entra no cliente sem mover nada. */
+.contact-map-time { display: inline-block; min-width: 14ch; min-height: 1.2em; color: var(--soft); font-variant-numeric: tabular-nums; }
+
 /* Tooltip (components/tooltip.tsx): o mesmo na stack e no contato. Fora do layout enquanto fechado. */
 .tip-host { position: relative; display: inline-flex; }
 .tip { position: absolute; z-index: 10; bottom: 100%; left: 50%; translate: -50% 0; padding-bottom: 6px; }
+.tip-below { bottom: auto; top: 100%; left: auto; right: 0; translate: none; padding: 6px 0 0; }
 .tip-bubble { display: block; padding: 6px 10px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: var(--text-small); font-weight: 500; line-height: 1.2; white-space: nowrap; }
 
 /* Experiência e formação: linhas de duas pontas (texto à esquerda, período à direita). */

@@ -39,6 +39,8 @@ export type Content = {
     github: ContactLink;
     /** `null` quando não há PDF nessa língua: o link não aparece. */
     resume: ContactLink | null;
+    /** Cidade ao lado do mapa e fuso da hora local (a hora em si vem do relógio, não daqui). */
+    map: { place: string; offset: string };
   };
   experience: {
     heading: string;
@@ -62,7 +64,14 @@ export type Content = {
   ui: {
     themeToggle: string;
     /** Link pra rota equivalente na outra língua: o texto está na língua de destino ("English" / "Português"). */
-    otherLang: { label: string; href: string; lang: Lang };
+    otherLang: {
+      label: string;
+      href: string;
+      lang: Lang;
+      /** Bandeira do país da língua de destino (a única cor da barra do topo) e o nome dele, que é o tooltip. */
+      flag: "US" | "BR";
+      country: string;
+    };
   };
   carmine: {
     heading: string;
