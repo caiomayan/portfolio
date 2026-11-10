@@ -6,7 +6,7 @@ import type { Weather, WeatherKind } from "@/lib/weather";
 const icons: Record<WeatherKind, LucideIcon> = { clear: Sun, partly: CloudSun, cloudy: Cloud, fog: CloudFog, rain: CloudRain, storm: CloudLightning };
 
 /**
- * Clima de João Pessoa (#28), renderizado no servidor: `now` vai ao lado da hora e `credit` embaixo do mapa.
+ * Clima de João Pessoa (#28), renderizado no servidor: `now` vai ao lado da hora e `credit` embaixo da cidade, na primeira tela (#29).
  * Sem dado (`null`), nada aparece. O ícone é decorativo; o nome do tempo vai só pra leitor de tela.
  */
 export function weatherSlots(weather: Weather | null, w: Content["contact"]["weather"]) {
@@ -14,7 +14,7 @@ export function weatherSlots(weather: Weather | null, w: Content["contact"]["wea
   const Icon = icons[weather.kind];
   return {
     now: (
-      <span className="contact-map-weather">
+      <span className="place-weather">
         <Icon className="weather-icon" size={16} strokeWidth={1.75} aria-hidden="true" focusable="false" />
         <span className="sr-only">{w.labels[weather.kind]}, </span>
         {`${weather.temperature}°C`}

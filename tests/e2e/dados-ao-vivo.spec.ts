@@ -12,19 +12,19 @@ const rotas = [
 
 for (const r of rotas) {
   test.describe(`dados ao vivo em ${r.path}`, () => {
-    test("clima no Contato, ao lado da hora, no HTML do servidor, com ícone e crédito", async ({ page, request }) => {
+    test("clima na primeira tela, ao lado da hora, no HTML do servidor, com ícone e crédito", async ({ page, request }) => {
       const html = await (await request.get(r.path)).text();
       expect(html).toContain("28°C");
       await page.goto(r.path);
-      const clima = page.locator(".contact-map-weather");
-      await clima.scrollIntoViewIfNeeded();
+      const clima = page.locator(".place-weather");
+      
       await expect(clima).toContainText("28°C");
       await expect(clima).toContainText(r.clima); // nome do tempo, só pra leitor de tela
       await expect(clima.locator("svg")).toHaveCount(1);
       await expect(clima.locator("svg")).toHaveAttribute("aria-hidden", "true");
       // Ao lado da hora (mesma linha da legenda do mapa), sem mexer no texto da hora.
-      await expect(page.locator(".contact-map-time")).toHaveText(/^\d{2}:\d{2} \(UTC−3\)$/);
-      const [t, c] = await Promise.all([page.locator(".contact-map-time").boundingBox(), clima.boundingBox()]);
+      await expect(page.locator(".place-time")).toHaveText(/^\d{2}:\d{2} \(UTC−3\)$/);
+      const [t, c] = await Promise.all([page.locator(".place-time").boundingBox(), clima.boundingBox()]);
       expect(Math.abs(t!.y - c!.y)).toBeLessThan(12);
       expect(c!.x).toBeGreaterThan(t!.x);
       // Crédito CC BY 4.0 do Open-Meteo.

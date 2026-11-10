@@ -6,8 +6,6 @@ import type { ContactLink } from "@/content/types";
 import { useIconHover, type IconComponent, type IconHandle } from "@/lib/icon-hover";
 import { prefersReducedMotion } from "@/lib/motion";
 import { Tooltip } from "./tooltip";
-import { ContactMap } from "./contact-map";
-import type { WeatherSlots } from "./weather";
 import { CheckIcon } from "./icons/check";
 import { CopyIcon } from "./icons/copy";
 import { FileTextIcon } from "./icons/file-text";
@@ -78,8 +76,8 @@ function CopyButton({ text, label, doneLabel }: { text: string; label: string; d
   );
 }
 
-/** `weather`: clima já renderizado no servidor (#28); `null` quando a API falhou. `children`: blocos de servidor (as línguas, com bandeira) que entram depois do mapa sem puxar a biblioteca de bandeiras pro cliente. */
-export function Contact({ content, weather = null, children }: { content: Content; weather?: WeatherSlots | null; children?: React.ReactNode }) {
+/** `children`: blocos de servidor (as línguas, com bandeira) que entram no fim do Contato sem puxar a biblioteca de bandeiras pro cliente. */
+export function Contact({ content, children }: { content: Content; children?: React.ReactNode }) {
   const c = content.contact;
   return (
     <section className="contact" aria-labelledby="contato">
@@ -103,7 +101,6 @@ export function Contact({ content, weather = null, children }: { content: Conten
           </li>
         )}
       </ul>
-      <ContactMap map={c.map} weather={weather} />
       {children}
     </section>
   );

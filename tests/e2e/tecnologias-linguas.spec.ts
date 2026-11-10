@@ -47,7 +47,7 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       t.tecnologias.nomes.forEach((n, i) => (n === "Valkey" ? expect(filtros[i]).toBe("none") : expect(filtros[i]).toContain("invert")));
     });
 
-    test("idiomas no Contato: rótulo e duas linhas de duas pontas, com bandeira, junto da cidade e da hora local", async ({ page }) => {
+    test("idiomas no Contato: rótulo e duas linhas de duas pontas, com bandeira, embaixo dos ícones", async ({ page }) => {
       await page.goto(path);
       const grupo = page.locator(".contact .contact-languages");
       await expect(grupo.getByRole("heading", { name: t.linguas.heading })).toBeVisible();
@@ -64,12 +64,12 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       // As partes entram em sequência (reveal): espera o layout assentar antes de medir.
       await expect
         .poll(async () => {
-          const cidade = (await page.locator(".contact-map-caption").boundingBox())!;
+          const cidade = (await page.locator(".contact .contact-links").boundingBox())!;
           const g = (await grupo.boundingBox())!;
           const nome = (await linhas.first().locator(".contact-language-name").boundingBox())!;
           const nivel = (await linhas.first().locator(".contact-language-level").boundingBox())!;
           const li = (await linhas.first().boundingBox())!;
-          // abaixo da cidade; nome à esquerda, nível colado na borda direita da linha
+          // abaixo dos ícones de contato; nome à esquerda, nível colado na borda direita da linha
           return g.y > cidade.y && nome.x < nivel.x && Math.abs(nivel.x + nivel.width - (li.x + li.width)) < 2;
         })
         .toBe(true);

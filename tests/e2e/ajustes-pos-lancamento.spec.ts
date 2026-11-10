@@ -45,12 +45,12 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await expect(copiar).not.toHaveCSS("background-color", TRANSPARENTE);
     });
 
-    test("sem nome nem cidade embaixo da foto; cidade numa linha embaixo da frase, do conteúdo", async ({ page }) => {
+    test("sem nome nem cidade embaixo da foto; o lugar (mapa, cidade e hora) embaixo da frase, do conteúdo", async ({ page }) => {
       await page.goto(path);
       await expect(page.locator(".who figcaption")).toHaveCount(0);
       await expect(page.locator(".who")).toHaveText("");
       const lugar = page.locator(".hero .place");
-      await expect(lugar).toHaveText(t.local);
+      await expect(lugar.locator(".place-city")).toHaveText(t.local);
       const lead = (await page.locator(".hero .lead").boundingBox())!;
       const box = (await lugar.boundingBox())!;
       expect(box.y).toBeGreaterThanOrEqual(lead.y + lead.height - 1);

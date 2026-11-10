@@ -21,13 +21,13 @@ export default async function Page() {
   const [weather, activity] = await Promise.all([getWeather(), getActivity()]);
   return (
     <>
-      <Hero content={content.pt} />
+      <Hero content={content.pt} weather={weatherSlots(weather, content.pt.contact.weather)} />
       <CarmineSection content={content.pt.carmine} />
       <Experience content={content.pt} />
       <Education content={content.pt} />
       <Technologies content={content.pt} />
       <Activity content={content.pt.activity} data={activity} lang="pt" />
-      <Contact content={content.pt} weather={weatherSlots(weather, content.pt.contact.weather)}>
+      <Contact content={content.pt}>
         <ContactLanguages languages={content.pt.contact.languages} />
       </Contact>
     </>

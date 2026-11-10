@@ -25,8 +25,8 @@ export type Content = {
     title: string;
     /** Resto da frase de abertura; título + lead formam a frase do copy deck. */
     lead: string;
-    /** Linha discreta embaixo da frase de abertura. */
-    location: string;
+    /** Lugar embaixo da frase de abertura (#29): cidade ao lado do mapa compacto e fuso da hora local (a hora em si vem do relógio). */
+    place: { city: string; offset: string };
     photoAlt: string;
   };
   contact: {
@@ -40,9 +40,7 @@ export type Content = {
     github: ContactLink;
     /** `null` quando não há PDF nessa língua: o link não aparece. */
     resume: ContactLink | null;
-    /** Cidade ao lado do mapa e fuso da hora local (a hora em si vem do relógio, não daqui). */
-    map: { place: string; offset: string };
-    /** Clima ao lado da hora (#28): nome de cada tempo (lido por leitor de tela) e o crédito do Open-Meteo (CC BY 4.0). */
+    /** Clima ao lado da hora (#28, na primeira tela desde a #29): nome de cada tempo (lido por leitor de tela) e o crédito do Open-Meteo (CC BY 4.0). */
     weather: { labels: Record<WeatherKind, string>; credit: { prefix: string; name: string; href: string } };
     /** Línguas que ele fala: grupo pequeno com rótulo, uma linha por língua (bandeira e nome à esquerda, nível à direita). */
     languages: { heading: string; items: { name: string; level: string; flag: "BR" | "US" }[] };
@@ -72,6 +70,8 @@ export type Content = {
   };
   ui: {
     themeToggle: string;
+    /** Língua da página atual no seletor (#29): bandeira em destaque, `aria-current="page"`, não é link. O nome vai só pra leitor de tela. */
+    currentLang: { label: string; lang: Lang; flag: "US" | "BR"; country: string };
     /** Link pra rota equivalente na outra língua: o texto está na língua de destino ("English" / "Português"). */
     otherLang: {
       label: string;

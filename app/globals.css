@@ -65,23 +65,28 @@ img { display: block; max-width: 100%; height: auto; }
   padding-block: 20px;
 }
 .top-actions { display: flex; align-items: center; gap: 8px; }
-.lang-switch {
+/* Seletor de língua (#29): as duas bandeiras lado a lado. A atual é um span com aria-current (cor cheia e uma marca sutil embaixo); a outra é o link, apagada. */
+.lang-switch { display: inline-flex; align-items: center; }
+.lang-option {
+  position: relative;
   display: inline-flex;
   align-items: center;
   height: 44px;
-  padding-inline: 14px;
+  padding-inline: 10px;
   border-radius: 22px;
   background: transparent;
   color: var(--ink);
   text-decoration: none;
 }
+a.lang-option { opacity: 0.5; }
+.lang-option[aria-current="page"]::after { content: ""; position: absolute; left: 50%; bottom: 3px; width: 14px; height: 2px; margin-left: -7px; border-radius: 1px; background: var(--ink); }
 /* Bandeira: a única cor da barra do topo (decisão do Caio, #24). Proporção 3:2, cantos suaves. */
 .lang-flag { display: block; width: 28px; height: auto; border-radius: 4px; }
 /* Sem fundo em repouso; o fundo aparece no hover e no foco (o contorno do foco continua). A cor muda sem transição. */
-.lang-switch:focus-visible, .theme-toggle:focus-visible, .copy-button:focus-visible { background: var(--surface); }
+a.lang-option:focus-visible, .theme-toggle:focus-visible, .copy-button:focus-visible { background: var(--surface); }
 /* Hover só com mouse: no toque o :hover fica preso depois do toque e deixaria o fundo em repouso. */
 @media (hover: hover) {
-  .lang-switch:hover, .theme-toggle:hover, .copy-button:hover { background: var(--surface); }
+  a.lang-option:hover, .theme-toggle:hover, .copy-button:hover { background: var(--surface); }
 }
 .theme-toggle {
   position: relative;
@@ -142,7 +147,21 @@ h1::after { content: "." / ""; }
   color: var(--soft);
   text-wrap: pretty;
 }
-.place { margin: 16px 0 0; font-size: var(--text-small); color: var(--soft); }
+/* Lugar (#29): mapa compacto à esquerda e, ao lado, cidade, hora e clima. Pontos em tons do tema, pino em João Pessoa. Decorativo; largura fixa por clamp, então não rola de lado. */
+.place { display: flex; align-items: center; gap: 16px; margin: clamp(16px, 2.4vw, 28px) 0 0; font-size: var(--text-small); color: var(--soft); }
+.place-art { position: relative; flex: none; width: clamp(104px, 30vw, 144px); }
+.place-art svg { display: block; width: 100%; height: 100%; overflow: hidden; }
+.place-art path { fill: none; stroke: var(--soft); stroke-opacity: 0.5; stroke-width: 3.2; stroke-linecap: round; }
+.place-pin { position: absolute; width: 7px; height: 7px; translate: -50% -50%; }
+.place-dot, .place-pulse { position: absolute; inset: 0; border-radius: 50%; }
+.place-dot { background: var(--ink); }
+/* Em repouso (movimento reduzido ou sem animação) o anel fica parado; o pulso é só de quem aceita movimento. */
+.place-pulse { background: var(--ink); opacity: 0.18; transform: scale(2.4); }
+.place-text { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.place-text p { margin: 0; }
+.place-city { color: var(--ink); font-weight: 500; }
+/* Espaço reservado pra hora (14:32 (UTC−3)): ela entra no cliente sem mover nada. */
+.place-time { display: inline-block; min-width: 14ch; min-height: 1.2em; color: var(--soft); font-variant-numeric: tabular-nums; }
 
 /* Contato */
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
@@ -194,21 +213,6 @@ h1::after { content: "." / ""; }
 }
 .contact-link .icon { display: grid; line-height: 0; color: var(--soft); }
 .contact-link:hover .icon, .contact-link:focus-visible .icon { color: var(--ink); }
-
-/* Mapa do Contato (#24): pontos em tons do tema, pino em João Pessoa. Decorativo; sem rolagem lateral (largura 100%). */
-.contact-map { margin-top: 64px; max-width: 640px; }
-.contact-map-art { position: relative; width: 100%; aspect-ratio: 720 / 272; }
-.contact-map-art svg { display: block; width: 100%; height: 100%; overflow: hidden; }
-.contact-map-art path { fill: none; stroke: var(--soft); stroke-opacity: 0.5; stroke-width: 3.4; stroke-linecap: round; }
-.contact-map-pin { position: absolute; width: 10px; height: 10px; translate: -50% -50%; }
-.contact-map-dot, .contact-map-pulse { position: absolute; inset: 0; border-radius: 50%; }
-.contact-map-dot { background: var(--ink); }
-/* Em repouso (movimento reduzido ou sem animação) o anel fica parado; o pulso é só de quem aceita movimento. */
-.contact-map-pulse { background: var(--ink); opacity: 0.18; transform: scale(2.4); }
-.contact-map-caption { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin: 20px 0 0; font-size: var(--text-small); }
-.contact-map-place { color: var(--ink); font-weight: 500; }
-/* Espaço reservado pra hora (14:32 (UTC−3)): ela entra no cliente sem mover nada. */
-.contact-map-time { display: inline-block; min-width: 14ch; min-height: 1.2em; color: var(--soft); font-variant-numeric: tabular-nums; }
 
 /* Tooltip (components/tooltip.tsx): o mesmo na stack e no contato. Fora do layout enquanto fechado. */
 .tip-host { position: relative; display: inline-flex; }
@@ -327,9 +331,9 @@ h1::after { content: "." / ""; }
   .place { animation-delay: 240ms; }
 
   /* Botões da barra do topo e de copiar: só transform e opacity (a cor muda sem transição). */
-  .lang-switch, .theme-toggle { transition: transform 160ms var(--ease); }
-  .lang-switch:hover { transform: scale(1.04); }
-  .lang-switch:active { transform: scale(0.96); }
+  a.lang-option, .theme-toggle { transition: transform 160ms var(--ease), opacity 160ms var(--ease); }
+  a.lang-option:hover { transform: scale(1.04); }
+  a.lang-option:active { transform: scale(0.96); }
   .theme-toggle:hover { transform: scale(1.06); }
   .theme-toggle:active { transform: scale(0.94); }
   .theme-toggle .icon-sun, .theme-toggle .icon-moon { transition: transform 320ms var(--ease), opacity 200ms; }

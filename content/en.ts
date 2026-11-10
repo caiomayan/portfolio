@@ -8,7 +8,7 @@ export const en: Content = {
     name: "Caio Mayan",
     title: "Software Engineer",
     lead: "I build products on applied AI, on a solid backend foundation.",
-    location: "João Pessoa, Brazil",
+    place: { city: "João Pessoa, Brazil", offset: "UTC−3" },
     photoAlt: "Portrait of Caio Mayan",
   },
   contact: {
@@ -19,7 +19,6 @@ export const en: Content = {
     linkedin: { label: "LinkedIn", href: "https://www.linkedin.com/in/caiomayan/", external: true },
     github: { label: "GitHub", href: "https://github.com/caiomayan", external: true },
     resume: { label: "Resume (PDF)", href: "/caio-mayan-resume.pdf" },
-    map: { place: "João Pessoa, Brazil", offset: "UTC−3" },
     weather: {
       labels: { clear: "Clear sky", partly: "Partly cloudy", cloudy: "Cloudy", fog: "Fog", rain: "Rain", storm: "Thunderstorm" },
       credit: { prefix: "Weather data by", name: "Open-Meteo.com", href: "https://open-meteo.com/" },
@@ -74,7 +73,7 @@ export const en: Content = {
       },
     ],
   },
-  ui: { themeToggle: "Dark theme", otherLang: { label: "Português", href: locales.pt.path, lang: "pt", flag: "BR", country: "Brazil" } },
+  ui: { themeToggle: "Dark theme", currentLang: { label: "English", lang: "en", flag: "US", country: "United States" }, otherLang: { label: "Português", href: locales.pt.path, lang: "pt", flag: "BR", country: "Brazil" } },
   activity: { heading: "Activity", total: { one: "{n} contribution in the last year", other: "{n} contributions in the last year" } },
   technologies: {
     heading: "Technologies",

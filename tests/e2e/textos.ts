@@ -6,7 +6,7 @@ export const rotasTexto = {
     foto: /Retrato de Caio Mayan/,
     outraLingua: "English",
     tema: "Tema escuro",
-    local: "João Pessoa, PB",
+    local: "João Pessoa, Brasil",
     copiar: "Copiar e-mail",
     copiado: "Copiado",
     carmine: {
