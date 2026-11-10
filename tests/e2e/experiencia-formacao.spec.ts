@@ -51,6 +51,21 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       expect(bf!.y).toBeGreaterThan(bd!.y + bd!.height - 1);
       const tamanho = (l: ReturnType<typeof page.locator>) => l.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
       expect(await tamanho(filho)).toBeLessThan(await tamanho(curso));
+      // O período do subitem alinha à direita com o da linha (desktop).
+      const [pc, pf] = await Promise.all([page.locator("#formacao .entry-period").boundingBox(), page.locator("#formacao .entry-child-period").boundingBox()]);
+      expect(Math.abs(pc!.x + pc!.width - (pf!.x + pf!.width))).toBeLessThan(2);
+    });
+
+    test("no celular o período do curso fica embaixo do texto do curso, antes da monitoria", async ({ page }) => {
+      await page.setViewportSize({ width: 375, height: 812 });
+      await page.goto(path);
+      const [curso, periodo, filho] = await Promise.all([
+        page.locator("#formacao .entry-main").boundingBox(),
+        page.locator("#formacao .entry-period").boundingBox(),
+        page.locator("#formacao .entry-child").boundingBox(),
+      ]);
+      expect(periodo!.y).toBeGreaterThanOrEqual(curso!.y + curso!.height - 1);
+      expect(filho!.y).toBeGreaterThanOrEqual(periodo!.y + periodo!.height - 1);
     });
 
     test("logos reais da TechEduConnect, do Hospital e do IFPB carregam, sem fundo", async ({ page }) => {

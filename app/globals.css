@@ -274,12 +274,13 @@ h1::after { content: "." / ""; }
 
 @media (max-width: 899px) {
   :is(#experiencia, #formacao) .entry { grid-template-columns: 1fr; row-gap: 4px; }
+  :is(#experiencia, #formacao) .entry-children { order: 3; }
   :is(#experiencia, #formacao) .entry-period { white-space: normal; padding: 0 0 0 calc(var(--entry-logo) + var(--entry-gap)); order: 2; }
 }
 
 /* Subitem subordinado (monitoria dentro do curso): recuado, menor, sem marcador nem linha. */
-:is(#experiencia, #formacao) .entry-children { margin-top: 14px; display: grid; gap: 6px; }
-:is(#experiencia, #formacao) .entry-child { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 24px; padding-left: 20px; font-size: var(--text-small); line-height: 1.5; }
+:is(#experiencia, #formacao) .entry-children { grid-column: 1 / -1; margin-top: 2px; display: grid; gap: 6px; }
+:is(#experiencia, #formacao) .entry-child { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 24px; padding-left: calc(var(--entry-logo) + var(--entry-gap) + 20px); font-size: var(--text-small); line-height: 1.5; }
 :is(#experiencia, #formacao) .entry-child-title { color: var(--ink); }
 :is(#experiencia, #formacao) .entry-child-period { color: var(--soft); font-variant-numeric: tabular-nums; }
 

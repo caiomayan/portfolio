@@ -52,6 +52,7 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await page.goto(path);
       const linguas = page.locator(".contact .contact-languages");
       await expect(linguas).toHaveText(t.linguas);
+      await linguas.scrollIntoViewIfNeeded();
       // As partes entram em sequência (reveal): espera o layout assentar antes de medir.
       await expect
         .poll(async () => {

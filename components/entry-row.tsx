@@ -40,19 +40,20 @@ export function EntryRow({ title, titleUrl, sub, about, lines, subitems, period,
               ))}
             </ul>
           )}
-          {subitems && (
-            <ul className="entry-children">
-              {subitems.map((s) => (
-                <li key={s.title} className="entry-child">
-                  <span className="entry-child-title">{s.title}</span>
-                  <span className="entry-child-period">{s.period}</span>
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
       </div>
       <span className="entry-period">{period}</span>
+      {/* Irmão do texto e do período, na largura toda: o período do subitem alinha com o da linha, e o da linha não cai embaixo dele no celular. */}
+      {subitems && (
+        <ul className="entry-children">
+          {subitems.map((s) => (
+            <li key={s.title} className="entry-child">
+              <span className="entry-child-title">{s.title}</span>
+              <span className="entry-child-period">{s.period}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </li>
   );
 }
