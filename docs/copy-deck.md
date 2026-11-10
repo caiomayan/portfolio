@@ -27,7 +27,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
   - Oracle Cloud
 - Links: stcarmine.com (https://stcarmine.com) · repositório (https://github.com/caiomayan/carmine)
 - Título da seção (#29): o nome "Carmine", no mesmo título grande das outras seções (com o logo antes do nome), e embaixo, discreto, "Projeto pessoal" (vindo do protótipo; proposto, o Caio revisa). Depois vêm situação, o que é, como é feito, stack e links.
-- Prints do Carmine removidos (#18): sem abas, legenda nem rótulo das telas. Fica o título da lista: "Stack".
+- Prints do Carmine removidos (#18): sem abas, legenda nem rótulo das telas. Fica o rótulo da lista: "Feito com" (#29; proposto, o Caio revisa; antes "Stack").
 
 ## Experiência
 
@@ -110,7 +110,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
   - AWS EC2
   - Oracle Cloud
 - Links: stcarmine.com · Repository
-- Screenshots removed (#18); list title "Stack".
+- Screenshots removed (#18); list label "Built with" (#29; proposed, Caio reviews; was "Stack").
 
 ### Experience
 

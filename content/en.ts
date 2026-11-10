@@ -108,7 +108,7 @@ export const en: Content = {
     what: "SaaS for competitive Counter-Strike 2 players and teams.",
     status: "In development, launch expected in 2027",
     how: "Built with AI agents that open issues and pull requests and keep the specs and the backlog up to date, with a staging environment separate from production.",
-    stackLabel: "Stack",
+    stackLabel: "Built with",
     stack: [
       { name: "Nest.js", logo: "nestjs" },
       { name: "Next.js", logo: "nextdotjs" },

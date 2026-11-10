@@ -7,8 +7,8 @@ for (const path of ["/", "/en"]) {
     const size = (sel: string) =>
       page.locator(sel).evaluateAll((els) => els.map((e) => `${getComputedStyle(e).width} x ${getComputedStyle(e).height}`));
     const all = (arr: string[], v: string) => arr.length > 0 && arr.every((x) => x === v);
-    expect(all(await size("#carmine .stack-logo-empty svg"), "20px x 20px")).toBe(true);
-    expect(all(await size("#carmine .stack img"), "20px x 20px")).toBe(true);
+    expect(all(await size("#carmine .stack-logo-empty svg"), "16px x 16px")).toBe(true);
+    expect(all(await size("#carmine .stack img"), "16px x 16px")).toBe(true);
     expect(all(await size("#tecnologias .stack img"), "20px x 20px")).toBe(true);
     expect(all(await size(".contact-link .icon svg, .copy-button svg, .theme-toggle svg"), "20px x 20px")).toBe(true);
   });
