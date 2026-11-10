@@ -41,8 +41,8 @@ export type Content = {
     resume: ContactLink | null;
     /** Cidade ao lado do mapa e fuso da hora local (a hora em si vem do relógio, não daqui). */
     map: { place: string; offset: string };
-    /** Línguas que ele fala: linha discreta junto da cidade e da hora local. */
-    languages: string;
+    /** Línguas que ele fala: grupo pequeno com rótulo, uma linha por língua (bandeira e nome à esquerda, nível à direita). */
+    languages: { heading: string; items: { name: string; level: string; flag: "BR" | "US" }[] };
   };
   experience: {
     heading: string;
@@ -63,8 +63,8 @@ export type Content = {
       detail?: string;
       /** Descrição curta embaixo (o que o curso construiu). */
       description?: string;
-      /** Subitens subordinados ao curso, sem ícone próprio. */
-      children?: { title: string; period: string }[];
+      /** Subitens subordinados ao curso: rótulo curto ("Monitoria") antes do título, ícone de hierarquia e período próprio. */
+      children?: { label: string; title: string; period: string }[];
     })[];
   };
   ui: {

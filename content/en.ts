@@ -20,7 +20,13 @@ export const en: Content = {
     github: { label: "GitHub", href: "https://github.com/caiomayan", external: true },
     resume: { label: "Resume (PDF)", href: "/caio-mayan-resume.pdf" },
     map: { place: "João Pessoa, Brazil", offset: "UTC−3" },
-    languages: "Portuguese (native) · English (fluent, C2)",
+    languages: {
+      heading: "Languages",
+      items: [
+        { name: "Portuguese", level: "native", flag: "BR" },
+        { name: "English", level: "fluent · C2, EF SET", flag: "US" },
+      ],
+    },
   },
   experience: {
     heading: "Experience",
@@ -60,7 +66,7 @@ export const en: Content = {
         description:
           "Where I built, and keep strengthening, my foundation: Java and Spring Boot, databases, data structures and information security.",
         period: "Oct. 2024 – Jul. 2027 (expected)",
-        children: [{ title: "Teaching Assistant: Data Security course", period: "2026.2 semester" }],
+        children: [{ label: "Teaching assistant", title: "Data Security course", period: "2026.2 semester" }],
       },
     ],
   },
@@ -68,7 +74,7 @@ export const en: Content = {
   technologies: {
     heading: "Technologies",
     items: [
-      { name: "Java", icon: "coffee" },
+      { name: "Java", logo: "java" },
       { name: "Spring Boot", logo: "springboot" },
       { name: "Node.js", logo: "nodedotjs" },
       { name: "TypeScript", logo: "typescript" },

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { CornerDownRight } from "lucide-react";
 import { orgLogos, type OrgLogoId } from "@/lib/org-logos";
 import type { FallbackIconId } from "@/lib/fallback-icons";
 import { FallbackIcon } from "./fallback-icon";
@@ -11,7 +12,7 @@ type Props = {
   about?: string;
   lines?: string[];
   /** Subitens subordinados à linha (ex.: a monitoria dentro do curso): recuados, menores, com o próprio período. */
-  subitems?: { title: string; period: string }[];
+  subitems?: { label: string; title: string; period: string }[];
   period: string;
   /** Logo OU ícone de reserva: um dos dois, sempre. */
   logo?: OrgLogoId;
@@ -48,7 +49,10 @@ export function EntryRow({ title, titleUrl, sub, about, lines, subitems, period,
         <ul className="entry-children">
           {subitems.map((s) => (
             <li key={s.title} className="entry-child">
-              <span className="entry-child-title">{s.title}</span>
+              <CornerDownRight className="entry-child-icon" strokeWidth={1.75} aria-hidden="true" focusable="false" />
+              <p className="entry-child-text">
+                <span className="entry-child-label">{s.label}</span> <span className="entry-child-title">{s.title}</span>
+              </p>
               <span className="entry-child-period">{s.period}</span>
             </li>
           ))}

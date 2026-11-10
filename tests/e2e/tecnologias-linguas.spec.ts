@@ -44,23 +44,43 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await page.goto(path);
       await page.getByRole("button", { name: t.tema }).click();
       const filtros = await page.locator("#tecnologias .stack img").evaluateAll((els) => els.map((el) => getComputedStyle(el).filter));
-      const nomes = t.tecnologias.nomes.filter((n) => n !== "Java");
-      nomes.forEach((n, i) => (n === "Valkey" ? expect(filtros[i]).toBe("none") : expect(filtros[i]).toContain("invert")));
+      t.tecnologias.nomes.forEach((n, i) => (n === "Valkey" ? expect(filtros[i]).toBe("none") : expect(filtros[i]).toContain("invert")));
     });
 
-    test("línguas no Contato, discretas, junto da cidade e da hora local", async ({ page }) => {
+    test("idiomas no Contato: rótulo e duas linhas de duas pontas, com bandeira, junto da cidade e da hora local", async ({ page }) => {
       await page.goto(path);
-      const linguas = page.locator(".contact .contact-languages");
-      await expect(linguas).toHaveText(t.linguas);
-      await linguas.scrollIntoViewIfNeeded();
+      const grupo = page.locator(".contact .contact-languages");
+      await expect(grupo.getByRole("heading", { name: t.linguas.heading })).toBeVisible();
+      const linhas = grupo.locator("li");
+      await expect(linhas).toHaveCount(t.linguas.itens.length);
+      for (const [i, [nome, nivel]] of t.linguas.itens.entries()) {
+        const li = linhas.nth(i);
+        await expect(li.locator(".contact-language-name")).toHaveText(nome);
+        await expect(li.locator(".contact-language-level")).toHaveText(nivel);
+        await expect(li.locator("svg.lang-flag")).toHaveCount(1);
+        await expect(li.locator("svg.lang-flag")).toHaveAttribute("data-flag", i === 0 ? "BR" : "US");
+      }
+      await grupo.scrollIntoViewIfNeeded();
       // As partes entram em sequência (reveal): espera o layout assentar antes de medir.
       await expect
         .poll(async () => {
           const cidade = (await page.locator(".contact-map-caption").boundingBox())!;
-          const l = (await linguas.boundingBox())!;
-          return l.y > cidade.y && l.y - (cidade.y + cidade.height) < 24;
+          const g = (await grupo.boundingBox())!;
+          const nome = (await linhas.first().locator(".contact-language-name").boundingBox())!;
+          const nivel = (await linhas.first().locator(".contact-language-level").boundingBox())!;
+          const li = (await linhas.first().boundingBox())!;
+          // abaixo da cidade; nome à esquerda, nível colado na borda direita da linha
+          return g.y > cidade.y && nome.x < nivel.x && Math.abs(nivel.x + nivel.width - (li.x + li.width)) < 2;
         })
         .toBe(true);
+    });
+
+    test("idiomas: nome em --ink, nível e rótulo em --soft", async ({ page }) => {
+      await page.goto(path);
+      const cor = (sel: string) => page.locator(sel).first().evaluate((el) => getComputedStyle(el).color);
+      const [nome, nivel, rotulo] = await Promise.all([cor(".contact-language-name"), cor(".contact-language-level"), cor(".contact-languages h3")]);
+      expect(nivel).toBe(rotulo);
+      expect(nome).not.toBe(nivel);
     });
 
     test("não rola na horizontal a 375 px", async ({ page }) => {

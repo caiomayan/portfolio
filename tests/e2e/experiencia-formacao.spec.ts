@@ -36,6 +36,7 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await expect(sec.getByText(t.form.curso)).toBeVisible();
       await expect(sec.getByText(t.form.inst)).toBeVisible();
       await expect(sec.getByText(t.form.periodo)).toBeVisible();
+      await expect(sec.getByText(t.form.monitoria, { exact: true })).toBeVisible();
       await expect(sec.getByText(t.form.monitor)).toBeVisible();
       await expect(sec.getByText(t.form.semestre)).toBeVisible();
       await expect(sec.getByText(t.form.descricao)).toBeVisible();
@@ -47,7 +48,16 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await expect(filho).toHaveCount(1);
       await expect(page.locator("#formacao .entry-child")).toHaveCount(1);
       const [bc, bf, bd] = await Promise.all([curso.boundingBox(), filho.boundingBox(), sec.getByText(t.form.descricao).boundingBox()]);
-      expect(bf!.x).toBeGreaterThan(bc!.x + 8);
+      // Mesma borda esquerda do texto do curso (não um recuo solto), com o ícone de hierarquia à esquerda dela.
+      const texto = (await page.locator("#formacao .entry-child-text").boundingBox())!;
+      expect(Math.abs(texto.x - bc!.x)).toBeLessThan(1);
+      expect(bf!.x).toBeGreaterThan(bc!.x);
+      const rotulo = page.locator("#formacao .entry-child-label");
+      const icone = page.locator("#formacao .entry-child-icon");
+      const [br, bi] = await Promise.all([rotulo.boundingBox(), icone.boundingBox()]);
+      expect(bi!.x + bi!.width).toBeLessThanOrEqual(br!.x);
+      expect(await rotulo.evaluate((el) => getComputedStyle(el).color)).toBe(await page.locator("#formacao .entry-period").evaluate((el) => getComputedStyle(el).color)); // --soft
+      expect(await rotulo.evaluate((el) => getComputedStyle(el).color)).not.toBe(await filho.evaluate((el) => getComputedStyle(el).color)); // título em --ink
       expect(bf!.y).toBeGreaterThan(bd!.y + bd!.height - 1);
       const tamanho = (l: ReturnType<typeof page.locator>) => l.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
       expect(await tamanho(filho)).toBeLessThan(await tamanho(curso));

@@ -20,7 +20,13 @@ export const pt: Content = {
     github: { label: "GitHub", href: "https://github.com/caiomayan", external: true },
     resume: { label: "Currículo (PDF)", href: "/caio-mayan-curriculo.pdf" },
     map: { place: "João Pessoa, Brasil", offset: "UTC−3" },
-    languages: "Português (nativo) · Inglês (fluente, C2)",
+    languages: {
+      heading: "Idiomas",
+      items: [
+        { name: "Português", level: "nativo", flag: "BR" },
+        { name: "Inglês", level: "fluente · C2, EF SET", flag: "US" },
+      ],
+    },
   },
   experience: {
     heading: "Experiência",
@@ -60,7 +66,7 @@ export const pt: Content = {
         description:
           "Onde construí e sigo fortalecendo minha base: Java e Spring Boot, bancos de dados, estrutura de dados e segurança da informação.",
         period: "out. 2024 – jul. 2027 (previsão)",
-        children: [{ title: "Monitor da disciplina de Segurança de Dados", period: "semestre 2026.2" }],
+        children: [{ label: "Monitoria", title: "Disciplina de Segurança de Dados", period: "semestre 2026.2" }],
       },
     ],
   },
@@ -68,7 +74,7 @@ export const pt: Content = {
   technologies: {
     heading: "Tecnologias",
     items: [
-      { name: "Java", icon: "coffee" },
+      { name: "Java", logo: "java" },
       { name: "Spring Boot", logo: "springboot" },
       { name: "Node.js", logo: "nodedotjs" },
       { name: "TypeScript", logo: "typescript" },

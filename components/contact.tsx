@@ -77,7 +77,8 @@ function CopyButton({ text, label, doneLabel }: { text: string; label: string; d
   );
 }
 
-export function Contact({ content }: { content: Content }) {
+/** `children`: blocos de servidor (as línguas, com bandeira) que entram depois do mapa sem puxar a biblioteca de bandeiras pro cliente. */
+export function Contact({ content, children }: { content: Content; children?: React.ReactNode }) {
   const c = content.contact;
   return (
     <section className="contact" aria-labelledby="contato">
@@ -102,7 +103,7 @@ export function Contact({ content }: { content: Content }) {
         )}
       </ul>
       <ContactMap map={c.map} />
-      <p className="contact-languages" data-reveal-part>{c.languages}</p>
+      {children}
     </section>
   );
 }

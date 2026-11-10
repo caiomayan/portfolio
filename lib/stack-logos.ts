@@ -5,6 +5,7 @@ import cloudflare from "@/assets/logos/cloudflare.svg";
 import docker from "@/assets/logos/docker.svg";
 import express from "@/assets/logos/express.svg";
 import git from "@/assets/logos/git.svg";
+import java from "@/assets/logos/java.svg";
 import mongodb from "@/assets/logos/mongodb.svg";
 import nestjs from "@/assets/logos/nestjs.svg";
 import nextdotjs from "@/assets/logos/nextdotjs.svg";
@@ -33,6 +34,7 @@ export const stackLogos = {
   valkey: { src: valkey, colored: true },
   amazonec2: { src: amazonec2, colored: false },
   oracle: { src: oracle, colored: false },
+  java: { src: java, colored: false },
   springboot: { src: springboot, colored: false },
   nodedotjs: { src: nodedotjs, colored: false },
   typescript: { src: typescript, colored: false },

@@ -278,15 +278,29 @@ h1::after { content: "." / ""; }
   :is(#experiencia, #formacao) .entry-period { white-space: normal; padding: 0 0 0 calc(var(--entry-logo) + var(--entry-gap)); order: 2; }
 }
 
-/* Subitem subordinado (monitoria dentro do curso): recuado, menor, sem marcador nem linha. */
-:is(#experiencia, #formacao) .entry-children { grid-column: 1 / -1; margin-top: 2px; display: grid; gap: 6px; }
-:is(#experiencia, #formacao) .entry-child { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 24px; padding-left: calc(var(--entry-logo) + var(--entry-gap) + 20px); font-size: var(--text-small); line-height: 1.5; }
+/* Subitem subordinado (monitoria dentro do curso): mesma borda esquerda do texto do curso (a coluna do logo guarda só o ícone de hierarquia),
+   rótulo em --soft antes do título em --ink, período à direita como o da linha. */
+:is(#experiencia, #formacao) .entry-children { grid-column: 1 / -1; margin-top: 10px; display: grid; gap: 6px; }
+:is(#experiencia, #formacao) .entry-child { display: grid; grid-template-columns: var(--entry-logo) minmax(0, 1fr) auto; column-gap: var(--entry-gap); align-items: baseline; font-size: var(--text-small); line-height: 1.5; }
+:is(#experiencia, #formacao) .entry-child-icon { justify-self: end; align-self: center; width: 16px; height: 16px; color: var(--soft); }
+:is(#experiencia, #formacao) .entry-child-text { margin: 0; min-width: 0; }
+:is(#experiencia, #formacao) .entry-child-label { color: var(--soft); margin-right: 4px; }
 :is(#experiencia, #formacao) .entry-child-title { color: var(--ink); }
-:is(#experiencia, #formacao) .entry-child-period { color: var(--soft); font-variant-numeric: tabular-nums; }
+:is(#experiencia, #formacao) .entry-child-period { color: var(--soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (max-width: 899px) {
+  :is(#experiencia, #formacao) .entry-child-period { grid-column: 2; white-space: normal; }
+}
 
 /* Tecnologias: só ícones, a mesma fileira da stack do Carmine. */
 #tecnologias .stack { margin-top: 8px; }
-.contact-languages { margin: 6px 0 0; font-size: var(--text-small); color: var(--soft); }
+/* Idiomas: rótulo em --soft e linhas de duas pontas (bandeira e nome em --ink, nível em --soft), como as outras linhas do site. */
+.contact-languages { margin-top: 40px; max-width: 640px; font-size: var(--text-small); }
+.contact-languages h3 { margin: 0 0 8px; font-size: var(--text-small); font-weight: 500; color: var(--soft); }
+.contact-languages ul { list-style: none; margin: 0; padding: 0; }
+.contact-languages li { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0 24px; padding-block: 6px; line-height: 1.5; }
+.contact-language-name { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); }
+.contact-languages .contact-language-flag { width: 20px; flex: none; border-radius: 3px; }
+.contact-language-level { color: var(--soft); }
 
 .notfound { min-height: 100svh; display: grid; place-items: center; }
 .notfound h1 { font-size: var(--text-display); }
