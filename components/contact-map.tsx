@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Content } from "@/content";
 import { project, worldMap } from "@/lib/world-map";
+import type { WeatherSlots } from "./weather";
 
 // João Pessoa (7,12° S, 34,88° O) e o fuso da hora local (UTC−3, sem horário de verão).
 const CITY = { lon: -34.88, lat: -7.12 };
@@ -29,7 +30,7 @@ function LocalTime({ offset }: { offset: string }) {
   return <span className="contact-map-time">{time && `${time} (${offset})`}</span>;
 }
 
-export function ContactMap({ map }: { map: Content["contact"]["map"] }) {
+export function ContactMap({ map, weather }: { map: Content["contact"]["map"]; weather: WeatherSlots | null }) {
   const { x, y } = project(CITY.lon, CITY.lat);
   return (
     <div className="contact-map" data-reveal-part>
@@ -45,8 +46,13 @@ export function ContactMap({ map }: { map: Content["contact"]["map"] }) {
       </div>
       <p className="contact-map-caption">
         <span className="contact-map-place">{map.place}</span>
-        <LocalTime offset={map.offset} />
+        {/* Hora e clima andam juntos: se faltar espaço, o par inteiro desce, nunca só o clima. */}
+        <span className="contact-map-now">
+          <LocalTime offset={map.offset} />
+          {weather?.now}
+        </span>
       </p>
+      {weather?.credit}
     </div>
   );
 }

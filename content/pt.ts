@@ -20,6 +20,10 @@ export const pt: Content = {
     github: { label: "GitHub", href: "https://github.com/caiomayan", external: true },
     resume: { label: "Currículo (PDF)", href: "/caio-mayan-curriculo.pdf" },
     map: { place: "João Pessoa, Brasil", offset: "UTC−3" },
+    weather: {
+      labels: { clear: "Céu limpo", partly: "Parcialmente nublado", cloudy: "Nublado", fog: "Neblina", rain: "Chuva", storm: "Tempestade" },
+      credit: { prefix: "Dados do clima por", name: "Open-Meteo.com", href: "https://open-meteo.com/" },
+    },
     languages: {
       heading: "Idiomas",
       items: [
@@ -71,6 +75,7 @@ export const pt: Content = {
     ],
   },
   ui: { themeToggle: "Tema escuro", otherLang: { label: "English", href: locales.en.path, lang: "en", flag: "US", country: "Estados Unidos" } },
+  activity: { heading: "Atividade", total: { one: "{n} contribuição no último ano", other: "{n} contribuições no último ano" } },
   technologies: {
     heading: "Tecnologias",
     items: [

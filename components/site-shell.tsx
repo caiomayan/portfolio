@@ -8,6 +8,7 @@ import { SmoothScroll } from "@/components/smooth-scroll";
 import "lenis/dist/lenis.css";
 import "@/app/globals.css";
 import "@/app/motion.css";
+import "@/app/dados.css";
 
 // Inter variável com eixo de tamanho óptico (opsz); servida pelo próprio site.
 const inter = Inter({ subsets: ["latin"], axes: ["opsz"], variable: "--font-inter", display: "swap" });
