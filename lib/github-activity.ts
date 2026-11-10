@@ -4,6 +4,8 @@
  * Sem token, ou com qualquer falha (rede, status, erro do GraphQL, formato), devolve `null` e o bloco não aparece.
  */
 
+import { apiUrl } from "./api-url.ts";
+
 export type Level = 0 | 1 | 2 | 3 | 4;
 export type Activity = { total: number; weeks: { count: number; level: Level }[][] };
 
@@ -50,7 +52,7 @@ export async function getActivity(): Promise<Activity | null> {
   const token = process.env.GITHUB_TOKEN?.trim();
   if (!token) return null;
   try {
-    const res = await fetch(process.env.GITHUB_GRAPHQL_URL || DEFAULT_URL, {
+    const res = await fetch(apiUrl(process.env.GITHUB_GRAPHQL_URL, DEFAULT_URL), {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", "User-Agent": "caiomayan.com" },
       body: JSON.stringify({ query: QUERY, variables: { login: LOGIN } }),

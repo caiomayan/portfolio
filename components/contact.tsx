@@ -78,8 +78,8 @@ function CopyButton({ text, label, doneLabel }: { text: string; label: string; d
   );
 }
 
-/** `weather`: clima já renderizado no servidor (#28); `null` quando a API falhou, e o resto segue igual. */
-export function Contact({ content, weather = null }: { content: Content; weather?: WeatherSlots | null }) {
+/** `weather`: clima já renderizado no servidor (#28); `null` quando a API falhou. `children`: blocos de servidor (as línguas, com bandeira) que entram depois do mapa sem puxar a biblioteca de bandeiras pro cliente. */
+export function Contact({ content, weather = null, children }: { content: Content; weather?: WeatherSlots | null; children?: React.ReactNode }) {
   const c = content.contact;
   return (
     <section className="contact" aria-labelledby="contato">
@@ -104,6 +104,7 @@ export function Contact({ content, weather = null }: { content: Content; weather
         )}
       </ul>
       <ContactMap map={c.map} weather={weather} />
+      {children}
     </section>
   );
 }

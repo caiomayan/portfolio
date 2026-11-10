@@ -10,8 +10,8 @@ const APIS = `http://127.0.0.1:${PORT_APIS}`;
 // O token abaixo é só do servidor falso (não é segredo). Dois builds: um com as APIs respondendo (.next) e um com as duas falhando (.next-falha).
 export const TEST_TOKEN = "token-de-teste-nao-e-segredo";
 export const buildEnv = {
-  ok: { OPEN_METEO_URL: `${APIS}/weather`, GITHUB_GRAPHQL_URL: `${APIS}/github`, GITHUB_TOKEN: TEST_TOKEN },
-  falha: { OPEN_METEO_URL: `${APIS}/weather-erro`, GITHUB_GRAPHQL_URL: `${APIS}/github-erro`, GITHUB_TOKEN: TEST_TOKEN, NEXT_DIST_DIR: ".next-falha" },
+  ok: { ALLOW_TEST_API_URLS: "1", OPEN_METEO_URL: `${APIS}/weather`, GITHUB_GRAPHQL_URL: `${APIS}/github`, GITHUB_TOKEN: TEST_TOKEN },
+  falha: { ALLOW_TEST_API_URLS: "1", OPEN_METEO_URL: `${APIS}/weather-erro`, GITHUB_GRAPHQL_URL: `${APIS}/github-erro`, GITHUB_TOKEN: TEST_TOKEN, NEXT_DIST_DIR: ".next-falha" },
 };
 
 // Os testes rodam contra o build de produção (next build + next start).

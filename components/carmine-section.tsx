@@ -1,9 +1,7 @@
 import Image from "next/image";
 import type { Content } from "@/content";
 import carmineLogo from "@/assets/logos/carmine.svg";
-import { FallbackIcon } from "./fallback-icon";
-import { stackLogos } from "@/lib/stack-logos";
-import { Tooltip } from "./tooltip";
+import { StackIcons } from "./stack-icons";
 import { HoverLinkPreview } from "./hover-link-preview";
 import carminePreview from "@/assets/carmine-preview.webp";
 
@@ -24,22 +22,7 @@ export function CarmineSection({ content }: { content: Content["carmine"] }) {
         <p className="soft" data-reveal-part>{content.how}</p>
 
         <h3 className="label" data-reveal-part>{content.stackLabel}</h3>
-        <ul className="stack" data-reveal-part>
-          {content.stack.map((s) => (
-            <li key={s.name}>
-              <Tooltip label={s.name}>
-                {/* Foco pelo teclado abre o tooltip; o nome acessível é o do próprio controle. */}
-                <span className="stack-icon" role="img" aria-label={s.name} tabIndex={0}>
-                  {s.logo ? (
-                    <Image className={stackLogos[s.logo].colored ? "logo color" : "logo"} src={stackLogos[s.logo].src} alt="" width={20} height={20} unoptimized />
-                  ) : (
-                    <span className="stack-logo-empty"><FallbackIcon id={s.icon!} /></span>
-                  )}
-                </span>
-              </Tooltip>
-            </li>
-          ))}
-        </ul>
+        <StackIcons items={content.stack} data-reveal-part />
 
         <div className="links" data-reveal-part>
           <HoverLinkPreview className="link-external" href={content.links.site.href} image={carminePreview}>{content.links.site.label}</HoverLinkPreview>

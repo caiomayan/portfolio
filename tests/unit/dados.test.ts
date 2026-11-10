@@ -74,3 +74,46 @@ test("código WMO vira o ícone certo", () => {
   assert.equal(weatherKind(95), "storm");
   assert.equal(weatherKind(71), "cloudy");
 });
+
+// Guarda da URL: o token do GitHub vai na chamada, então um valor errado na Vercel não pode trocar o host.
+function fetchedUrls() {
+  const urls: string[] = [];
+  globalThis.fetch = (async (input: RequestInfo | URL) => {
+    urls.push(String(input));
+    return new Response("{}", { status: 500 });
+  }) as typeof fetch;
+  return urls;
+}
+
+test("URLs trocadas por variável só valem com a variável de teste ligada", async () => {
+  process.env.GITHUB_TOKEN = "token";
+  process.env.OPEN_METEO_URL = "http://evil.test/weather";
+  process.env.GITHUB_GRAPHQL_URL = "http://evil.test/github";
+  delete process.env.ALLOW_TEST_API_URLS;
+  delete process.env.VERCEL_ENV;
+  let urls = fetchedUrls();
+  await getWeather();
+  await getActivity();
+  assert.match(urls[0], /^https:\/\/api\.open-meteo\.com\//);
+  assert.equal(urls[1], "https://api.github.com/graphql");
+
+  process.env.ALLOW_TEST_API_URLS = "1";
+  urls = fetchedUrls();
+  await getWeather();
+  await getActivity();
+  assert.match(urls[0], /^http:\/\/evil\.test\/weather/);
+  assert.equal(urls[1], "http://evil.test/github");
+});
+
+test("em produção da Vercel os hosts oficiais valem mesmo com a variável de teste ligada", async () => {
+  process.env.GITHUB_TOKEN = "token";
+  process.env.ALLOW_TEST_API_URLS = "1";
+  process.env.VERCEL_ENV = "production";
+  process.env.OPEN_METEO_URL = "http://evil.test/weather";
+  process.env.GITHUB_GRAPHQL_URL = "http://evil.test/github";
+  const urls = fetchedUrls();
+  await getWeather();
+  await getActivity();
+  assert.match(urls[0], /^https:\/\/api\.open-meteo\.com\//);
+  assert.equal(urls[1], "https://api.github.com/graphql");
+});

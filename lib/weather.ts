@@ -4,6 +4,8 @@
  * Qualquer falha (rede, status, formato, demora) vira `null` e o clima simplesmente não aparece.
  */
 
+import { apiUrl } from "./api-url.ts";
+
 export type WeatherKind = "clear" | "partly" | "cloudy" | "fog" | "rain" | "storm";
 export type Weather = { temperature: number; kind: WeatherKind };
 
@@ -23,7 +25,7 @@ export function weatherKind(code: number): WeatherKind {
 
 export async function getWeather(): Promise<Weather | null> {
   try {
-    const url = new URL(process.env.OPEN_METEO_URL || DEFAULT_URL);
+    const url = new URL(apiUrl(process.env.OPEN_METEO_URL, DEFAULT_URL));
     url.searchParams.set("latitude", "-7.12");
     url.searchParams.set("longitude", "-34.88");
     url.searchParams.set("current", "temperature_2m,weather_code");
