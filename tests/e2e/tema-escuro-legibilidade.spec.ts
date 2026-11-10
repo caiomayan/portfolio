@@ -36,7 +36,7 @@ for (const path of ["/", "/en"]) {
       );
       expect(filtros.filter((f) => f.cor)).toHaveLength(1);
       for (const f of filtros) {
-        if (f.cor) expect(f.filter).toBe("none");
+        if (f.cor) expect(f.filter).toContain("brightness(0)"); // o colorido vai pro tom suave, sem o matiz
         else expect(f.filter).toContain("invert");
       }
     });

@@ -1,4 +1,4 @@
-// Servidor falso do Open-Meteo e do GitHub, só pros testes e2e: o build lê as URLs de OPEN_METEO_URL e GITHUB_GRAPHQL_URL.
+// Servidor falso (o clima vem de noite, `is_day: 0`: o teste confere o ícone da lua) do Open-Meteo e do GitHub, só pros testes e2e: o build lê as URLs de OPEN_METEO_URL e GITHUB_GRAPHQL_URL.
 // Assim o build de produção testado não depende de rede nem do token de verdade.
 import { createServer } from "node:http";
 
@@ -24,7 +24,7 @@ createServer((req, res) => {
     res.end(JSON.stringify(body));
   };
   if (url.pathname === "/health") return send(200, { ok: true });
-  if (url.pathname === "/weather") return send(200, { current: { temperature_2m: 27.6, weather_code: 2 } });
+  if (url.pathname === "/weather") return send(200, { current: { temperature_2m: 27.6, weather_code: 2, is_day: 0 } });
   if (url.pathname === "/weather-erro") return send(500, { error: true });
   if (url.pathname === "/github-erro") return send(502, { error: true });
   if (url.pathname === "/github" && req.method === "POST") {

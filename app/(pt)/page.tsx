@@ -1,10 +1,11 @@
 import { Education } from "@/components/education";
 import { Experience } from "@/components/experience";
-import { Technologies } from "@/components/technologies";
+import { Foundations } from "@/components/foundations";
 import { Contact } from "@/components/contact";
 import { ContactLanguages } from "@/components/contact-languages";
 import { CarmineSection } from "@/components/carmine-section";
-import { Hero } from "@/components/hero";
+import { Hero, SiteHeader } from "@/components/hero";
+import { SiteFooter } from "@/components/site-footer";
 import { Activity } from "@/components/activity";
 import { weatherSlots } from "@/components/weather";
 import { content } from "@/content";
@@ -19,17 +20,23 @@ export const revalidate = 1800;
 
 export default async function Page() {
   const [weather, activity] = await Promise.all([getWeather(), getActivity()]);
+  const clima = weatherSlots(weather, content.pt.contact.weather);
   return (
     <>
-      <Hero content={content.pt} />
-      <CarmineSection content={content.pt.carmine} />
-      <Experience content={content.pt} />
-      <Education content={content.pt} />
-      <Technologies content={content.pt} />
-      <Activity content={content.pt.activity} data={activity} lang="pt" />
-      <Contact content={content.pt} weather={weatherSlots(weather, content.pt.contact.weather)}>
-        <ContactLanguages languages={content.pt.contact.languages} />
-      </Contact>
+      <SiteHeader content={content.pt} />
+      <main>
+        <Hero content={content.pt} weather={clima} />
+        <CarmineSection content={content.pt.carmine} />
+        <Experience content={content.pt} />
+        <Education content={content.pt} />
+        <Foundations content={content.pt} />
+        <Activity content={content.pt.activity} data={activity} lang="pt" />
+        <Contact content={content.pt}>
+          <ContactLanguages languages={content.pt.contact.languages} />
+        </Contact>
+      </main>
+      {/* Crédito do Open-Meteo (CC BY 4.0) à direita do rodapé, só quando há clima. */}
+      <SiteFooter footer={content.pt.footer} credit={clima?.credit} />
     </>
   );
 }

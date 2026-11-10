@@ -5,10 +5,10 @@ import { rotasTexto, type RotaTexto } from "./textos";
 for (const path of ["/", "/en"] as RotaTexto[]) {
   const t = rotasTexto[path];
   test.describe(`experiência e formação em ${path}`, () => {
-    test("a página inteira segue a ordem: apresentação, Carmine, experiência, formação, tecnologias, contato", async ({ page }) => {
+    test("a página inteira segue a ordem: apresentação, Carmine, experiência, formação, fundamentos, contato", async ({ page }) => {
       await page.goto(path);
       const tops = await Promise.all(
-        [".hero", "#carmine", "#experiencia", "#formacao", "#tecnologias", ".contact"].map(async (sel) => (await page.locator(sel).boundingBox())!.y),
+        [".hero", "#carmine", "#experiencia", "#formacao", "#fundamentos", ".contact"].map(async (sel) => (await page.locator(sel).boundingBox())!.y),
       );
       expect(tops).toEqual([...tops].sort((a, b) => a - b));
       expect(new Set(tops).size).toBe(6);
@@ -82,9 +82,9 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await page.goto(path);
       const exp = page.locator("section", { has: page.getByRole("heading", { name: t.exp.heading }) });
       const form = page.locator("section", { has: page.getByRole("heading", { name: t.form.heading }) });
-      await expect(exp.locator("img")).toHaveCount(2);
-      await expect(form.locator("img")).toHaveCount(1);
-      for (const l of [exp.locator("img"), form.locator("img")]) {
+      await expect(exp.locator("img.entry-logo")).toHaveCount(2);
+      await expect(form.locator("img.entry-logo")).toHaveCount(1);
+      for (const l of [exp.locator("img.entry-logo"), form.locator("img.entry-logo")]) {
         for (const img of await l.all()) {
           await expect(img).toBeVisible();
           expect(await img.evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth > 0)).toBe(true);

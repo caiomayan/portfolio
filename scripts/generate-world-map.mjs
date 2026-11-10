@@ -64,11 +64,6 @@ export const worldMap = {
   /** Um único caminho: cada ponto é um traço de comprimento zero (desenhado redondo com stroke-linecap). */
   dots: "${dots.join("")}",
 } as const;
-
-/** Posição (0 a 1) de uma coordenada dentro do mapa. */
-export function project(lon: number, lat: number): { x: number; y: number } {
-  return { x: ((lon + 180) * worldMap.scale) / worldMap.width, y: ((worldMap.latTop - lat) * worldMap.scale) / worldMap.height };
-}
 `;
 await writeFile(OUT, src);
 console.log(`lib/world-map.ts: ${dots.length} pontos, ${(src.length / 1024).toFixed(1)} KB`);

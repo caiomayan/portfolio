@@ -14,6 +14,7 @@ export function Education({ content }: { content: Content }) {
             sub={item.detail}
             about={item.description}
             subitems={item.children}
+            stack={item.stack}
             period={item.period}
             logo={item.logo}
             icon={item.icon}
