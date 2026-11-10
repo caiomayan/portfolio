@@ -147,16 +147,32 @@ for (const r of rotas) {
       }
     });
 
-    test("o mapa não mostra a ponta da África: o recorte corta antes de 17,5° O e o pino fica de fora do corte", async ({ page }) => {
-      await page.goto(r.path);
-      const svg = page.locator(".place-art svg");
-      const direita = await svg.evaluate((el) => parseFloat(getComputedStyle(el).clipPath.match(/[\d.]+%/g)?.[0] ?? "0"));
-      expect(direita).toBeGreaterThan(0);
-      // Recorte de −100° a 20° de longitude: o visível vai até (1 − direita/100); Dacar (−17,5°) fica em 82,5 / 120 = 68,75 %.
-      expect(1 - direita / 100).toBeLessThan(82.5 / 120);
-      const pino = (await page.locator(".place-pin").boundingBox())!;
-      const mapa = (await page.locator(".place-art").boundingBox())!;
-      expect(pino.x + pino.width - mapa.x).toBeLessThan(mapa.width * (1 - direita / 100));
+    test("o mapa termina depois do Brasil (sem a África), com os pontos do mesmo tamanho e o texto perto do pino", async ({ browser }) => {
+      for (const [w, esperado] of [[1440, 144], [375, 75]] as const) {
+        const ctx = await browser.newContext({ viewport: { width: w, height: 800 } });
+        const page = await ctx.newPage();
+        await page.goto(r.path);
+        const m = await page.evaluate(() => {
+          const vb = document.querySelector(".place-art svg")!.getAttribute("viewBox")!.split(" ").map(Number);
+          const art = document.querySelector(".place-art")!.getBoundingClientRect();
+          const pin = document.querySelector(".place-pin")!.getBoundingClientRect();
+          const txt = document.querySelector(".place-text")!.getBoundingClientRect();
+          return { vbW: vb[2], vbH: vb[3], w: art.width, h: art.height, pinX: pin.x + pin.width / 2, pinDir: pin.right, artX: art.x, artDir: art.right, txtX: txt.x };
+        });
+        // O recorte tem 90° de altura; a largura em graus sai da proporção do viewBox. Começa em −100°, então termina em −100 + largura.
+        const lonMax = -100 + (90 * m.vbW) / m.vbH;
+        expect(lonMax, `${w}px: o recorte tem que acabar antes de Dacar (−17,5°)`).toBeLessThan(-17.5);
+        expect(lonMax).toBeGreaterThan(-34.88); // e depois de João Pessoa
+        // A caixa acompanha o recorte (sem vão vazio): mesma proporção do viewBox.
+        expect(m.w / m.h).toBeCloseTo(m.vbW / m.vbH, 1);
+        expect(Math.abs(m.w - esperado), `${w}px`).toBeLessThanOrEqual(w === 1440 ? 2 : 14);
+        // Tamanho dos pontos igual ao de antes: no desktop 1,8 px por grau (era 216 px para 120°).
+        if (w === 1440) expect(m.w / (lonMax + 100)).toBeCloseTo(1.8, 1);
+        // O pino fica dentro da caixa e o texto começa perto dele (antes do #34 eram ~123 px; agora bem menos).
+        expect(m.pinDir).toBeLessThanOrEqual(m.artDir);
+        expect(m.txtX - m.pinX, `${w}px: pino até o texto`).toBeLessThan(w === 1440 ? 70 : 50);
+        await ctx.close();
+      }
     });
 
     for (const tema of temas) {

@@ -9,7 +9,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 - Nome: Caio Mayan
 - Título: Engenheiro de Software
 - Frase de abertura: Engenheiro de Software. Construo produtos com IA aplicada, sobre uma base sólida de backend.
-- Lugar (#29, no lugar da linha "João Pessoa, PB"): mapa de pontos compacto (recorte das Américas e do Atlântico, com o pino em João Pessoa), decorativo, e ao lado, em texto, "João Pessoa, Brasil", a hora local, no formato "14:32 (UTC−3)" (24 h, fuso America/Fortaleza, atualizada a cada minuto; a hora não vem no HTML do servidor), e o clima (abaixo). Fica embaixo da frase de abertura, na primeira tela.
+- Lugar (#29, no lugar da linha "João Pessoa, PB"): mapa de pontos compacto (recorte das Américas até logo depois do Brasil, com o pino em João Pessoa), decorativo, e ao lado, em texto, "João Pessoa, Brasil", a hora local, no formato "14:32 (UTC−3)" (24 h, fuso America/Fortaleza, atualizada a cada minuto; a hora não vem no HTML do servidor), e o clima (abaixo). Fica embaixo da frase de abertura, na primeira tela.
 - Link para o Contato (#34): "Contato ↓", texto simples embaixo do lugar, leva à seção Contato.
 - Foto: `assets/foto-original.jpg`
 
@@ -100,7 +100,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 - Name: Caio Mayan
 - Title: Software Engineer
 - Opening line: Software Engineer. I build applied AI products on a solid backend foundation.
-- Place (#29, replaces the "João Pessoa, Brazil" line): compact dot map (crop of the Americas and the Atlantic, with a pin on João Pessoa), decorative, and next to it, as text, "João Pessoa, Brazil", the local time, formatted "14:32 (UTC−3)" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML), and the weather (below). Sits under the opening line, on the first screen.
+- Place (#29, replaces the "João Pessoa, Brazil" line): compact dot map (crop of the Americas up to just past Brazil, with a pin on João Pessoa), decorative, and next to it, as text, "João Pessoa, Brazil", the local time, formatted "14:32 (UTC−3)" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML), and the weather (below). Sits under the opening line, on the first screen.
 - Link to Contact (#34): "Contact ↓", plain text under the place, leads to the Contact section.
 - Photo alt: "Portrait of Caio Mayan"
 
