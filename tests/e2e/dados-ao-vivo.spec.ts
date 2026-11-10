@@ -12,7 +12,7 @@ const rotas = [
 
 for (const r of rotas) {
   test.describe(`dados ao vivo em ${r.path}`, () => {
-    test("clima na primeira tela, ao lado da hora, no HTML do servidor, com ícone da noite; crédito no fim do Contato", async ({ page, request }) => {
+    test("clima na primeira tela, ao lado da hora, no HTML do servidor, com ícone da noite; crédito no rodapé", async ({ page, request }) => {
       const html = await (await request.get(r.path)).text();
       expect(html).toContain("28°C");
       await page.goto(r.path);
@@ -30,9 +30,12 @@ for (const r of rotas) {
       const [t, c] = await Promise.all([page.locator(".place-time").boundingBox(), clima.boundingBox()]);
       expect(Math.abs(t!.y - c!.y)).toBeLessThan(12);
       expect(c!.x).toBeGreaterThan(t!.x);
-      // Crédito CC BY 4.0 do Open-Meteo: no fim do Contato (nunca na primeira tela), depois das línguas.
-      await expect(page.locator(".hero .weather-credit")).toHaveCount(0);
-      const credito = page.locator(".contact .weather-credit");
+      // Juntos na mesma linha, com um separador discreto: o vão entre o fim da hora e o início do clima é curto (sem o buraco de antes).
+      expect(c!.x - (t!.x + t!.width)).toBeLessThan(32);
+      expect(await clima.evaluate((e) => getComputedStyle(e, "::before").content)).toContain("·");
+      // Crédito CC BY 4.0 do Open-Meteo: no rodapé (nunca na primeira tela nem no Contato), depois das línguas.
+      await expect(page.locator(".hero .weather-credit, .contact .weather-credit")).toHaveCount(0);
+      const credito = page.locator("footer .weather-credit");
       await credito.scrollIntoViewIfNeeded();
       const [lg, cr] = await Promise.all([page.locator(".contact .contact-languages").boundingBox(), credito.boundingBox()]);
       expect(cr!.y).toBeGreaterThan(lg!.y + lg!.height - 1);

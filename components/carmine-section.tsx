@@ -8,16 +8,16 @@ import carminePreview from "@/assets/carmine-preview.webp";
 export function CarmineSection({ content }: { content: Content["carmine"] }) {
   return (
     <section id="carmine" aria-labelledby="carmine-title">
-      <div className="carmine-aside" data-reveal-part>
-        <h2 id="carmine-title">{content.heading}</h2>
-        <p className="carmine-aside-note">{content.note}</p>
+      <div className="carmine-head" data-reveal-part>
+        {/* Mesmo título das outras seções (h2 grande); o logo vem antes do nome, decorativo. */}
+        <h2 id="carmine-title">
+          <Image src={carmineLogo} alt="" width={40} height={40} unoptimized />
+          {content.heading}
+        </h2>
+        <p className="carmine-note">{content.note}</p>
       </div>
       <div className="carmine-body">
         <p className="status" data-reveal-part><span className="status-dot" aria-hidden="true" />{content.status}</p>
-        <div className="project-head" data-reveal-part>
-          <Image src={carmineLogo} alt="" width={40} height={40} unoptimized />
-          <span className="project-name">{content.name}</span>
-        </div>
         <p data-reveal-part>{content.what}</p>
         <p className="soft" data-reveal-part>{content.how}</p>
 

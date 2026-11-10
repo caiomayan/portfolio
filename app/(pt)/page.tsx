@@ -5,6 +5,7 @@ import { Contact } from "@/components/contact";
 import { ContactLanguages } from "@/components/contact-languages";
 import { CarmineSection } from "@/components/carmine-section";
 import { Hero } from "@/components/hero";
+import { SiteFooter } from "@/components/site-footer";
 import { Activity } from "@/components/activity";
 import { weatherSlots } from "@/components/weather";
 import { content } from "@/content";
@@ -30,9 +31,9 @@ export default async function Page() {
       <Activity content={content.pt.activity} data={activity} lang="pt" />
       <Contact content={content.pt}>
         <ContactLanguages languages={content.pt.contact.languages} />
-        {/* Crédito do Open-Meteo (CC BY 4.0): linha discreta no fim do Contato, só quando há clima. */}
-        {clima?.credit}
       </Contact>
+      {/* Crédito do Open-Meteo (CC BY 4.0) à direita do rodapé, só quando há clima. */}
+      <SiteFooter footer={content.pt.footer} credit={clima?.credit} />
     </>
   );
 }

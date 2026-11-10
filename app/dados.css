@@ -1,10 +1,13 @@
 /* Dados ao vivo (#28): clima ao lado da hora, na primeira tela (#29), e gráfico de contribuições do GitHub. Preto e branco: só tons do tema. */
 
 /* Clima: renderizado no servidor, ao lado da hora (que entra no cliente). */
-.place-now { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0 12px; }
-.place-weather { display: inline-flex; align-items: center; gap: 6px; color: var(--soft); font-variant-numeric: tabular-nums; }
-.weather-icon { flex: none; color: var(--soft); }
-.weather-credit { margin: 40px 0 0; font-size: var(--text-small); color: var(--soft); }
+/* Hora e clima na mesma linha, juntos, alinhados pela linha de base: "07:02 (UTC−3) · ☁ 28°C". O separador é ornamento (sem texto alternativo). */
+.place-now { display: flex; align-items: baseline; white-space: nowrap; }
+.place-weather { display: inline-flex; align-items: baseline; gap: 6px; color: var(--soft); font-variant-numeric: tabular-nums; }
+.place-weather::before { content: "·" / ""; margin-inline: 8px 2px; }
+.weather-icon { flex: none; align-self: center; color: var(--soft); }
+/* Crédito do Open-Meteo no rodapé (CC BY 4.0). */
+.weather-credit { margin: 0; font-size: var(--text-small); color: var(--soft); }
 .weather-credit a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
 .weather-credit a:hover { color: var(--ink); text-decoration-color: var(--ink); }
 

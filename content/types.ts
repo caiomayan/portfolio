@@ -89,6 +89,8 @@ export type Content = {
     heading: string;
     items: ({ name: string } & Mark<StackLogoId>)[];
   };
+  /** Rodapé mínimo (#29): `{year}` vira o ano corrente, calculado ao gerar a página. O crédito do clima fica em `contact.weather.credit`. */
+  footer: { copyright: string };
   carmine: {
     heading: string;
     note: string;

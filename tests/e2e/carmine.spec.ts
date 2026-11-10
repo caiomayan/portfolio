@@ -63,7 +63,7 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       const secao = page.locator("#carmine");
       await expect(secao.getByRole("tab")).toHaveCount(0);
       await expect(secao.locator("figure, figcaption, [role=tabpanel]")).toHaveCount(0);
-      await expect(secao.locator(".project-head img")).toHaveCount(1);
+      await expect(secao.locator(".carmine-head h2 img")).toHaveCount(1);
       expect(await secao.innerText()).not.toMatch(/no ar\.|Screenshots from|Telas do|Carmine screens/);
     });
 

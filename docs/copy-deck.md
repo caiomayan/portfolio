@@ -26,7 +26,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
   - AWS EC2
   - Oracle Cloud
 - Links: stcarmine.com (https://stcarmine.com) · repositório (https://github.com/caiomayan/carmine)
-- Rótulo lateral da seção: "Projeto pessoal" (vindo do protótipo; proposto, o Caio revisa).
+- Título da seção (#29): o nome "Carmine", no mesmo título grande das outras seções (com o logo antes do nome), e embaixo, discreto, "Projeto pessoal" (vindo do protótipo; proposto, o Caio revisa). Depois vêm situação, o que é, como é feito, stack e links.
 - Prints do Carmine removidos (#18): sem abas, legenda nem rótulo das telas. Fica o título da lista: "Stack".
 
 ## Experiência
@@ -58,13 +58,19 @@ Seção entre Formação e Contato, só ícones (o nome é o tooltip e o nome ac
 
 ## Contato
 
+- Título (#29): "Contato", no mesmo título grande das outras seções.
+
 - E-mail: mail@caiomayan.com (com botão de copiar)
 - LinkedIn: https://www.linkedin.com/in/caiomayan/
 - GitHub: https://github.com/caiomayan
 - Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en). Só ícone no site (#18): o rótulo "Currículo (PDF)" vira tooltip e nome acessível, assim como "LinkedIn" e "GitHub". O e-mail continua escrito.
 - Mapa e hora (#24): a partir da #29 estão na primeira tela (ver Apresentação); o Contato não tem mais mapa.
-- Clima (#28, proposto, o Caio revisa; na primeira tela desde a #29): ao lado da hora, ícone do tempo e temperatura atual de João Pessoa, por exemplo "14:32 (UTC−3)  ☁ 28°C". O nome do tempo só é lido por leitor de tela: "Céu limpo", "Parcialmente nublado", "Nublado", "Neblina", "Chuva", "Tempestade". De noite o ícone é o da versão noturna (lua; nuvem com lua), pelo `is_day` do Open-Meteo. Crédito discreto numa linha no fim do Contato, depois dos idiomas (licença CC BY 4.0 do Open-Meteo): "Dados do clima por Open-Meteo.com" (o nome é um link). Se a API falha, nada disso aparece.
+- Clima (#28, proposto, o Caio revisa; na primeira tela desde a #29): junto da hora, na mesma linha e separados por um ponto discreto, ícone do tempo e temperatura atual de João Pessoa, por exemplo "14:32 (UTC−3) · ☁ 28°C". O nome do tempo só é lido por leitor de tela: "Céu limpo", "Parcialmente nublado", "Nublado", "Neblina", "Chuva", "Tempestade". De noite o ícone é o da versão noturna (lua; nuvem com lua), pelo `is_day` do Open-Meteo. O crédito (licença CC BY 4.0 do Open-Meteo) fica no rodapé (abaixo): "Dados do clima por Open-Meteo.com" (o nome é um link). Se a API falha, nada disso aparece.
 - Idiomas (#27), grupo pequeno no Contato, embaixo dos ícones: rótulo "Idiomas" e duas linhas, nome à esquerda e nível à direita: Português — nativo; Inglês — fluente · C2, EF SET.
+
+## Rodapé (#29)
+
+- Faixa mínima no fim da página, separada do Contato só por espaço (sem linha nem fundo): "© 2026 Caio Mayan" à esquerda e o crédito do clima, "Dados do clima por Open-Meteo.com", à direita (o crédito só aparece quando há clima). No celular os dois empilham. O ano é o corrente, calculado ao gerar a página (`{year}` em `content/`).
 
 ## Atividade (#28, proposto, o Caio revisa)
 
@@ -92,7 +98,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 ### Carmine
 
 - Name: Carmine
-- Side label: "Personal project"
+- Section title (#29): the name "Carmine", in the same large heading as the other sections (logo before the name), and below it, discreet, "Personal project". Then status, what it is, how it is built, stack and links.
 - What it is: SaaS for competitive Counter-Strike 2 players and teams.
 - Status: In development, launch expected in 2027
 - How it is built: Built with AI agents that open issues and pull requests and keep the specs and the backlog up to date, with a staging environment separate from production.
@@ -135,12 +141,16 @@ Section between Education and Contact, icons only (the name is the tooltip and t
 
 ### Contact
 
-- Heading: Contact
+- Heading: Contact (same large heading as the other sections, #29)
 - Email: mail@caiomayan.com (with copy button)
 - Resume (PDF): icon only (#18); "Resume (PDF)" is the tooltip and accessible name, file `caio-mayan-resume.pdf`. Email stays as text.
 - Map and time (#24): since #29 they are on the first screen (see Presentation); Contact no longer has a map.
-- Weather (#28, proposed, Caio reviews; on the first screen since #29): next to the time, a weather icon and the current temperature in João Pessoa, e.g. "14:32 (UTC−3)  ☁ 28°C". The weather name is read by screen readers only: "Clear sky", "Partly cloudy", "Cloudy", "Fog", "Rain", "Thunderstorm". At night the icon is the night version (moon; cloud with moon), from Open-Meteo’s `is_day`. Discreet credit on one line at the end of Contact, after the languages (Open-Meteo CC BY 4.0): "Weather data by Open-Meteo.com" (the name is a link). If the API fails, none of this shows.
+- Weather (#28, proposed, Caio reviews; on the first screen since #29): together with the time, on the same line and separated by a discreet dot, a weather icon and the current temperature in João Pessoa, e.g. "14:32 (UTC−3) · ☁ 28°C". The weather name is read by screen readers only: "Clear sky", "Partly cloudy", "Cloudy", "Fog", "Rain", "Thunderstorm". At night the icon is the night version (moon; cloud with moon), from Open-Meteo’s `is_day`. The credit (Open-Meteo CC BY 4.0) sits in the footer (below): "Weather data by Open-Meteo.com" (the name is a link). If the API fails, none of this shows.
 - Languages (#27), small group in Contact, under the icons: label "Languages" and two lines, name left and level right: Portuguese — native; English — fluent · C2, EF SET.
+
+### Footer (#29)
+
+- Minimal strip at the end of the page, separated from Contact by space only (no line, no background): "© 2026 Caio Mayan" on the left and the weather credit "Weather data by Open-Meteo.com" on the right (the credit only shows when there is weather). On mobile the two stack. The year is the current year, computed when the page is generated (`{year}` in `content/`).
 
 ### Activity (#28, proposed, Caio reviews)
 

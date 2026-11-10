@@ -100,6 +100,7 @@ export const pt: Content = {
       { name: "Git", logo: "git" },
     ],
   },
+  footer: { copyright: "© {year} Caio Mayan" },
   carmine: {
     heading: "Carmine",
     note: "Projeto pessoal",

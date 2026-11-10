@@ -18,8 +18,6 @@
   --max: 1120px;
 
   /* Seção Carmine (ver DESIGN.md) */
-  --carmine-rail: 200px;
-  --carmine-gap: 40px;
   --carmine-column: 640px;
 
   /* Experiência e formação: coluna do logo + respiro (o período no celular alinha por aqui) */
@@ -149,7 +147,16 @@ h1::after { content: "." / ""; }
 }
 /* Lugar (#29): mapa compacto à esquerda e, ao lado, cidade, hora e clima. Pontos em tons do tema, pino em João Pessoa. Decorativo; largura fixa por clamp, então não rola de lado. */
 .place { display: flex; align-items: center; gap: 16px; margin: clamp(16px, 2.4vw, 28px) 0 0; font-size: var(--text-small); color: var(--soft); }
-.place-art { position: relative; flex: none; width: clamp(104px, 30vw, 144px); }
+.place-art {
+  position: relative; flex: none; width: clamp(104px, 30vw, 144px);
+  /* Sem corte seco: as quatro bordas somem num fade (mais forte à direita, onde a África é cortada). A máscara age na transparência, então vale nos dois temas.
+     O pino (x ≈ 54%, y ≈ 61% do recorte) fica sempre na parte opaca: um teste confere. */
+  --fade-x: 14%; --fade-right: 34%; --fade-y: 16%;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--fade-x)), linear-gradient(to left, transparent, #000 var(--fade-right)), linear-gradient(to bottom, transparent, #000 var(--fade-y)), linear-gradient(to top, transparent, #000 var(--fade-y));
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 var(--fade-x)), linear-gradient(to left, transparent, #000 var(--fade-right)), linear-gradient(to bottom, transparent, #000 var(--fade-y)), linear-gradient(to top, transparent, #000 var(--fade-y));
+  mask-composite: intersect;
+}
 .place-art svg { display: block; width: 100%; height: 100%; overflow: hidden; }
 .place-art path { fill: none; stroke: var(--soft); stroke-opacity: 0.5; stroke-width: 3.2; stroke-linecap: round; }
 .place-pin { position: absolute; width: 7px; height: 7px; translate: -50% -50%; }
@@ -161,16 +168,16 @@ h1::after { content: "." / ""; }
 .place-text p { margin: 0; }
 .place-city { color: var(--ink); font-weight: 500; }
 /* Espaço reservado pra hora (14:32 (UTC−3)): ela entra no cliente sem mover nada. */
-.place-time { display: inline-block; min-width: 14ch; min-height: 1.2em; color: var(--soft); font-variant-numeric: tabular-nums; }
+.place-time { display: inline-block; min-width: 11.5ch; min-height: 1.2em; color: var(--soft); font-variant-numeric: tabular-nums; }
 
 /* Contato */
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 .contact {
   width: min(var(--max), 100% - 2 * var(--gutter));
   margin-inline: auto;
-  padding-block: 72px 96px;
+  padding-block: clamp(40px, 6vw, 72px) clamp(56px, 8vw, 96px);
 }
-.contact h2 { margin: 0 0 28px; font-size: var(--text-body); font-weight: 600; letter-spacing: -0.01em; color: var(--soft); }
+.contact h2 { margin: 0 0 20px; font-size: var(--text-lead); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
 .mail { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .mail-address {
   font-size: var(--text-lead);
@@ -298,7 +305,7 @@ h1::after { content: "." / ""; }
 /* Tecnologias: só ícones, a mesma fileira da stack do Carmine. */
 #tecnologias .stack { margin-top: 8px; }
 /* Idiomas: rótulo em --soft e linhas de duas pontas (bandeira e nome em --ink, nível em --soft), como as outras linhas do site. */
-.contact-languages { margin-top: 40px; max-width: 640px; font-size: var(--text-small); }
+.contact-languages { margin-top: 40px; max-width: 400px; font-size: var(--text-small); }
 .contact-languages h3 { margin: 0 0 8px; font-size: var(--text-small); font-weight: 500; color: var(--soft); }
 .contact-languages ul { list-style: none; margin: 0; padding: 0; }
 .contact-languages li { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0 24px; padding-block: 6px; line-height: 1.5; }
@@ -310,6 +317,11 @@ h1::after { content: "." / ""; }
 .notfound h1 { font-size: var(--text-display); }
 .notfound h1::after { content: none; }
 
+/* Telas muito estreitas (320 px): o mapa encolhe pra hora e o clima caberem na mesma linha. */
+@media (max-width: 359px) {
+  .place { gap: 12px; }
+  .place-art { width: 80px; }
+}
 @media (max-width: 899px) {
   .hero { grid-template-columns: 1fr; row-gap: 40px; align-content: start; min-height: 0; padding-block: 8px 64px; }
   .photo { width: clamp(104px, 32vw, 144px); border-radius: 20px; flex: none; }
@@ -346,21 +358,18 @@ h1::after { content: "." / ""; }
 #carmine {
   width: min(var(--max), 100% - 2 * var(--gutter));
   margin-inline: auto;
-  display: grid;
-  grid-template-columns: var(--carmine-rail) minmax(0, 1fr);
-  column-gap: var(--carmine-gap);
-  padding-block: 24px 112px;
+  padding-block: 24px 0;
 }
-#carmine .carmine-aside h2 { margin: 0; font-size: var(--text-lead); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
-#carmine .carmine-aside-note { margin: 8px 0 0; font-size: var(--text-small); color: var(--soft); }
+#carmine .carmine-head { margin-bottom: 20px; }
+#carmine .carmine-head h2 { display: flex; align-items: center; gap: 12px; margin: 0; font-size: var(--text-lead); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
+/* O logo acompanha o corpo do título (altura do texto de --text-lead), círculo como no cabeçalho antigo. */
+#carmine .carmine-head h2 img { width: 1.25em; height: 1.25em; border-radius: 50%; flex: none; }
+#carmine .carmine-note { margin: 8px 0 0; font-size: var(--text-small); color: var(--soft); }
 #carmine .carmine-body { min-width: 0; max-width: var(--carmine-column); }
 #carmine .carmine-body p { margin: 0 0 1em; }
 #carmine .soft { color: var(--soft); }
 #carmine .status { display: flex; align-items: center; gap: 10px; font-size: var(--text-small); color: var(--soft); margin: 0 0 20px; }
 #carmine .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); flex: none; }
-#carmine .project-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-#carmine .project-head img { border-radius: 50%; }
-#carmine .project-name { font-size: var(--text-lead); font-weight: 700; line-height: 1; letter-spacing: -0.03em; }
 #carmine h3.label { font-size: var(--text-small); font-weight: 600; line-height: 1; color: var(--soft); margin: 48px 0 8px; }
 :is(#carmine, #tecnologias) .stack { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 :is(#carmine, #tecnologias) .stack-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; }
@@ -372,5 +381,21 @@ h1::after { content: "." / ""; }
 #carmine .link-external::after { content: " ↗" / ""; }
 #carmine .link-external:hover { text-decoration-color: var(--ink); }
 @media (max-width: 899px) {
-  #carmine { grid-template-columns: 1fr; row-gap: 24px; padding-block: 8px 80px; }
+  #carmine { padding-block: 8px 0; }
+}
+
+/* Rodapé mínimo (#29): sem linha nem fundo, separado do Contato só por espaço. © à esquerda, crédito do clima à direita; no celular empilham. */
+.site-footer {
+  width: min(var(--max), 100% - 2 * var(--gutter));
+  margin-inline: auto;
+  padding-block: 0 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--text-small);
+  color: var(--soft);
+}
+.site-footer p { margin: 0; }
+@media (min-width: 640px) {
+  .site-footer { flex-direction: row; justify-content: space-between; align-items: baseline; gap: 24px; }
 }
