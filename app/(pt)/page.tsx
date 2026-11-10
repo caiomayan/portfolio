@@ -1,6 +1,6 @@
 import { Education } from "@/components/education";
 import { Experience } from "@/components/experience";
-import { Technologies } from "@/components/technologies";
+import { Foundations } from "@/components/foundations";
 import { Contact } from "@/components/contact";
 import { ContactLanguages } from "@/components/contact-languages";
 import { CarmineSection } from "@/components/carmine-section";
@@ -27,7 +27,7 @@ export default async function Page() {
       <CarmineSection content={content.pt.carmine} />
       <Experience content={content.pt} />
       <Education content={content.pt} />
-      <Technologies content={content.pt} />
+      <Foundations content={content.pt} />
       <Activity content={content.pt.activity} data={activity} lang="pt" />
       <Contact content={content.pt}>
         <ContactLanguages languages={content.pt.contact.languages} />

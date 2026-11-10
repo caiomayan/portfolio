@@ -52,7 +52,7 @@ for (const r of rotas) {
           return `${cs.fontSize}/${cs.fontWeight}/${cs.letterSpacing}/${cs.color}`;
         });
       const base = await estilo("#experiencia h2");
-      for (const sel of ["#formacao h2", "#tecnologias h2", "#carmine h2", "#contato"]) expect(await estilo(sel), sel).toBe(base);
+      for (const sel of ["#formacao h2", "#fundamentos h2", "#carmine h2", "#contato"]) expect(await estilo(sel), sel).toBe(base);
       await expect(page.locator("#contato")).toHaveJSProperty("tagName", "H2");
       await expect(page.getByRole("heading", { level: 2, name: r.contato })).toHaveAttribute("id", "contato");
       await expect(page.getByRole("heading", { level: 2, name: r.carmine, exact: true })).toBeVisible();

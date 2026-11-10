@@ -27,8 +27,7 @@
   /* Ícones: tamanhos só aqui (ver DESIGN.md). Os componentes não carregam medida própria. */
   --icon-ui: 20px; /* contato, copiar e-mail, botão de tema */
   --icon-entry: 26px; /* ícone de reserva em experiência e formação */
-  --icon-stack: 20px; /* logo ou ícone de reserva na seção Tecnologias */
-  --icon-stack-quiet: 16px; /* o mesmo, na stack do Carmine (contexto do projeto, mais leve) */
+  --icon-stack: 16px; /* logo ou ícone de reserva da linha de ícones (Carmine, curso, TechEduConnect): discreta */
   --measure: 70ch; /* medida de leitura dos textos de apoio */
 }
 :root[data-theme="dark"] {
@@ -212,7 +211,6 @@ h1::after { content: "." / ""; }
 .contact-link .icon svg, .copy-button svg, .theme-toggle svg { width: var(--icon-ui); height: var(--icon-ui); }
 .fallback-icon { width: 100%; height: 100%; }
 :is(#experiencia, #formacao) .entry-logo-gap .fallback-icon { width: var(--icon-entry); height: var(--icon-entry); }
-:is(#carmine, #tecnologias) .stack-logo-empty .fallback-icon { width: var(--icon-stack); height: var(--icon-stack); }
 .copy-button:hover { color: var(--ink); }
 .copy-button[data-copied="true"] { color: var(--ink); }
 .contact-links { list-style: none; margin: 32px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
@@ -252,12 +250,12 @@ h1::after { content: "." / ""; }
 .link-preview img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 /* Experiência e formação: linhas de duas pontas (texto à esquerda, período à direita). */
-:is(#experiencia, #formacao, #tecnologias) {
+:is(#experiencia, #formacao, #fundamentos) {
   width: min(var(--max), 100% - 2 * var(--gutter));
   margin-inline: auto;
   padding-block: clamp(40px, 6vw, 72px) 0;
 }
-:is(#experiencia, #formacao, #tecnologias) h2 {
+:is(#experiencia, #formacao, #fundamentos) h2 {
   margin: 0 0 12px;
   font-size: var(--text-lead);
   font-weight: 700;
@@ -312,14 +310,11 @@ h1::after { content: "." / ""; }
   :is(#experiencia, #formacao) .entry-child-period { grid-column: 2; white-space: normal; }
 }
 
-/* Tecnologias: só ícones, a mesma fileira da stack do Carmine. */
-#tecnologias .stack { margin-top: 8px; }
-/* Sem ícone sobrando na última linha (20 ícones): até 1099 px, 10 por linha; no celular, 5 por linha (4 linhas), espaçados de ponta a ponta. */
-@media (max-width: 1099px) {
-  #tecnologias ul.stack { display: grid; grid-template-columns: repeat(10, 44px); gap: 8px; }
-}
-@media (max-width: 639px) {
-  #tecnologias ul.stack { grid-template-columns: repeat(5, 44px); justify-content: space-between; }
+/* Fundamentos: linhas de texto, sem ícone. Duas colunas lidas de cima pra baixo (5 + 4) no desktop, uma no celular. */
+#fundamentos .foundations { list-style: none; margin: 0; padding: 0; display: grid; column-gap: 48px; font-size: var(--text-body); line-height: 1.5; }
+#fundamentos .foundations li { padding-block: 6px; max-width: var(--measure); }
+@media (min-width: 700px) {
+  #fundamentos .foundations { grid-auto-flow: column; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(5, auto); }
 }
 /* Idiomas: rótulo em --soft e linhas de duas pontas (bandeira e nome em --ink, nível em --soft), como as outras linhas do site. */
 .contact-languages { margin-top: 40px; max-width: 400px; font-size: var(--text-small); }
@@ -388,17 +383,18 @@ h1::after { content: "." / ""; }
 #carmine .status { display: flex; align-items: center; gap: 10px; font-size: var(--text-small); color: var(--soft); margin: 0 0 20px; }
 #carmine .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); flex: none; }
 #carmine h3.label { font-size: var(--text-small); font-weight: 600; line-height: 1; color: var(--soft); margin: 32px 0 4px; }
-:is(#carmine, #tecnologias) .stack { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-:is(#carmine, #tecnologias) .stack-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; }
-:is(#carmine, #tecnologias) .logo { flex: none; object-fit: contain; width: var(--icon-stack); height: var(--icon-stack); }
-:root[data-theme="dark"] :is(#carmine, #tecnologias) .logo:not(.color) { filter: invert(1); }
-:is(#carmine, #tecnologias) .stack-logo-empty { display: grid; width: var(--icon-stack); height: var(--icon-stack); flex: none; color: var(--soft); line-height: 0; }
-/* Stack do Carmine: detalhe do projeto, mais leve que Tecnologias (ícones menores, em --soft; o logo colorido vai pro mesmo tom; cinza do tema = preto/branco a 60 %). */
-#carmine .stack { gap: 0; }
-#carmine .logo, #carmine .stack-logo-empty, #carmine .stack-logo-empty .fallback-icon { width: var(--icon-stack-quiet); height: var(--icon-stack-quiet); }
-#carmine .logo { opacity: 0.6; }
-#carmine .logo.color { filter: brightness(0); }
-:root[data-theme="dark"] #carmine .logo.color { filter: brightness(0) invert(1); }
+/* Linha de ícones discreta (components/icon-row.tsx), a mesma no Carmine, no curso e na TechEduConnect: ícones de 16 px em --soft a 60 %, alvos de 44 px sem espaço entre eles. */
+.icon-row { margin-top: 20px; }
+.icon-row-label { margin: 0 0 4px; font-size: var(--text-small); font-weight: 600; line-height: 1; color: var(--soft); }
+.icon-row .stack { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; }
+.icon-row .stack-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; }
+.icon-row .logo { flex: none; object-fit: contain; width: var(--icon-stack); height: var(--icon-stack); opacity: 0.6; }
+.icon-row .stack-logo-empty, .icon-row .stack-logo-empty .fallback-icon { display: grid; width: var(--icon-stack); height: var(--icon-stack); flex: none; color: var(--soft); line-height: 0; }
+:root[data-theme="dark"] .icon-row .logo:not(.color) { filter: invert(1); }
+/* O logo colorido do Valkey vai pro mesmo tom dos outros (cinza do tema = preto/branco a 60 %). */
+.icon-row .logo.color { filter: brightness(0); }
+:root[data-theme="dark"] .icon-row .logo.color { filter: brightness(0) invert(1); }
+#carmine .icon-row { margin-top: 32px; }
 #carmine .links { display: flex; gap: 28px; flex-wrap: wrap; margin-top: 12px; }
 #carmine .link-external { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
 #carmine .link-external::after { content: " ↗" / ""; }

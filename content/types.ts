@@ -10,6 +10,9 @@ export type ContactLink = { label: string; href: string; external?: boolean };
 /** Todo item tem um logo OU um ícone de reserva (Lucide), nunca nenhum dos dois. */
 export type Mark<Logo extends string> = { logo: Logo; icon?: never } | { logo?: never; icon: FallbackIconId };
 
+/** Linha de ícones com rótulo ("Feito com", "No curso"): o nome de cada um é o tooltip e o nome acessível. */
+export type IconList = { label: string; items: ({ name: string } & Mark<StackLogoId>)[] };
+
 /** O que Experiência e Formação têm em comum: uma linha com período e logo ou ícone de reserva. */
 export type EntryBase = { period: string } & Mark<OrgLogoId>;
 
@@ -54,6 +57,7 @@ export type Content = {
       role: string;
       about?: string;
       lines: string[];
+      stack?: IconList;
     })[];
   };
   education: {
@@ -66,6 +70,8 @@ export type Content = {
       description?: string;
       /** Subitens subordinados ao curso: rótulo curto ("Monitoria") antes do título, ícone de hierarquia e período próprio. */
       children?: { label: string; title: string; period: string }[];
+      /** Ferramentas do curso, em linha de ícones abaixo da descrição. */
+      stack?: IconList;
     })[];
   };
   ui: {
@@ -84,11 +90,8 @@ export type Content = {
   };
   /** Gráfico de contribuições do GitHub (#28). `total`: `one` com 1, `other` nos demais; `{n}` vira o número. */
   activity: { heading: string; total: { one: string; other: string } };
-  /** Tecnologias que ele domina: só ícones, na ordem do currículo; o nome é o tooltip e o nome acessível. */
-  technologies: {
-    heading: string;
-    items: ({ name: string } & Mark<StackLogoId>)[];
-  };
+  /** Fundamentos: o que ele sabe de base, só texto, na ordem do copy deck. */
+  foundations: { heading: string; items: string[] };
   /** Rodapé mínimo (#29): `{year}` vira o ano corrente, calculado ao gerar a página. O crédito do clima fica em `contact.weather.credit`. */
   footer: { copyright: string };
   carmine: {
@@ -98,8 +101,7 @@ export type Content = {
     what: string;
     status: string;
     how: string;
-    stackLabel: string;
-    stack: ({ name: string } & Mark<StackLogoId>)[];
+    stack: IconList;
     links: { site: { label: string; href: string }; repo: { label: string; href: string } };
   };
 };

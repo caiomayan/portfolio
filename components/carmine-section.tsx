@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { Content } from "@/content";
 import carmineLogo from "@/assets/logos/carmine.svg";
-import { StackIcons } from "./stack-icons";
+import { IconRow } from "./icon-row";
 import { HoverLinkPreview } from "./hover-link-preview";
 import carminePreview from "@/assets/carmine-preview.webp";
 
@@ -21,8 +21,7 @@ export function CarmineSection({ content }: { content: Content["carmine"] }) {
         <p data-reveal-part>{content.what}</p>
         <p className="soft" data-reveal-part>{content.how}</p>
 
-        <h3 className="label" data-reveal-part>{content.stackLabel}</h3>
-        <StackIcons items={content.stack} data-reveal-part />
+        <IconRow list={content.stack} data-reveal-part />
 
         <div className="links" data-reveal-part>
           <HoverLinkPreview className="link-external" href={content.links.site.href} image={carminePreview}>{content.links.site.label}</HoverLinkPreview>

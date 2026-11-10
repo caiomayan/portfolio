@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-// Issue #29, acabamento: medida de leitura, stack do Carmine mais leve, mapa maior no desktop e Tecnologias sem ícone sobrando.
+// Issue #29, acabamento: medida de leitura, stack do Carmine mais leve, mapa maior no desktop e Fundamentos em duas colunas (#29).
 for (const path of ["/", "/en"]) {
   test.describe(`acabamento em ${path}`, () => {
     test("textos de apoio ficam numa medida de leitura (até 75 caracteres), o período segue à direita", async ({ browser }) => {
@@ -25,20 +25,14 @@ for (const path of ["/", "/en"]) {
       await ctx.close();
     });
 
-    test("a stack do Carmine é mais leve que Tecnologias: ícones de 16 px, tom suave, rótulo Feito com", async ({ page }) => {
+    test("a linha de ícones é discreta: 16 px, tom suave, rótulo Feito com; o Valkey perde a cor", async ({ page }) => {
       await page.goto(path);
       const rotulo = path === "/" ? "Feito com" : "Built with";
-      await expect(page.locator("#carmine h3.label")).toHaveText(rotulo);
-      const [carmine, tech] = await Promise.all([
-        page.locator("#carmine .stack img").first().evaluate((el) => ({ w: el.getBoundingClientRect().width, o: getComputedStyle(el).opacity })),
-        page.locator("#tecnologias .stack img").first().evaluate((el) => ({ w: el.getBoundingClientRect().width, o: getComputedStyle(el).opacity })),
-      ]);
-      expect(carmine.w).toBe(16);
-      expect(tech.w).toBe(20);
-      expect(Number(carmine.o)).toBeLessThan(Number(tech.o));
-      // O logo do Valkey perde a cor (tom suave, como os outros).
+      await expect(page.locator("#carmine .icon-row-label")).toHaveText(rotulo);
+      const img = await page.locator("#carmine .stack img").first().evaluate((el) => ({ w: el.getBoundingClientRect().width, o: getComputedStyle(el).opacity }));
+      expect(img.w).toBe(16);
+      expect(Number(img.o)).toBeLessThan(1);
       expect(await page.locator("#carmine .stack img.color").evaluate((el) => getComputedStyle(el).filter)).toContain("brightness(0)");
-      expect(await page.locator("#tecnologias .stack img.color").evaluate((el) => getComputedStyle(el).filter)).toBe("none");
     });
 
     test("mapa da primeira tela: maior no desktop (216 px), compacto no celular", async ({ browser }) => {
@@ -65,26 +59,28 @@ for (const path of ["/", "/en"]) {
       }
     });
 
-    test("Tecnologias: 5 por linha no celular (4 linhas), uma linha no desktop, nunca ícone sozinho", async ({ browser }) => {
-      const linhas = async (w: number) => {
+    test("Fundamentos: duas colunas no desktop (5 + 4, lidas de cima pra baixo), uma no celular", async ({ browser }) => {
+      const colunas = async (w: number) => {
         const ctx = await browser.newContext({ viewport: { width: w, height: 800 } });
         const p = await ctx.newPage();
         await p.goto(path);
-        const tops = await p.locator("#tecnologias .stack li").evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().top)));
-        const lefts = await p.locator("#tecnologias .stack li").evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().left)));
+        const lefts = await p.locator("#fundamentos .foundations li").evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().left)));
+        const tops = await p.locator("#fundamentos .foundations li").evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().top)));
         const scroll = await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
         await ctx.close();
-        const porLinha = new Map<number, number>();
-        for (const t of tops) porLinha.set(t, (porLinha.get(t) ?? 0) + 1);
-        return { contagens: [...porLinha.values()], lefts, scroll };
+        return { lefts, tops, scroll };
       };
-      for (const w of [390, 375]) {
-        const r = await linhas(w);
-        expect(r.contagens, `${w}px`).toEqual([5, 5, 5, 5]);
+      for (const w of [375, 390]) {
+        const r = await colunas(w);
+        expect(new Set(r.lefts).size, `${w}px`).toBe(1);
         expect(r.scroll).toBe(true);
       }
-      expect((await linhas(1440)).contagens).toEqual([20]);
-      expect((await linhas(1000)).contagens).toEqual([10, 10]);
+      const d = await colunas(1440);
+      expect(new Set(d.lefts).size).toBe(2);
+      expect(d.lefts.slice(0, 5).every((l) => l === d.lefts[0])).toBe(true);
+      expect(d.lefts.slice(5).every((l) => l === d.lefts[5])).toBe(true);
+      expect(d.tops[5]).toBe(d.tops[0]); // a segunda coluna começa na altura da primeira
+      expect(d.scroll).toBe(true);
     });
   });
 }

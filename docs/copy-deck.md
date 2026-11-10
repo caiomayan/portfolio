@@ -39,6 +39,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
   - Plugin de correção de redações com IA para Moodle, em produção numa instituição de ensino superior. A IA propõe a avaliação e o tutor revisa e aprova.
   - Plataformas de ensino próprias em Next.js, React e TypeScript, e customizações e integrações para Moodle em PHP.
   - Desenvolvo com agentes de código (Claude Code com skills), a partir de specs, testes e quality gates.
+  - Linha de ícones "Feito com" (#29), depois das linhas, só ícones (nome no tooltip): Next.js, React, TypeScript, PHP, Moodle.
 
 ### Hospital Napoleão Laureano
 - Cargo: Jovem Aprendiz, setor de Compras
@@ -49,12 +50,23 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 
 - Tecnologia em Sistemas para Internet, Instituto Federal da Paraíba (IFPB), campus João Pessoa. Out. 2024 – jul. 2027 (previsão). (#27)
   - Descrição curta embaixo (#27, proposto, o Caio revisa): "Onde construí e sigo fortalecendo minha base: Java e Spring Boot, bancos de dados, estrutura de dados e segurança da informação."
+  - Linha de ícones "No curso" (#29), embaixo da descrição, só ícones (nome no tooltip): Java, Spring Boot, Node.js, TypeScript, Python, PostgreSQL, MongoDB, React, Angular, Docker, Git.
   - Subitem (filho do curso): rótulo "Monitoria" + título "Disciplina de Segurança de Dados", período "semestre 2026.2". Sem dizer "atividade do curso".
 - "Inglês fluente" saiu de Formação (#27): as línguas vão pro Contato.
 
-## Tecnologias (#27)
+## Fundamentos (#29)
 
-Seção entre Formação e Contato, só ícones (o nome é o tooltip e o nome acessível, como a stack do Carmine). Título: "Tecnologias". Ordem do currículo: Java, Spring Boot, Node.js, TypeScript, Nest.js, Express, PHP, Python · React, Next.js · PostgreSQL, Redis, Valkey, MongoDB · Docker, AWS, Oracle Cloud, Vercel, Cloudflare, Git.
+Seção entre Formação e Contato, só texto, sem ícones: o que ele sabe de base (as ferramentas mudam; elas aparecem só onde têm contexto, em Formação, Experiência e Carmine). Título: "Fundamentos". Itens, nesta ordem (pedido do Caio; o texto de cada item é dele):
+
+- Estruturas de dados
+- Bancos de dados e modelagem
+- Análise e projeto de sistemas
+- Segurança da informação
+- Backend e APIs
+- Testes e qualidade: TDD, quality gates
+- Desenvolvimento guiado por especificação (SDD)
+- IA aplicada: integração de LLMs e orquestração de agentes
+- Infraestrutura e entrega: containers, cloud e CI/CD
 
 ## Contato
 
@@ -74,7 +86,7 @@ Seção entre Formação e Contato, só ícones (o nome é o tooltip e o nome ac
 
 ## Atividade (#28, proposto, o Caio revisa)
 
-- Bloco curto entre Tecnologias e Contato (logo depois de Tecnologias): título "Atividade" e o total do ano em texto, "1.234 contribuições no último ano" (singular: "1 contribuição no último ano"), com a grade de contribuições do GitHub do usuário caiomayan embaixo. Sem token ou com a API fora, o bloco inteiro não aparece.
+- Bloco curto entre Fundamentos e Contato (logo depois de Fundamentos): título "Atividade" e o total do ano em texto, "1.234 contribuições no último ano" (singular: "1 contribuição no último ano"), com a grade de contribuições do GitHub do usuário caiomayan embaixo. Sem token ou com a API fora, o bloco inteiro não aparece.
 
 ## Interface
 
@@ -122,6 +134,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
   - AI-powered essay grading plugin for Moodle, in production at a higher-education institution. The AI proposes the assessment and the tutor reviews and approves it.
   - In-house learning platforms in Next.js, React and TypeScript, plus Moodle customizations and integrations in PHP.
   - I develop with coding agents (Claude Code with skills), working from specs, tests and quality gates.
+  - Icon row "Built with" (#29), after the lines, icons only (name in the tooltip): Next.js, React, TypeScript, PHP, Moodle.
 
 #### Hospital Napoleão Laureano
 - Role: Apprentice – Procurement
@@ -132,12 +145,23 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 
 - Associate Degree in Internet Systems Technology, Federal Institute of Paraíba (IFPB), João Pessoa campus. Oct. 2024 – Jul. 2027 (expected).
   - Short description below (#27, proposed, Caio reviews): "Where I built, and keep strengthening, my foundation: Java and Spring Boot, databases, data structures and information security."
+  - Icon row "In the course" (#29), below the description, icons only (name in the tooltip): Java, Spring Boot, Node.js, TypeScript, Python, PostgreSQL, MongoDB, React, Angular, Docker, Git.
   - Sub-item (child of the course): label "Teaching assistant" + title "Data Security course", period "2026.2 semester".
 - "Fluent English" left Education (#27): languages moved to Contact.
 
-### Technologies (#27)
+### Foundations (#29)
 
-Section between Education and Contact, icons only (the name is the tooltip and the accessible name). Title: "Technologies". Same list and order as the Portuguese one; names do not change.
+Section between Education and Contact, text only, no icons: what he knows at the base (tools change; they appear only where they have context: Education, Experience and Carmine). Title: "Foundations". Items, in this order:
+
+- Data structures
+- Databases and data modeling
+- Systems analysis and design
+- Information security
+- Backend and APIs
+- Testing and quality: TDD, quality gates
+- Spec-driven development (SDD)
+- Applied AI: LLM integration and agent orchestration
+- Infrastructure and delivery: containers, cloud and CI/CD
 
 ### Contact
 
@@ -154,7 +178,7 @@ Section between Education and Contact, icons only (the name is the tooltip and t
 
 ### Activity (#28, proposed, Caio reviews)
 
-- Short block between Technologies and Contact (right after Technologies): heading "Activity" and the yearly total as text, "1,234 contributions in the last year" (singular: "1 contribution in the last year"), with the GitHub contribution grid for user caiomayan below. Without a token or with the API down, the whole block is absent.
+- Short block between Foundations and Contact (right after Foundations): heading "Activity" and the yearly total as text, "1,234 contributions in the last year" (singular: "1 contribution in the last year"), with the GitHub contribution grid for user caiomayan below. Without a token or with the API down, the whole block is absent.
 
 ### Interface
 
@@ -162,4 +186,4 @@ Section between Education and Contact, icons only (the name is the tooltip and t
 - Copy email button: "Copy email" → "Copied".
 - Theme button (accessible name): "Dark theme".
 - Tab title: "Caio Mayan — Software Engineer".
-- Section headings: "Experience", "Education", "Technologies".
+- Section headings: "Experience", "Education", "Foundations".
