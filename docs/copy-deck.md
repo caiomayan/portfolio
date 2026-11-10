@@ -2,7 +2,7 @@
 
 Fonte única do texto do caiomayan.com. Os protótipos e o site usam este texto, sem inventar nada além dele.
 
-Regras: nunca citar o nome da instituição que usa o plugin, nem Inoue, Kurage, proposta.dev ou Jev. Nada de telefone. Nada de métricas.
+Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriores nem os termos da lista de termos proibidos (secret FORBIDDEN_TERMS, local em private/forbidden-terms.txt). Nada de telefone. Nada de métricas.
 
 ## Apresentação
 

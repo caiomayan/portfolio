@@ -1,0 +1,12 @@
+#!/bin/sh
+# Procura termos proibidos nos arquivos em stage. Nunca imprime o termo.
+# A lista fica em private/forbidden-terms.txt na pasta principal do repositório
+# (achada pelo git-common-dir, pra funcionar dentro de worktrees, que não têm private/).
+common=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || exit 0
+list="$(dirname "$common")/private/forbidden-terms.txt"
+if [ ! -f "$list" ]; then
+  echo "pre-commit: lista de termos proibidos não encontrada; verificação pulada." >&2
+  exit 0
+fi
+root=$(git rev-parse --show-toplevel) || exit 0
+exec node "$root/scripts/check-forbidden-terms.mjs" --staged --terms-file "$list"
