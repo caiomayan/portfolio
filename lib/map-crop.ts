@@ -1,6 +1,6 @@
 import { worldMap } from "./world-map";
 
-/** Recorte do mapa-múndi pra primeira tela (#29): as Américas e o Atlântico, com João Pessoa à direita do centro. Mesmos pontos e mesma projeção do `world-map.ts`. */
+/** Recorte do mapa-múndi pra primeira tela (#29): as Américas e o Atlântico, com João Pessoa à direita do centro. Mesmos pontos e mesma projeção equiretangular do `world-map.ts`. */
 export const crop = { lonMin: -100, lonMax: 20, latTop: 48, latBottom: -42 } as const;
 
 const { scale, latTop: mapLatTop } = worldMap;

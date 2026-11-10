@@ -63,7 +63,7 @@ Seção entre Formação e Contato, só ícones (o nome é o tooltip e o nome ac
 - GitHub: https://github.com/caiomayan
 - Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en). Só ícone no site (#18): o rótulo "Currículo (PDF)" vira tooltip e nome acessível, assim como "LinkedIn" e "GitHub". O e-mail continua escrito.
 - Mapa e hora (#24): a partir da #29 estão na primeira tela (ver Apresentação); o Contato não tem mais mapa.
-- Clima (#28, proposto, o Caio revisa; na primeira tela desde a #29): ao lado da hora, ícone do tempo e temperatura atual de João Pessoa, por exemplo "14:32 (UTC−3)  ☁ 28°C". O nome do tempo só é lido por leitor de tela: "Céu limpo", "Parcialmente nublado", "Nublado", "Neblina", "Chuva", "Tempestade". Crédito discreto embaixo da cidade e da hora (licença CC BY 4.0 do Open-Meteo): "Dados do clima por Open-Meteo.com" (o nome é um link). Se a API falha, nada disso aparece.
+- Clima (#28, proposto, o Caio revisa; na primeira tela desde a #29): ao lado da hora, ícone do tempo e temperatura atual de João Pessoa, por exemplo "14:32 (UTC−3)  ☁ 28°C". O nome do tempo só é lido por leitor de tela: "Céu limpo", "Parcialmente nublado", "Nublado", "Neblina", "Chuva", "Tempestade". De noite o ícone é o da versão noturna (lua; nuvem com lua), pelo `is_day` do Open-Meteo. Crédito discreto numa linha no fim do Contato, depois dos idiomas (licença CC BY 4.0 do Open-Meteo): "Dados do clima por Open-Meteo.com" (o nome é um link). Se a API falha, nada disso aparece.
 - Idiomas (#27), grupo pequeno no Contato, embaixo dos ícones: rótulo "Idiomas" e duas linhas, nome à esquerda e nível à direita: Português — nativo; Inglês — fluente · C2, EF SET.
 
 ## Atividade (#28, proposto, o Caio revisa)
@@ -139,7 +139,7 @@ Section between Education and Contact, icons only (the name is the tooltip and t
 - Email: mail@caiomayan.com (with copy button)
 - Resume (PDF): icon only (#18); "Resume (PDF)" is the tooltip and accessible name, file `caio-mayan-resume.pdf`. Email stays as text.
 - Map and time (#24): since #29 they are on the first screen (see Presentation); Contact no longer has a map.
-- Weather (#28, proposed, Caio reviews; on the first screen since #29): next to the time, a weather icon and the current temperature in João Pessoa, e.g. "14:32 (UTC−3)  ☁ 28°C". The weather name is read by screen readers only: "Clear sky", "Partly cloudy", "Cloudy", "Fog", "Rain", "Thunderstorm". Discreet credit below the city and time (Open-Meteo CC BY 4.0): "Weather data by Open-Meteo.com" (the name is a link). If the API fails, none of this shows.
+- Weather (#28, proposed, Caio reviews; on the first screen since #29): next to the time, a weather icon and the current temperature in João Pessoa, e.g. "14:32 (UTC−3)  ☁ 28°C". The weather name is read by screen readers only: "Clear sky", "Partly cloudy", "Cloudy", "Fog", "Rain", "Thunderstorm". At night the icon is the night version (moon; cloud with moon), from Open-Meteo’s `is_day`. Discreet credit on one line at the end of Contact, after the languages (Open-Meteo CC BY 4.0): "Weather data by Open-Meteo.com" (the name is a link). If the API fails, none of this shows.
 - Languages (#27), small group in Contact, under the icons: label "Languages" and two lines, name left and level right: Portuguese — native; English — fluent · C2, EF SET.
 
 ### Activity (#28, proposed, Caio reviews)

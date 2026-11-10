@@ -12,7 +12,7 @@ const rotas = [
 
 for (const r of rotas) {
   test.describe(`dados ao vivo em ${r.path}`, () => {
-    test("clima na primeira tela, ao lado da hora, no HTML do servidor, com ícone e crédito", async ({ page, request }) => {
+    test("clima na primeira tela, ao lado da hora, no HTML do servidor, com ícone da noite; crédito no fim do Contato", async ({ page, request }) => {
       const html = await (await request.get(r.path)).text();
       expect(html).toContain("28°C");
       await page.goto(r.path);
@@ -22,13 +22,20 @@ for (const r of rotas) {
       await expect(clima).toContainText(r.clima); // nome do tempo, só pra leitor de tela
       await expect(clima.locator("svg")).toHaveCount(1);
       await expect(clima.locator("svg")).toHaveAttribute("aria-hidden", "true");
+      // O servidor falso responde is_day: 0 (noite): parcialmente nublado vira nuvem com lua, não nuvem com sol.
+      await expect(clima.locator("svg")).toHaveClass(/lucide-cloud-moon/);
+      await expect(clima.locator("svg")).not.toHaveClass(/lucide-cloud-sun/);
       // Ao lado da hora (mesma linha da legenda do mapa), sem mexer no texto da hora.
       await expect(page.locator(".place-time")).toHaveText(/^\d{2}:\d{2} \(UTC−3\)$/);
       const [t, c] = await Promise.all([page.locator(".place-time").boundingBox(), clima.boundingBox()]);
       expect(Math.abs(t!.y - c!.y)).toBeLessThan(12);
       expect(c!.x).toBeGreaterThan(t!.x);
-      // Crédito CC BY 4.0 do Open-Meteo.
-      const credito = page.locator(".weather-credit");
+      // Crédito CC BY 4.0 do Open-Meteo: no fim do Contato (nunca na primeira tela), depois das línguas.
+      await expect(page.locator(".hero .weather-credit")).toHaveCount(0);
+      const credito = page.locator(".contact .weather-credit");
+      await credito.scrollIntoViewIfNeeded();
+      const [lg, cr] = await Promise.all([page.locator(".contact .contact-languages").boundingBox(), credito.boundingBox()]);
+      expect(cr!.y).toBeGreaterThan(lg!.y + lg!.height - 1);
       await expect(credito).toContainText(r.credito);
       await expect(credito.getByRole("link", { name: "Open-Meteo.com" })).toHaveAttribute("href", "https://open-meteo.com/");
     });

@@ -9,7 +9,7 @@ const CITY = { lon: -34.88, lat: -7.12 };
 
 /**
  * Lugar na primeira tela (#29, no lugar da linha "João Pessoa, PB"): mapa de pontos compacto (recorte das Américas e do Atlântico,
- * mesmos dados e projeção do mapa da #24) com o pino pulsando em João Pessoa; ao lado, a cidade, a hora local e o clima (#28).
+ * mesmos dados do mapa da #24) com o pino pulsando em João Pessoa; ao lado, a cidade, a hora local e o clima (#28).
  * Componente de servidor: só a hora (`LocalTime`) vai pro cliente. O mapa é decorativo (`aria-hidden`); cidade e hora estão em texto.
  * `weather`: clima já renderizado no servidor; `null` quando a API falhou.
  */
@@ -34,7 +34,6 @@ export function Place({ place, weather }: { place: Content["hero"]["place"]; wea
           <LocalTime offset={place.offset} />
           {weather?.now}
         </p>
-        {weather?.credit}
       </div>
     </div>
   );

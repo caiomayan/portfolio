@@ -19,9 +19,10 @@ export const revalidate = 1800;
 
 export default async function Page() {
   const [weather, activity] = await Promise.all([getWeather(), getActivity()]);
+  const clima = weatherSlots(weather, content.pt.contact.weather);
   return (
     <>
-      <Hero content={content.pt} weather={weatherSlots(weather, content.pt.contact.weather)} />
+      <Hero content={content.pt} weather={clima} />
       <CarmineSection content={content.pt.carmine} />
       <Experience content={content.pt} />
       <Education content={content.pt} />
@@ -29,6 +30,8 @@ export default async function Page() {
       <Activity content={content.pt.activity} data={activity} lang="pt" />
       <Contact content={content.pt}>
         <ContactLanguages languages={content.pt.contact.languages} />
+        {/* Crédito do Open-Meteo (CC BY 4.0): linha discreta no fim do Contato, só quando há clima. */}
+        {clima?.credit}
       </Contact>
     </>
   );

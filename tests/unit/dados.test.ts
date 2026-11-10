@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { afterEach, test } from "node:test";
 import { getActivity, parseActivity } from "../../lib/github-activity.ts";
-import { getWeather, weatherKind } from "../../lib/weather.ts";
+import { getWeather, weatherIcon, weatherKind } from "../../lib/weather.ts";
 
 const realFetch = globalThis.fetch;
 const env = { ...process.env };
@@ -62,7 +62,11 @@ test("clima: API fora, formato torto ou demora viram null; resposta boa arredond
   stubFetch(async () => new Response(JSON.stringify({ current: { temperature_2m: "quente" } })));
   assert.equal(await getWeather(), null);
   stubFetch(async () => new Response(JSON.stringify({ current: { temperature_2m: 27.6, weather_code: 2 } })));
-  assert.deepEqual(await getWeather(), { temperature: 28, kind: "partly" });
+  assert.deepEqual(await getWeather(), { temperature: 28, kind: "partly", isDay: true }); // sem is_day: dia
+  stubFetch(async () => new Response(JSON.stringify({ current: { temperature_2m: 24.2, weather_code: 0, is_day: 0 } })));
+  assert.deepEqual(await getWeather(), { temperature: 24, kind: "clear", isDay: false });
+  stubFetch(async () => new Response(JSON.stringify({ current: { temperature_2m: 30, weather_code: 0, is_day: 1 } })));
+  assert.deepEqual(await getWeather(), { temperature: 30, kind: "clear", isDay: true });
 });
 
 test("código WMO vira o ícone certo", () => {
@@ -116,4 +120,16 @@ test("em produção da Vercel os hosts oficiais valem mesmo com a variável de t
   await getActivity();
   assert.match(urls[0], /^https:\/\/api\.open-meteo\.com\//);
   assert.equal(urls[1], "https://api.github.com/graphql");
+});
+
+test("ícone do clima: versão noturna (lua) quando não é dia", () => {
+  assert.equal(weatherIcon("clear", true), "sun");
+  assert.equal(weatherIcon("clear", false), "moon");
+  assert.equal(weatherIcon("partly", true), "cloud-sun");
+  assert.equal(weatherIcon("partly", false), "cloud-moon");
+  assert.equal(weatherIcon("rain", true), "cloud-rain");
+  assert.equal(weatherIcon("rain", false), "cloud-moon-rain");
+  assert.equal(weatherIcon("cloudy", false), "cloud");
+  assert.equal(weatherIcon("fog", false), "cloud-fog");
+  assert.equal(weatherIcon("storm", false), "cloud-lightning");
 });

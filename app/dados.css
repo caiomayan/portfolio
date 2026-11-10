@@ -4,7 +4,7 @@
 .place-now { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0 12px; }
 .place-weather { display: inline-flex; align-items: center; gap: 6px; color: var(--soft); font-variant-numeric: tabular-nums; }
 .weather-icon { flex: none; color: var(--soft); }
-.weather-credit { margin: 6px 0 0; font-size: var(--text-small); color: var(--soft); }
+.weather-credit { margin: 40px 0 0; font-size: var(--text-small); color: var(--soft); }
 .weather-credit a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
 .weather-credit a:hover { color: var(--ink); text-decoration-color: var(--ink); }
 
