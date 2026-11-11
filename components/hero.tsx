@@ -7,6 +7,7 @@ import type { Lang } from "@/lib/locales";
 import { ContactIcons } from "./contact-icons";
 import { LangMenu } from "./lang-menu";
 import { Place } from "./place";
+import { FloatingControls } from "./floating-controls";
 import type { WeatherSlots } from "./weather";
 
 /** Barra do topo: fica fora do <main>, como o rodapé. */
@@ -14,10 +15,10 @@ export function SiteHeader({ content, lang }: { content: Content; lang: Lang }) 
   return (
     <header className="top">
       <Signature name={content.hero.name} />
-      <div className="top-actions">
+      <FloatingControls>
         <LangMenu lang={lang} label={content.ui.language} />
         <ThemeToggle label={content.ui.themeToggle} />
-      </div>
+      </FloatingControls>
     </header>
   );
 }
