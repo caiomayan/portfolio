@@ -20,7 +20,7 @@ const CLEAR = "opacity,transform,transformOrigin";
 const WATCH_MS = 700;
 const WATCH_STRIKES = 2; // ≈ 1,4 s além da hora em que devia ter terminado
 
-type Item = { trigger: Element; tween: gsap.core.Tween; once: boolean; strikes: number; done: boolean; targets: gsap.TweenTarget };
+type Item = { trigger: Element; tween: gsap.core.Tween; once: boolean; strikes: number; done: boolean; targets: gsap.TweenTarget; els: Element[] };
 type Mode = { desktop: boolean; wide: boolean };
 type Range = { start?: string; end?: string };
 
@@ -49,7 +49,7 @@ export function arm(): () => void {
     const start = range?.start ?? (m.desktop ? "clamp(top 94%)" : "clamp(top 97%)");
     const end = range?.end ?? (m.desktop ? "clamp(top 55%)" : "clamp(top 75%)");
     (trigger as HTMLElement).dataset.motion = "pending";
-    const it: Item = { trigger, once: false, strikes: 0, done: false, targets, tween: null as unknown as gsap.core.Tween };
+    const it: Item = { trigger, once: false, strikes: 0, done: false, targets, els: gsap.utils.toArray<Element>(targets), tween: null as unknown as gsap.core.Tween };
     gsap.set(targets, from); // com stagger o GSAP só esconderia o primeiro alvo: o estado de partida de todos é posto aqui, de uma vez
     it.tween = gsap.fromTo(targets, from, {
       ...to,
@@ -64,7 +64,7 @@ export function arm(): () => void {
   const enter = (targets: gsap.TweenTarget | null | undefined, trigger: Element | null | undefined, m: Mode, vars: { y?: number; stagger?: number; start?: string; duration?: number } = {}) => {
     if (!targets || !trigger || !below(trigger)) return;
     (trigger as HTMLElement).dataset.motion = "pending";
-    const it: Item = { trigger, once: true, strikes: 0, done: false, targets, tween: null as unknown as gsap.core.Tween };
+    const it: Item = { trigger, once: true, strikes: 0, done: false, targets, els: gsap.utils.toArray<Element>(targets), tween: null as unknown as gsap.core.Tween };
     const y = m.desktop ? (vars.y ?? 14) : Math.min(vars.y ?? 14, 10);
     gsap.set(targets, { opacity: 0, y }); // idem: todos os alvos escondidos desde já
     it.tween = gsap.to(targets, {
@@ -93,14 +93,23 @@ export function arm(): () => void {
     });
   };
 
-  const mm = gsap.matchMedia();
+  /** Desfaz tudo o que ainda não tocou: gatilhos e animações mortos, sem estilo inline de animação sobrando (a troca de idioma reaproveita nós do DOM). */
+  const dispose = () => {
+    items.forEach((it) => {
+      it.tween.scrollTrigger?.kill();
+      it.tween.kill();
+      gsap.set(it.targets, { clearProps: CLEAR });
+      delete (it.trigger as HTMLElement).dataset.motion;
+    });
+    items.length = 0;
+  };
+
+  // Lido uma vez, no preparo. Não usamos `gsap.matchMedia()`: cruzar um ponto de corte (meia janela, outro ponteiro) re-executaria o preparo, que escondeu
+  // de novo o que já tinha tocado, e o que ficou de antes ainda entraria no vigia. Só `prefers-reduced-motion` é ouvido (adiante): ligar desfaz tudo.
+  const reduceMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
   try {
-  mm.add(
-    { always: "(min-width: 1px)", desktop: "(hover: hover) and (pointer: fine)", wide: "(min-width: 900px)", reduce: "(prefers-reduced-motion: reduce)" },
-    (ctx) => {
-      const c = ctx.conditions as { desktop: boolean; wide: boolean; reduce: boolean };
-      if (c.reduce) return;
-      const m: Mode = { desktop: c.desktop, wide: c.wide };
+    if (!reduceMQ.matches) {
+      const m: Mode = { desktop: window.matchMedia("(hover: hover) and (pointer: fine)").matches, wide: window.matchMedia("(min-width: 900px)").matches };
 
       // Carmine: título por máscara; o bloco cresce de leve (scale .94 → 1) até assentar; ícones em cascata (única).
       const carmine = document.getElementById("carmine");
@@ -163,15 +172,9 @@ export function arm(): () => void {
       // Rodapé: sobe uma vez, assim que aparece.
       const footer = document.querySelector(".site-footer");
       enter(footer ? [footer] : [], footer, m, { start: "clamp(top bottom)", y: 12, duration: 0.8 });
-    },
-  );
+    }
   } catch (e) {
-    mm.revert(); // falhou no meio: devolve tudo o que já tinha sido escondido
-    items.forEach((it) => {
-      it.tween.kill();
-      gsap.set(it.targets, { clearProps: CLEAR });
-      delete (it.trigger as HTMLElement).dataset.motion;
-    });
+    dispose(); // falhou no meio: devolve tudo o que já tinha sido escondido
     throw e;
   }
 
@@ -193,18 +196,29 @@ export function arm(): () => void {
     }
   }, WATCH_MS);
 
-  root.dataset.choreography = "armed";
-  return () => {
+  // Foco por teclado (ou por clique) numa parte que ainda não assentou: o navegador a rola só até a borda de baixo, onde o scrub está perto de 0 e o
+  // elemento quase não aparece. Quem recebe foco vai direto ao estado final (a parte inteira que o contém).
+  const onFocus = (e: FocusEvent) => {
+    const t = e.target as Node | null;
+    if (!t) return;
+    for (const it of items) if (!it.done && (it.trigger.contains(t) || it.els.some((el) => el.contains(t)))) settle(it);
+  };
+  document.addEventListener("focusin", onFocus);
+
+  const teardown = () => {
     clearInterval(watch);
     offLenis();
-    mm.kill(); // para de ouvir as media queries; os gatilhos e as animações são mortos um a um abaixo (sem `revert()`: ele refaz o cálculo dos gatilhos e mexia na rolagem)
-    // A troca de idioma reaproveita nós do DOM: nenhuma parte ainda não tocada pode ficar com estilo inline de animação.
-    items.forEach((it) => {
-      it.tween.scrollTrigger?.kill();
-      it.tween.kill();
-      gsap.set(it.targets, { clearProps: CLEAR });
-      delete (it.trigger as HTMLElement).dataset.motion;
-    });
+    document.removeEventListener("focusin", onFocus);
+    reduceMQ.removeEventListener("change", onReduce);
+    dispose(); // sem `ScrollTrigger.revert()`/`matchMedia`: eles refazem o cálculo dos gatilhos e mexiam na rolagem
     delete root.dataset.choreography;
   };
+  // Movimento reduzido ligado com a página aberta: tudo aparece pronto.
+  const onReduce = () => {
+    if (reduceMQ.matches) teardown();
+  };
+  reduceMQ.addEventListener("change", onReduce);
+
+  root.dataset.choreography = "armed";
+  return teardown;
 }

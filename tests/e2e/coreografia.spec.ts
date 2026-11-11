@@ -217,4 +217,44 @@ test.describe("coreografia das seções (#39)", () => {
     await rolarTudo(page);
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
   });
+
+  test("foco por teclado numa parte que ainda não assentou a leva direto ao estado final (nada de foco em espaço vazio)", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await armada(page);
+    for (const sel of ["#experiencia h3 a", "#experiencia .stack-icon", "#carmine .link-external", "#formacao .stack-icon"]) {
+      const alvo = page.locator(sel).first();
+      await alvo.focus(); // o navegador rola o alvo só até a borda de baixo
+      await page.waitForTimeout(350);
+      const estado = await alvo.evaluate((el) => {
+        const rastros: string[] = [];
+        for (let n: Element | null = el; n && n !== document.body; n = n.parentElement) {
+          const st = getComputedStyle(n);
+          if (/opacity|transform/.test(n.getAttribute("style") ?? "") || st.opacity !== "1") rastros.push(n.tagName + "." + n.className + " " + st.opacity);
+        }
+        return rastros;
+      });
+      expect(estado, sel).toEqual([]);
+    }
+  });
+
+  test("cruzar o ponto de corte de 900 px com a página aberta não refaz nem esconde de novo o que já tocou, e a rolagem fica", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await armada(page);
+    const topo = await topoNoDocumento(page, "#fundamentos .foundations");
+    await rolarAte(page, topo - 300, 2200);
+    await expect(page.locator("#experiencia .entry").first()).toHaveAttribute("data-motion", "played");
+    const tocados = await page.locator("[data-motion=played]").count();
+    const y = await page.evaluate(() => window.scrollY);
+    await page.setViewportSize({ width: 800, height: 900 });
+    await page.waitForTimeout(1800);
+    expect(Math.abs((await page.evaluate(() => window.scrollY)) - y)).toBeLessThan(400); // o texto muda de altura ao estreitar, mas a rolagem não vai a 0
+    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(300);
+    expect(await page.locator("[data-motion=played]").count()).toBeGreaterThanOrEqual(tocados);
+    for (const sel of ["#carmine .carmine-body", "#experiencia .entry", "#experiencia h2 .title-text", "#formacao .entry-main"]) {
+      expect(await opacidades(page, sel), sel).not.toContain(0);
+    }
+    expect((await opacidades(page, "#experiencia .entry")).every((o) => o === 1)).toBe(true);
+  });
 });
