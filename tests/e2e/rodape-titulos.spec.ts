@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 
 // Issue #29, revisão de frontend: mapa sem corte seco (máscara), títulos de seção unificados, idiomas com largura contida e rodapé mínimo.
 const rotas = [

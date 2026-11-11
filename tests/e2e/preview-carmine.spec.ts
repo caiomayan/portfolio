@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./base";
 
 // Preview do site do Carmine no hover do link "stcarmine.com" (#21). Nunca vai pra rede de verdade:
 // o link aponta pra fora, então qualquer clique/toque é interceptado.

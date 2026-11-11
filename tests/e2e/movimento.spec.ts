@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./base";
 import { rotasTexto, type RotaTexto } from "./textos";
 
 // Mesma marcação que o componente Reveal usa: nenhuma lista de seletores própria.
@@ -55,21 +55,16 @@ for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
       await ctx.close();
     });
 
-    test("sem preferência, a entrada do hero e a assinatura animam (controle)", async ({ browser }) => {
+    test("sem preferência, a entrada do hero anima (controle) e a assinatura do topo já está pronta", async ({ browser }) => {
       const ctx = await browser.newContext({ reducedMotion: "no-preference" });
       const page = await ctx.newPage();
       await page.goto(path);
       await expect(page.locator("h1")).toHaveCSS("animation-name", "rise");
-      // Depois do mount a assinatura passa a ser desenhada (motion): a última letra ainda nem começou...
+      // Desde a #39 o desenho do traço é da abertura (abertura.spec.ts); a assinatura do topo é sempre a versão pronta.
       const sig = page.locator(".signature");
-      await expect(sig).not.toHaveAttribute("data-static", "");
-      const ultima = sig.locator(":scope > path").last();
-      expect(Number(await ultima.evaluate((el) => getComputedStyle(el).opacity))).toBe(0);
-      // ...e o desenho termina com todas as letras inteiras.
-      await expect
-        .poll(async () => Math.min(...(await sig.locator(":scope > path").evaluateAll((ps) => ps.map((p) => Number(getComputedStyle(p).opacity))))), { timeout: 8000 })
-        .toBe(1);
-      await expect(ultima).toHaveCSS("stroke-dashoffset", /^0(px)?$/);
+      await expect(sig).toHaveAttribute("data-static", "");
+      await expect(sig).toBeVisible();
+      expect(await sig.locator("mask").count()).toBe(0);
       await ctx.close();
     });
 
@@ -79,7 +74,6 @@ for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
       const sig = page.locator(".signature");
       await expect(sig).toHaveAttribute("aria-hidden", "true");
       await expect(sig).toBeVisible();
-      await expect.poll(() => sig.boundingBox()).not.toBeNull(); // a versão pronta é trocada pela animada logo após o mount
       const box = (await sig.boundingBox())!;
       expect(box.x).toBeLessThan(120);
       expect(box.y).toBeLessThan(60);

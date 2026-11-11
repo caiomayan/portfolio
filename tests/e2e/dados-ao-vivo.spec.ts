@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 
 // Issue #28: clima de João Pessoa ao lado da hora e gráfico de contribuições do GitHub, ambos buscados no servidor.
 // O build testado lê o Open-Meteo e o GitHub de um servidor falso (tests/fixtures/apis.mjs): 27,6 °C com tempo parcialmente nublado e

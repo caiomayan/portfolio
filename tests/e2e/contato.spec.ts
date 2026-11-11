@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "./base";
 import { rotasTexto } from "./textos";
 
 // #38: a seção Contato saiu. Os ícones (e-mail, LinkedIn, GitHub, Currículo) ficam na faixa da primeira tela, à direita.

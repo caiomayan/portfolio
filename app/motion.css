@@ -27,6 +27,8 @@
   color: var(--ink);
 }
 
+.opening { display: none; } /* só existe com `html[data-opening]` */
+
 @media (prefers-reduced-motion: no-preference) {
   /* Tooltip: entra com fade e 4 px de deslocamento (transform/opacity); fecha na hora. Sem movimento reduzido, só aparece. */
   @keyframes tip-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
@@ -35,9 +37,21 @@
   .place-pulse { animation: pin-pulse 2.4s var(--ease) infinite; }
   .tip { animation: tip-in 140ms var(--ease) both; }
 
-  /* A versão pronta (render do servidor) fica escondida até o script trocar pela animada; sem script, sem assinatura. */
-  /* Depois da troca de idioma (`data-drawn`) ela já foi desenhada nesta visita: fica pronta e visível, sem desenhar de novo. */
-  .signature[data-static]:not([data-drawn]) { visibility: hidden; }
+  /* Abertura (#39, components/opening.tsx): enquanto `html[data-opening]` existe (o script inline de components/site-shell.tsx o põe antes da primeira pintura,
+     só na primeira visita da aba e sem movimento reduzido), uma tela de cobertura em --bg mostra a assinatura grande se escrevendo e a do topo fica invisível
+     (mantém o lugar: é ali que a grande vai parar). A página por baixo carrega normal, com o h1 pintado, e a cobertura só some (opacity) depois do voo.
+     O traço é CSS: nasce na primeira pintura, sem esperar o JavaScript; o voo (transform) e o fade da cobertura são WAAPI, por JS. Os tempos repetem lib/opening.ts. */
+  html[data-opening] .opening { display: grid; place-items: center; position: fixed; inset: 0; z-index: 100; color: var(--ink); }
+  .opening-scrim { position: absolute; inset: 0; background: var(--bg); } /* só ele some (opacity); a assinatura grande fica opaca até o fim */
+  html[data-opening] .signature-mark .signature { visibility: hidden; }
+  .opening-art { position: relative; display: block; width: min(72vw, 560px); height: auto; overflow: visible; transform-origin: 0 0; will-change: transform; }
+  /* O traço, letra a letra (a exceção documentada: stroke-dashoffset num SVG pequeno). O 1% evita o pontinho do caps redondo antes de começar. */
+  @keyframes opening-draw {
+    0% { stroke-dashoffset: 1; opacity: 0; }
+    1% { stroke-dashoffset: 1; opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 1; }
+  }
+  .opening-stroke { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; animation: opening-draw 450ms ease-in-out calc(50ms + var(--i) * 55ms) both; }
 
   /* Entrada escalonada: o estado escondido só existe se o script (components/reveal.tsx) o aplicar. */
   [data-reveal="pending"] { opacity: 0; transform: translateY(20px); }

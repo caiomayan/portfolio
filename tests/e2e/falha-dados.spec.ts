@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 
 // Issue #28: com as duas APIs falhando (projeto "apis-falhando": build com o Open-Meteo em 500 e o GitHub em 502, mesmo com token),
 // a página renderiza normalmente, sem o clima, sem o gráfico e sem erro no console.

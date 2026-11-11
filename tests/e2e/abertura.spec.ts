@@ -1,0 +1,197 @@
+import { expect, test, type Page } from "@playwright/test"; // direto do Playwright: aqui a abertura roda de verdade (os outros testes partem de tests/e2e/base.ts)
+
+// Issue #39: abertura com a assinatura (uma vez por aba, pulável, sem esconder nada sem JavaScript ou com movimento reduzido).
+const html = (page: Page) => page.locator("html");
+const cobertura = (page: Page) => page.locator(".opening");
+const topo = (page: Page) => page.locator(".top .signature");
+/** Espera a abertura acabar sozinha (≈ 1,6 s; folga pra máquina lenta). */
+const terminou = async (page: Page) => {
+  await expect(cobertura(page)).toHaveCount(0, { timeout: 8000 });
+  await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
+};
+/** O voo (FLIP) da assinatura grande, pra pausar e olhar em qualquer instante. */
+const pausaNoInstante = (page: Page, fracao: number) =>
+  page.evaluate((f) => {
+    const voo = document.getAnimations().find((a) => (a.effect as KeyframeEffect | null)?.target?.classList.contains("opening-art"));
+    if (!voo) return false;
+    voo.pause();
+    const { delay = 0, duration } = voo.effect!.getTiming();
+    voo.currentTime = Number(delay) + Number(duration) * f;
+    return true;
+  }, fracao);
+
+test.describe("abertura (#39)", () => {
+  test("na primeira visita da aba, a assinatura aparece grande no centro e a do topo fica no lugar, invisível", async ({ page }) => {
+    await page.goto("/");
+    await expect(html(page)).toHaveAttribute("data-opening", "run");
+    await expect(cobertura(page)).toBeVisible();
+    const grande = (await page.locator(".opening-art").boundingBox())!;
+    const vp = page.viewportSize()!;
+    expect(grande.width).toBeGreaterThan(vp.width * 0.4);
+    expect(Math.abs(grande.x + grande.width / 2 - vp.width / 2)).toBeLessThan(4);
+    expect(Math.abs(grande.y + grande.height / 2 - vp.height / 2)).toBeLessThan(4);
+    expect(await topo(page).evaluate((el) => getComputedStyle(el).visibility)).toBe("hidden");
+    // O h1 e a foto estão no HTML e pintados por baixo da cobertura (é o que o LCP mede).
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+    expect(await page.evaluate(() => sessionStorage.getItem("opening"))).toBe("1");
+  });
+
+  test("termina sozinha: a cobertura sai do DOM e a assinatura do topo aparece pronta", async ({ page }) => {
+    await page.goto("/");
+    await terminou(page);
+    await expect(topo(page)).toBeVisible();
+    expect(await topo(page).evaluate((el) => getComputedStyle(el).visibility)).toBe("visible");
+    await expect(page.getByRole("img", { name: "Caio Mayan", exact: true })).toHaveCount(1);
+  });
+
+  test("os três momentos: grande no centro, no meio do voo, e igual à assinatura do topo no fim", async ({ page }) => {
+    await page.goto("/");
+    await expect(cobertura(page)).toBeVisible();
+    await expect.poll(() => pausaNoInstante(page, 0)).toBe(true);
+    const alvo = (await page.locator(".top .signature-mark").boundingBox())!;
+    const inicio = (await page.locator(".opening-art").boundingBox())!;
+    await pausaNoInstante(page, 0.5);
+    const meio = (await page.locator(".opening-art").boundingBox())!;
+    await pausaNoInstante(page, 1);
+    const fim = (await page.locator(".opening-art").boundingBox())!;
+    expect(inicio.width).toBeGreaterThan(alvo.width * 1.5);
+    expect(meio.width).toBeLessThan(inicio.width);
+    expect(meio.width).toBeGreaterThan(alvo.width);
+    expect(meio.y).toBeGreaterThan(alvo.y);
+    expect(meio.y).toBeLessThan(inicio.y);
+    for (const k of ["x", "y", "width", "height"] as const) expect(Math.abs(fim[k] - alvo[k])).toBeLessThan(1.5);
+  });
+
+  test("ao recarregar na mesma aba, a página aparece pronta; numa aba nova, a abertura roda de novo", async ({ page, context }) => {
+    await page.goto("/");
+    await terminou(page);
+    await page.reload();
+    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
+    await expect(cobertura(page)).toHaveCount(0);
+    await expect(topo(page)).toBeVisible();
+    const outra = await context.newPage();
+    await outra.goto("/");
+    await expect(html(outra)).toHaveAttribute("data-opening", "run");
+  });
+
+  test("um clique pula a abertura e leva direto ao estado final", async ({ page }) => {
+    await page.goto("/");
+    await expect(cobertura(page)).toBeVisible();
+    await page.mouse.click(40, 400);
+    await expect(cobertura(page)).toHaveCount(0);
+    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
+    expect(await topo(page).evaluate((el) => getComputedStyle(el).visibility)).toBe("visible");
+    expect(await page.evaluate(() => document.getAnimations().some((a) => (a.effect as KeyframeEffect | null)?.target?.classList.contains("opening-art")))).toBe(false);
+  });
+
+  for (const tecla of ["Tab", "Space"]) {
+    test(`a tecla ${tecla} pula a abertura`, async ({ page }) => {
+      await page.goto("/");
+      await expect(cobertura(page)).toBeVisible();
+      await page.keyboard.press(tecla);
+      await expect(cobertura(page)).toHaveCount(0);
+      await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
+    });
+  }
+
+  test("a rolagem (roda do mouse) pula a abertura", async ({ page }) => {
+    await page.goto("/");
+    await expect(cobertura(page)).toBeVisible();
+    await page.mouse.wheel(0, 200);
+    await expect(cobertura(page)).toHaveCount(0);
+    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
+  });
+
+  test("o toque pula a abertura no celular", async ({ browser }) => {
+    const ctx = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 375, height: 667 } });
+    const page = await ctx.newPage();
+    await page.goto("/");
+    await expect(cobertura(page)).toBeVisible();
+    const grande = (await page.locator(".opening-art").boundingBox())!;
+    expect(grande.width).toBeGreaterThan(375 * 0.6);
+    expect(grande.x).toBeGreaterThanOrEqual(0);
+    expect(grande.x + grande.width).toBeLessThanOrEqual(375);
+    await page.touchscreen.tap(190, 330);
+    await expect(cobertura(page)).toHaveCount(0);
+    await expect(topo(page)).toBeVisible();
+    await ctx.close();
+  });
+
+  test("a troca de idioma não dispara a abertura (nem a refaz, se ela já tinha rodado)", async ({ page }) => {
+    await page.goto("/");
+    await terminou(page);
+    await page.evaluate(() => {
+      (window as unknown as { __marca: number }).__marca = 1;
+    });
+    await page.getByRole("button", { name: /^Idioma/ }).click();
+    await page.getByRole("menuitemradio", { name: "English" }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Software Engineer");
+    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
+    await expect(cobertura(page)).toHaveCount(0);
+    expect(await page.evaluate(() => (window as unknown as { __marca?: number }).__marca)).toBe(1); // a página não recarregou
+    await expect(topo(page)).toBeVisible();
+  });
+
+  test("a troca de idioma no meio da abertura pula pro estado final e não a refaz", async ({ page }) => {
+    await page.goto("/");
+    await expect(cobertura(page)).toBeVisible();
+    await page.keyboard.press("Tab"); // pula
+    await page.getByRole("button", { name: /^Idioma/ }).click();
+    await page.getByRole("menuitemradio", { name: "Español" }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ingeniero de Software");
+    await expect(cobertura(page)).toHaveCount(0);
+  });
+
+  test("com prefers-reduced-motion: reduce, nada de abertura e a assinatura aparece pronta", async ({ browser }) => {
+    const ctx = await browser.newContext({ reducedMotion: "reduce" });
+    const page = await ctx.newPage();
+    await page.goto("/");
+    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
+    await expect(cobertura(page)).toHaveCount(0);
+    await expect(topo(page)).toBeVisible();
+    await ctx.close();
+  });
+
+  test("sem JavaScript, nada fica escondido: a assinatura e a primeira tela aparecem prontas", async ({ browser }) => {
+    const ctx = await browser.newContext({ javaScriptEnabled: false, reducedMotion: "no-preference" });
+    const page = await ctx.newPage();
+    await page.goto("/");
+    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
+    await expect(cobertura(page)).toBeHidden();
+    await expect(topo(page)).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.locator(".who")).toBeVisible();
+    await ctx.close();
+  });
+
+  test("se o script da página falhar, o atributo sai sozinho e o conteúdo não fica escondido", async ({ browser }) => {
+    const ctx = await browser.newContext({ reducedMotion: "no-preference" });
+    const page = await ctx.newPage();
+    await page.route("**/_next/static/**/*.js", (route) => route.abort());
+    await page.goto("/");
+    await expect(html(page)).toHaveAttribute("data-opening", "run"); // o script inline rodou; o pacote, não
+    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/, { timeout: 8000 }); // o prazo de segurança (4 s) o tira
+    await expect(cobertura(page)).toBeHidden();
+    await expect(topo(page)).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await ctx.close();
+  });
+
+  test("durante a abertura só transform, opacity e o traço (stroke-dashoffset) animam", async ({ page }) => {
+    await page.goto("/");
+    await expect(cobertura(page)).toBeVisible();
+    const props = await page.evaluate(() => {
+      const ignorar = new Set(["offset", "easing", "composite", "computedOffset"]);
+      const nomes = new Set<string>();
+      for (const a of document.getAnimations()) {
+        for (const k of (a.effect as KeyframeEffect).getKeyframes()) for (const p of Object.keys(k)) if (!ignorar.has(p)) nomes.add(p);
+      }
+      return [...nomes].sort();
+    });
+    expect(props.length).toBeGreaterThan(0);
+    const permitidas = new Set(["transform", "opacity", "strokeDashoffset", "translate"]);
+    expect(props.filter((p) => !permitidas.has(p))).toEqual([]);
+    expect(props).toContain("strokeDashoffset");
+    expect(props).toContain("transform");
+  });
+});

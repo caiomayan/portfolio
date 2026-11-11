@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./base";
 
 // Issue #41: o seletor de idioma e o botão de tema acompanham a rolagem numa cápsula flutuante (uma cópia só no DOM).
 declare global {

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 
 // Issues #24, #29 e #38: mapa compacto na primeira tela, ao lado de três linhas empilhadas: cidade, hora (sem o fuso na tela) e clima.
 const rotas = [

@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./base";
 import { rotasTexto } from "./textos";
 
 // Revisão final da #29 (PR #33): estrutura (main), teclado nas linhas de ícones, ordem no celular, largura em telas estreitas,

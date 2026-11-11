@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./base";
 import { rotasTexto } from "./textos";
 
 // Issue #34: ajustes da segunda revisão de design. Contraste e cores são lidos do navegador, nos dois temas.

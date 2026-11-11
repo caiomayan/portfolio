@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 
 // Issue #29, acabamento: medida de leitura, stack do Carmine mais leve, mapa maior no desktop e Fundamentos em três grupos (#29).
 for (const path of ["/", "/en", "/es"]) {
