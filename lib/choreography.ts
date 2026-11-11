@@ -7,7 +7,7 @@
  *    altura da tela. Ao chegar lá a animação **assenta**: é encerrada, os estilos inline saem (`clearProps`) e o gatilho é morto. Depois disso nada
  *    se mexe (nem ao voltar a rolar pra cima, nem enquanto se lê). Sem pinning e sem deslocamento contínuo.
  *  - **Entrada única**: toca uma vez quando o bloco aparece (ícones em cascata etc.).
- * Só `opacity` e `transform` (`y`, `yPercent`, `scale`, `scaleY`). O estado escondido é aplicado aqui, no cliente, e só no que está inteiro abaixo
+ * Só `opacity` e `transform` (`y`, `yPercent`, `scale`). O estado escondido é aplicado aqui, no cliente, e só no que está inteiro abaixo
  * da tela no momento do preparo; se o script falhar, nada chegou a ser escondido. Um vigia independente do GSAP (um intervalo) força o estado final
  * de qualquer parte que devia ter terminado e não terminou. Com `prefers-reduced-motion`, nada é preparado.
  * Cada gatilho leva `data-motion="pending" | "played"` (os testes esperam por isso). `clamp()` nos limites: no fim da página nada fica pela metade.
@@ -85,14 +85,6 @@ export function arm(): () => void {
     const h2 = section?.querySelector("h2");
     if (h2) scrub(h2.querySelector(".title-text"), { yPercent: 110 }, { yPercent: 0 }, h2, m, titleRange(m));
   };
-  const line = (sec: Element | null, m: Mode) => {
-    const wrap = sec?.querySelector(".timeline-wrap");
-    scrub(wrap?.querySelector(".timeline"), { scaleY: 0 }, { scaleY: 1 }, wrap, m, {
-      start: m.desktop ? "clamp(top 80%)" : "clamp(top 92%)",
-      end: m.desktop ? "clamp(bottom 60%)" : "clamp(bottom 80%)",
-    });
-  };
-
   /** Desfaz tudo o que ainda não tocou: gatilhos e animações mortos, sem estilo inline de animação sobrando (a troca de idioma reaproveita nós do DOM). */
   const dispose = () => {
     items.forEach((it) => {
@@ -122,10 +114,9 @@ export function arm(): () => void {
       scrub(body, { opacity: 0, y: dy(m, 28), scale: m.desktop ? 0.94 : 0.975, transformOrigin: "0% 0%" }, { opacity: 1, y: 0, scale: 1 }, body, m);
       if (carmine) enter($("li", carmine.querySelector(".stack") ?? carmine), carmine.querySelector(".icon-row"), m, { start: "clamp(top 66%)", stagger: 0.05, y: 12 });
 
-      // Experiência: título por máscara; o fio de tempo se desenha ao lado das entradas; cada linha sobe presa à rolagem; ícones em cascata (única).
+      // Experiência: título por máscara; cada linha sobe presa à rolagem; ícones em cascata (única).
       const exp = document.getElementById("experiencia");
       titles(exp, m);
-      line(exp, m);
       if (exp) {
         $(".entry", exp).forEach((row) => {
           scrub(row, { opacity: 0, y: dy(m, 28) }, { opacity: 1, y: 0 }, row, m);
@@ -133,10 +124,9 @@ export function arm(): () => void {
         });
       }
 
-      // Formação: título; fio; cada linha entra em partes, uma depois da outra (texto, período, corpo), presa à rolagem; subitens em cascata (única).
+      // Formação: título; cada linha entra em partes, uma depois da outra (texto, período, corpo), presa à rolagem; subitens em cascata (única).
       const edu = document.getElementById("formacao");
       titles(edu, m);
-      line(edu, m);
       if (edu) {
         $(".entry", edu).forEach((row) => {
           const parts = [".entry-main", ".entry-period", ".entry-body", ".entry-children"].map((s) => row.querySelector(s)).filter(Boolean) as Element[];

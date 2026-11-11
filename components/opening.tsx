@@ -2,16 +2,29 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import { signature } from "@/lib/signature";
-import { OPENING_ATTR } from "@/lib/opening";
+import { LETTERS, OPENING_ATTR } from "@/lib/opening";
 import { drawnLetters, Filled, OUTLINE_PX } from "./signature";
 
 const MASK_STROKE = signature.fontSize * 0.22; // espessura do traço da máscara, proporcional à fonte
 const [vx, vy, vw, vh] = signature.viewBox.split(" ").map(Number);
-const maskRegion = { x: vx - MASK_STROKE, y: vy - MASK_STROKE, width: vw + 2 * MASK_STROKE, height: vh + 2 * MASK_STROKE };
+const maskRegion = {
+  x: vx - MASK_STROKE,
+  y: vy - MASK_STROKE,
+  width: vw + 2 * MASK_STROKE,
+  height: vh + 2 * MASK_STROKE,
+};
+
+/** O tempo de cada letra (lib/opening.ts) vai pro CSS por variáveis: início e duração do traço. */
+const stroke = (n: number) =>
+  ({
+    "--s": `${LETTERS[n][0]}ms`,
+    "--d": `${LETTERS[n][1]}ms`,
+  }) as CSSProperties;
 
 /**
- * Abertura (#39): na primeira visita da aba, a assinatura aparece grande no centro e se escreve; depois encolhe e desliza até o lugar
- * dela no topo (FLIP, só transform) enquanto o fundo da cobertura some (só opacity). ≈ 1,57 s: 0,95 s de traço + 0,62 s de voo.
+ * Abertura (#39): na primeira visita da aba, a assinatura aparece grande no centro e se escreve (1,76 s, cada letra no seu ritmo); a tinta assenta num
+ * respiro (0,26 s) e ela voa até o lugar dela no topo (0,86 s, FLIP só transform, X e Y com curvas diferentes) enquanto a cobertura levanta e a primeira tela
+ * entra em sequência. ≈ 3 s no total. Os tempos e as curvas estão em lib/opening.ts.
  *
  * **Toda a coreografia roda fora do React**, pra não depender da hidratação: dois scripts inline (lib/opening.ts, postos em components/site-shell.tsx)
  * decidem se a abertura roda (sessionStorage, movimento reduzido, endereço com #), fazem o voo e o fade (WAAPI) e tratam o pular e o prazo de
@@ -30,7 +43,10 @@ export function Opening() {
     const mo = new MutationObserver(() => {
       if (root.dataset[OPENING_ATTR] !== "run") setDone(true);
     });
-    mo.observe(root, { attributes: true, attributeFilter: ["data-" + OPENING_ATTR] });
+    mo.observe(root, {
+      attributes: true,
+      attributeFilter: ["data-" + OPENING_ATTR],
+    });
     return () => mo.disconnect();
   }, []);
 
@@ -38,41 +54,52 @@ export function Opening() {
   return (
     <div className="opening" aria-hidden="true" suppressHydrationWarning>
       <div className="opening-scrim" />
-      <svg className="opening-art" viewBox={signature.viewBox} focusable="false" fill="none">
-        <defs>
-          <mask id="opening-reveal" maskUnits="userSpaceOnUse" {...maskRegion}>
-            {drawnLetters.map((l, n) => (
-              <path
-                key={l.i}
-                className="opening-stroke"
-                pathLength={1}
-                d={l.d}
-                stroke="white"
-                strokeWidth={MASK_STROKE}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ "--i": n } as CSSProperties}
-              />
-            ))}
-          </mask>
-        </defs>
-        {drawnLetters.map((l, n) => (
-          <path
-            key={l.i}
-            className="opening-stroke"
-            pathLength={1}
-            d={l.d}
-            stroke="currentColor"
-            strokeWidth={OUTLINE_PX}
-            vectorEffect="non-scaling-stroke"
-            strokeLinejoin="round"
-            style={{ "--i": n } as CSSProperties}
-          />
-        ))}
-        <g mask="url(#opening-reveal)" fill="currentColor">
-          <Filled />
-        </g>
-      </svg>
+      <div className="opening-art">
+        <svg
+          className="opening-art-svg"
+          viewBox={signature.viewBox}
+          focusable="false"
+          fill="none"
+        >
+          <defs>
+            <mask
+              id="opening-reveal"
+              maskUnits="userSpaceOnUse"
+              {...maskRegion}
+            >
+              {drawnLetters.map((l, n) => (
+                <path
+                  key={l.i}
+                  className="opening-stroke"
+                  pathLength={1}
+                  d={l.d}
+                  stroke="white"
+                  strokeWidth={MASK_STROKE}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={stroke(n)}
+                />
+              ))}
+            </mask>
+          </defs>
+          {drawnLetters.map((l, n) => (
+            <path
+              key={l.i}
+              className="opening-stroke"
+              pathLength={1}
+              d={l.d}
+              stroke="currentColor"
+              strokeWidth={OUTLINE_PX}
+              vectorEffect="non-scaling-stroke"
+              strokeLinejoin="round"
+              style={stroke(n)}
+            />
+          ))}
+          <g mask="url(#opening-reveal)" fill="currentColor">
+            <Filled />
+          </g>
+        </svg>
+      </div>
     </div>
   );
 }

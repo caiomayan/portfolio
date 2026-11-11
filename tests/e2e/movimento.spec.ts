@@ -2,7 +2,7 @@ import { expect, test, type Page } from "./base";
 import { rotasTexto, type RotaTexto } from "./textos";
 
 // As partes que a coreografia (#39, lib/choreography.ts) esconde e anima: com movimento reduzido ou sem JavaScript nenhuma pode ficar escondida.
-const REVEAL_TARGETS = "h2 .title-text, .carmine-body, .timeline, .entry, .foundation-group, .activity-week, .language, .site-footer, .stack li";
+const REVEAL_TARGETS = "h2 .title-text, .carmine-body, .entry, .foundation-group, .activity-week, .language, .site-footer, .stack li";
 
 /** Rola até o fim da página, devagar o bastante pra cada parte chegar na tela. */
 async function scrollToEnd(page: Page) {

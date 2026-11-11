@@ -44,14 +44,16 @@
   html[data-opening] .opening { display: grid; place-items: center; position: fixed; inset: 0; z-index: 100; color: var(--ink); }
   .opening-scrim { position: absolute; inset: 0; background: var(--bg); } /* só ele some (opacity); a assinatura grande fica opaca até o fim */
   html[data-opening] .signature-mark .signature { visibility: hidden; }
-  .opening-art { position: relative; display: block; width: min(72vw, 560px); height: auto; overflow: visible; transform-origin: 0 0; will-change: transform; }
+  /* Invólucro (Y do voo) e <svg> (X e escala do voo): o script assenta os dois no tamanho e no lugar da assinatura do topo e anima a partir do grande. */
+  .opening-art { position: relative; width: min(72vw, 560px); will-change: transform; }
+  .opening-art-svg { display: block; width: 100%; height: auto; overflow: visible; transform-origin: 0 0; will-change: transform; }
   /* O traço, letra a letra (a exceção documentada: stroke-dashoffset num SVG pequeno). O 1% evita o pontinho do caps redondo antes de começar. */
   @keyframes opening-draw {
     0% { stroke-dashoffset: 1; opacity: 0; }
     1% { stroke-dashoffset: 1; opacity: 1; }
     100% { stroke-dashoffset: 0; opacity: 1; }
   }
-  .opening-stroke { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; animation: opening-draw 450ms ease-in-out calc(50ms + var(--i) * 55ms) both; }
+  .opening-stroke { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; animation: opening-draw var(--d) cubic-bezier(0.45, 0.05, 0.25, 1) var(--s) both; } /* --s e --d: início e duração de cada letra (lib/opening.ts, LETTERS) */
 
   /* Troca de tema: fade da página inteira (View Transitions), 100% composição. Sem suporte, a troca é instantânea. */
   ::view-transition-old(root),

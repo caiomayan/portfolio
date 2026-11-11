@@ -4,7 +4,7 @@ import { expect, test, type Page } from "./base";
 // Os gatilhos levam data-motion="pending" | "played"; o <html> leva data-choreography="armed" quando está preparada.
 const html = (page: Page) => page.locator("html");
 const armada = (page: Page) => expect(html(page)).toHaveAttribute("data-choreography", "armed", { timeout: 8000 });
-const PARTES = "h2 .title-text, .carmine-body, .timeline, .entry, .entry-main, .foundation-group, .activity-week, .activity-total, .language, .site-footer, .stack li";
+const PARTES = "h2 .title-text, .carmine-body, .entry, .entry-main, .foundation-group, .activity-week, .activity-total, .language, .site-footer, .stack li";
 const opacidades = (page: Page, sel = PARTES) => page.locator(sel).evaluateAll((els) => els.map((el) => Number(getComputedStyle(el).opacity)));
 const pendentes = (page: Page) => page.locator("[data-motion=pending]").count();
 

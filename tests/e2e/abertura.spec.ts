@@ -4,22 +4,26 @@ import { expect, test, type Page } from "@playwright/test"; // direto do Playwri
 const html = (page: Page) => page.locator("html");
 const cobertura = (page: Page) => page.locator(".opening");
 const topo = (page: Page) => page.locator(".top .signature");
-/** Espera a abertura acabar sozinha (≈ 1,6 s; folga pra máquina lenta). */
+/** Espera a abertura acabar sozinha (≈ 3 s; folga pra máquina lenta). */
 const terminou = async (page: Page) => {
   await expect(cobertura(page)).toHaveCount(0, { timeout: 8000 });
   await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
 };
-/** O voo (FLIP) da assinatura grande, pra pausar e olhar em qualquer instante. */
-const pausaNoInstante = (page: Page, fracao: number) =>
-  page.evaluate((f) => {
-    const voo = document.getAnimations().find((a) => (a.effect as KeyframeEffect | null)?.target?.classList.contains("opening-art"));
-    if (!voo) return false;
-    voo.pause();
-    const { delay = 0, duration } = voo.effect!.getTiming();
-    voo.currentTime = Number(delay) + Number(duration) * f;
-    return true;
-  }, fracao);
-
+/** Pausa a abertura num instante (ms depois do início): traço, respiro, voo e cobertura vão todos pra esse ponto da linha do tempo (lib/opening.ts). */
+const irPara = (page: Page, ms: number) =>
+  page.evaluate((t) => {
+    let n = 0;
+    for (const a of document.getAnimations()) {
+      const alvo = (a.effect as KeyframeEffect | null)?.target as Element | null;
+      if (alvo?.closest(".opening")) {
+        a.pause();
+        a.currentTime = t;
+        n++;
+      }
+    }
+    return n;
+  }, ms);
+const svgGrande = (page: Page) => page.locator(".opening-art-svg").boundingBox();
 
 /** Quanta tinta (preto sobre branco, soma de 255 − luminância) há num recorte da tela: mede a espessura de verdade, em pixels renderizados. */
 async function tinta(page: Page, clip: { x: number; y: number; width: number; height: number }) {
@@ -52,7 +56,7 @@ test.describe("abertura (#39)", () => {
     await page.goto("/");
     await expect(html(page)).toHaveAttribute("data-opening", "run");
     await expect(cobertura(page)).toBeVisible();
-    const grande = (await page.locator(".opening-art").boundingBox())!;
+    const grande = (await svgGrande(page))!;
     const vp = page.viewportSize()!;
     expect(grande.width).toBeGreaterThan(vp.width * 0.4);
     expect(Math.abs(grande.x + grande.width / 2 - vp.width / 2)).toBeLessThan(4);
@@ -71,22 +75,84 @@ test.describe("abertura (#39)", () => {
     await expect(page.getByRole("img", { name: "Caio Mayan", exact: true })).toHaveCount(1);
   });
 
-  test("os três momentos: grande no centro, no meio do voo, e igual à assinatura do topo no fim", async ({ page }) => {
+  test("os momentos: grande no centro, o respiro (recua 1,5 %), o voo com arco e o pouso igual à assinatura do topo", async ({ page }) => {
     await page.goto("/");
     await expect(cobertura(page)).toBeVisible();
-    await expect.poll(() => pausaNoInstante(page, 0)).toBe(true);
+    await expect.poll(() => irPara(page, 1700)).toBeGreaterThan(10);
     const alvo = (await page.locator(".top .signature-mark").boundingBox())!;
-    const inicio = (await page.locator(".opening-art").boundingBox())!;
-    await pausaNoInstante(page, 0.5);
-    const meio = (await page.locator(".opening-art").boundingBox())!;
-    await pausaNoInstante(page, 1);
-    const fim = (await page.locator(".opening-art").boundingBox())!;
-    expect(inicio.width).toBeGreaterThan(alvo.width * 1.5);
-    expect(meio.width).toBeLessThan(inicio.width);
+    const grande = (await svgGrande(page))!;
+    await irPara(page, 2020); // fim do respiro
+    const respiro = (await svgGrande(page))!;
+    await irPara(page, 2020 + 220); // início do voo
+    const a = (await svgGrande(page))!;
+    await irPara(page, 2020 + 860 * 0.5);
+    const meio = (await svgGrande(page))!;
+    await irPara(page, 5000);
+    const fim = (await svgGrande(page))!;
+    expect(grande.width).toBeGreaterThan(alvo.width * 1.5);
+    expect(respiro.width / grande.width).toBeGreaterThan(0.975); // a tinta assenta: recua ~1,5 %, nada mais
+    expect(respiro.width / grande.width).toBeLessThan(0.995);
+    expect(a.width).toBeLessThan(respiro.width);
+    expect(meio.width).toBeLessThan(a.width);
     expect(meio.width).toBeGreaterThan(alvo.width);
-    expect(meio.y).toBeGreaterThan(alvo.y);
-    expect(meio.y).toBeLessThan(inicio.y);
     for (const k of ["x", "y", "width", "height"] as const) expect(Math.abs(fim[k] - alvo[k])).toBeLessThan(1.5);
+    // Arco: X e Y andam em frações diferentes do caminho (curvas diferentes), então a rota não é uma reta.
+    const fx = (respiro.x - a.x) / (respiro.x - alvo.x);
+    const fy = (respiro.y - a.y) / (respiro.y - alvo.y);
+    expect(Math.abs(fx - fy)).toBeGreaterThan(0.03);
+  });
+
+  test("o traço tem cadência de caneta: letras com durações diferentes, easing que não é linear, termina entre 1,5 e 1,9 s", async ({ page }) => {
+    await page.goto("/");
+    await expect(cobertura(page)).toBeVisible();
+    const tracos = await page.evaluate(() =>
+      document
+        .getAnimations()
+        .filter((a) => (a.effect as KeyframeEffect | null)?.target?.classList.contains("opening-stroke"))
+        .map((a) => {
+          const t = a.effect!.getTiming();
+          return { ini: Number(t.delay), dur: Number(t.duration), ease: String((a.effect as KeyframeEffect).getKeyframes()[0].easing) }; // no CSS o easing vai nos quadros-chave
+        }),
+    );
+    expect(tracos.length).toBe(18); // contorno + máscara, 9 letras
+    expect(new Set(tracos.map((t) => t.dur)).size).toBeGreaterThanOrEqual(4); // ritmo não uniforme
+    expect(Math.max(...tracos.map((t) => t.dur))).toBeGreaterThan(Math.min(...tracos.map((t) => t.dur)) * 1.8);
+    for (const t of tracos) expect(t.ease).not.toBe("linear");
+    const fim = Math.max(...tracos.map((t) => t.ini + t.dur));
+    expect(fim).toBeGreaterThan(1500);
+    expect(fim).toBeLessThan(1900);
+  });
+
+  test("a duração total até a página pronta fica em ≈ 3 s (entre 2,6 e 3,6 s), abaixo do prazo de segurança", async ({ page }) => {
+    await page.addInitScript(() => {
+      const w = window as unknown as { __visto?: boolean; __fim?: number };
+      const iv = setInterval(() => {
+        const d = document.documentElement;
+        if (d?.dataset.opening) w.__visto = true;
+        if (w.__visto && d && !d.dataset.opening) {
+          w.__fim = performance.now();
+          clearInterval(iv);
+        }
+      }, 10);
+    });
+    await page.goto("/");
+    await expect.poll(() => page.evaluate(() => (window as unknown as { __fim?: number }).__fim ?? 0), { timeout: 8000 }).toBeGreaterThan(0);
+    const fim = await page.evaluate(() => (window as unknown as { __fim: number }).__fim);
+    expect(fim).toBeGreaterThan(2600);
+    expect(fim).toBeLessThan(3600);
+  });
+
+  test("a primeira tela entra em sequência enquanto a assinatura pousa e fica no estado final", async ({ page }) => {
+    await page.goto("/");
+    await expect(cobertura(page)).toBeVisible();
+    await page.waitForTimeout(2300); // a entrada já foi montada (pouco antes do voo) e está em andamento
+    const durante = await page.evaluate(() => document.getAnimations().filter((a) => (a.effect as KeyframeEffect | null)?.target?.matches?.(".hero h1, .hero .who, .hero .lead")).length);
+    expect(durante).toBeGreaterThanOrEqual(3);
+    await terminou(page);
+    for (const sel of [".hero .who", ".hero h1", ".hero .lead", ".hero .place", ".hero .contact-icons", ".top-actions"]) {
+      await expect(page.locator(sel).first()).toHaveCSS("opacity", "1");
+      await expect(page.locator(sel).first()).toHaveCSS("transform", /^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
+    }
   });
 
   test("ao recarregar na mesma aba, a página aparece pronta; numa aba nova, a abertura roda de novo", async ({ page, context }) => {
@@ -108,7 +174,7 @@ test.describe("abertura (#39)", () => {
     await expect(cobertura(page)).toHaveCount(0);
     await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
     expect(await topo(page).evaluate((el) => getComputedStyle(el).visibility)).toBe("visible");
-    expect(await page.evaluate(() => document.getAnimations().some((a) => (a.effect as KeyframeEffect | null)?.target?.classList.contains("opening-art")))).toBe(false);
+    expect(await page.evaluate(() => document.getAnimations().some((a) => (a.effect as KeyframeEffect | null)?.target?.closest(".opening")))).toBe(false);
   });
 
   for (const tecla of ["Tab", "Space"]) {
@@ -134,7 +200,7 @@ test.describe("abertura (#39)", () => {
     const page = await ctx.newPage();
     await page.goto("/");
     await expect(cobertura(page)).toBeVisible();
-    const grande = (await page.locator(".opening-art").boundingBox())!;
+    const grande = (await svgGrande(page))!;
     expect(grande.width).toBeGreaterThan(375 * 0.6);
     expect(grande.x).toBeGreaterThanOrEqual(0);
     expect(grande.x + grande.width).toBeLessThanOrEqual(375);
@@ -191,20 +257,20 @@ test.describe("abertura (#39)", () => {
     await ctx.close();
   });
 
-  test("a abertura não depende da hidratação: sem o pacote JS da página, ela termina sozinha em ≈ 1,6 s, antes do prazo de segurança", async ({ browser }) => {
+  test("a abertura não depende da hidratação: sem o pacote JS da página, ela termina sozinha em ≈ 3 s, antes do prazo de segurança", async ({ browser }) => {
     const ctx = await browser.newContext({ reducedMotion: "no-preference" });
     const page = await ctx.newPage();
     await page.route("**/_next/static/**/*.js", (route) => route.abort());
     await page.goto("/");
     await expect(html(page)).toHaveAttribute("data-opening", "run"); // os scripts inline rodaram; o pacote, não
-    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/, { timeout: 3500 }); // < 4 s do prazo de segurança
+    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/, { timeout: 4600 }); // < 5 s do prazo de segurança
     expect(await cobertura(page).evaluate((el) => getComputedStyle(el).display)).toBe("none");
     expect(await topo(page).evaluate((el) => getComputedStyle(el).visibility)).toBe("visible");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await ctx.close();
   });
 
-  test("o prazo de segurança (4 s) tira a cobertura mesmo se a coreografia travar", async ({ page }) => {
+  test("o prazo de segurança (5 s) tira a cobertura mesmo se a coreografia travar", async ({ page }) => {
     await page.addInitScript(() => {
       Element.prototype.animate = function () { // sem WAAPI o script inline termina na hora; aqui simulamos uma animação que nunca acaba
         return { finished: new Promise(() => {}), cancel() {} } as unknown as Animation;
@@ -212,7 +278,7 @@ test.describe("abertura (#39)", () => {
     });
     await page.goto("/");
     await expect(html(page)).toHaveAttribute("data-opening", "run");
-    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/, { timeout: 6000 });
+    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/, { timeout: 8500 });
     await expect(cobertura(page)).toHaveCount(0);
     await expect(topo(page)).toBeVisible();
   });
@@ -246,7 +312,7 @@ test.describe("abertura (#39)", () => {
       await page.evaluate(() => {
         for (const a of document.getAnimations()) {
           const t = (a.effect as KeyframeEffect | null)?.target?.classList;
-          if (t?.contains("opening-art") || t?.contains("opening-scrim") || t?.contains("opening-stroke")) {
+          if (t?.contains("opening-art") || t?.contains("opening-art-svg") || t?.contains("opening-scrim") || t?.contains("opening-stroke")) {
             a.pause();
             const tm = a.effect!.getTiming();
             a.currentTime = Number(tm.delay) + Number(tm.duration);

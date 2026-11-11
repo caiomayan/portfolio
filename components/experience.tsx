@@ -7,14 +7,11 @@ export function Experience({ content }: { content: Content }) {
   return (
     <section id="experiencia" className="entries" aria-labelledby="experiencia-title">
       <h2 id="experiencia-title"><TitleMask>{heading}</TitleMask></h2>
-      <div className="timeline-wrap">
-        <span className="timeline" aria-hidden="true" />
-        <ul>
+      <ul>
         {jobs.map((job) => (
           <EntryRow key={job.company} title={job.company} titleUrl={job.companyUrl} role={job.role} about={job.about} lines={job.lines} stack={job.stack} period={job.period} logo={job.logo} icon={job.icon} />
         ))}
-        </ul>
-      </div>
+      </ul>
     </section>
   );
 }

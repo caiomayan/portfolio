@@ -7,9 +7,7 @@ export function Education({ content }: { content: Content }) {
   return (
     <section id="formacao" className="entries" aria-labelledby="formacao-title">
       <h2 id="formacao-title"><TitleMask>{heading}</TitleMask></h2>
-      <div className="timeline-wrap">
-        <span className="timeline" aria-hidden="true" />
-        <ul>
+      <ul>
         {items.map((item) => (
           <EntryRow
             key={item.title}
@@ -23,8 +21,7 @@ export function Education({ content }: { content: Content }) {
             icon={item.icon}
           />
         ))}
-        </ul>
-      </div>
+      </ul>
     </section>
   );
 }
