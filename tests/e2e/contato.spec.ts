@@ -48,8 +48,9 @@ for (const { path, pdf } of rotas) {
       await page.goto(path);
       for (const link of await lista(page).getByRole("link").all()) {
         const box = (await link.boundingBox())!;
-        expect(box.width).toBeGreaterThanOrEqual(44);
-        expect(box.height).toBeGreaterThanOrEqual(44);
+        // 0,1 px de folga: a caixa é medida em ponto flutuante (43,99994 num quadro do CI) e o alvo é de 44 px.
+        expect(box.width).toBeGreaterThanOrEqual(43.9);
+        expect(box.height).toBeGreaterThanOrEqual(43.9);
       }
     });
 
