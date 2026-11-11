@@ -1,4 +1,5 @@
 import { CornerDownRight } from "lucide-react";
+import { PARALLAX_TITLE } from "@/lib/parallax";
 import type { Content } from "@/content";
 
 /**
@@ -9,7 +10,7 @@ import type { Content } from "@/content";
 export function Languages({ languages }: { languages: Content["languages"] }) {
   return (
     <section id="idiomas" aria-labelledby="idiomas-title">
-      <h2 id="idiomas-title" data-reveal-part>{languages.heading}</h2>
+      <h2 id="idiomas-title" data-reveal-part data-parallax={PARALLAX_TITLE}>{languages.heading}</h2>
       <ul className="languages">
         {languages.items.map((item) => (
           <li key={item.name} className="language" data-reveal-part>

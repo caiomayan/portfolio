@@ -1,11 +1,12 @@
 import type { Content } from "@/content";
+import { PARALLAX_TITLE } from "@/lib/parallax";
 
 /** Fundamentos: o que ele sabe de base, em três grupos de texto (sem ícones; ferramentas aparecem só onde têm contexto). */
 export function Foundations({ content }: { content: Content }) {
   const { heading, groups } = content.foundations;
   return (
     <section id="fundamentos" aria-labelledby="fundamentos-title">
-      <h2 id="fundamentos-title" data-reveal-part>{heading}</h2>
+      <h2 id="fundamentos-title" data-reveal-part data-parallax={PARALLAX_TITLE}>{heading}</h2>
       <div className="foundations">
         {groups.map((group) => (
           <div key={group.label} className="foundation-group" data-reveal-part>

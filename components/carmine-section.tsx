@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { PARALLAX_TITLE } from "@/lib/parallax";
 import type { Content } from "@/content";
 import carmineLogo from "@/assets/logos/carmine.svg";
 import { IconRow } from "./icon-row";
@@ -8,7 +9,7 @@ import carminePreview from "@/assets/carmine-preview.webp";
 export function CarmineSection({ content }: { content: Content["carmine"] }) {
   return (
     <section id="carmine" aria-labelledby="carmine-title">
-      <div className="carmine-head" data-reveal-part>
+      <div className="carmine-head" data-reveal-part data-parallax={PARALLAX_TITLE}>
         {/* Mesmo título das outras seções (h2 grande); o logo vem antes do nome, decorativo. */}
         <h2 id="carmine-title">
           <Image src={carmineLogo} alt="" width={40} height={40} unoptimized />

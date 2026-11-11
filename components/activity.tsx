@@ -1,4 +1,5 @@
 import type { Content } from "@/content";
+import { PARALLAX_TITLE } from "@/lib/parallax";
 import type { Activity as ActivityData } from "@/lib/github-activity";
 import { locales, type Lang } from "@/lib/locales";
 
@@ -13,7 +14,7 @@ export function Activity({ content, data, lang }: { content: Content["activity"]
   const total = (data.total === 1 ? content.total.one : content.total.other).replace("{n}", data.total.toLocaleString(locales[lang].htmlLang, { useGrouping: "always" }));
   return (
     <section className="activity" aria-labelledby="atividade">
-      <h2 id="atividade" data-reveal-part>
+      <h2 id="atividade" data-reveal-part data-parallax={PARALLAX_TITLE}>
         {content.heading}
       </h2>
       <p className="activity-total" data-reveal-part>

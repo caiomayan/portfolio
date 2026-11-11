@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { emitLenisScroll } from "@/lib/scroll-bus";
 
 const DESKTOP = "(hover: hover) and (pointer: fine)";
 const REDUCED = "(prefers-reduced-motion: reduce)";
@@ -34,6 +35,7 @@ export function SmoothScroll() {
       if (!alive || lenis || !desktop.matches || reduced.matches) return;
       const instance = new Lenis({ autoRaf: true });
       lenis = instance;
+      instance.on("scroll", emitLenisScroll); // o parallax acompanha o mesmo quadro do Lenis (components/parallax.tsx)
 
       // Links internos (#carmine etc.): rolagem suave, endereço atualizado e foco no alvo (o próximo Tab parte dali).
       const onClick = (e: MouseEvent) => {

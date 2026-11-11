@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { PARALLAX_PHOTO } from "@/lib/parallax";
 import type { Content } from "@/content";
 import foto from "@/assets/foto-original.jpg";
 import { Signature } from "./signature";
@@ -30,7 +31,7 @@ export function Hero({ content, weather = null }: { content: Content; weather?: 
     <section className="hero" aria-labelledby="hero-title">
       {/* Meio (#36): foto e título lado a lado, centrados entre o topo e a faixa de baixo. */}
       <div className="hero-main">
-        <figure className="who">
+        <figure className="who" data-parallax={PARALLAX_PHOTO} data-parallax-from="top">
           <Image
             className="photo"
             src={foto}
