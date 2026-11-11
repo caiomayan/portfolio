@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { rotasTexto, type RotaTexto } from "./textos";
 
-for (const path of ["/", "/en"] as RotaTexto[]) {
+for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
   const t = rotasTexto[path].carmine;
   test.describe(`seção Carmine em ${path}`, () => {
     test("aparece depois da apresentação, com o texto do copy deck", async ({ page }) => {

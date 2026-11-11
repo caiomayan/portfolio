@@ -5,10 +5,10 @@ import { useEffect, useState, type ReactNode } from "react";
 /**
  * Tooltip discreto, o mesmo da stack e do contato. Só mostra o nome (texto visual): o nome acessível fica
  * no próprio controle (`aria-label`), por isso o balão é `aria-hidden`. Abre no hover e no foco do teclado,
- * fecha com Esc (WCAG 1.4.13) e fica fora do layout enquanto fechado. `below`: abre embaixo, alinhado à direita
- * do controle (barra do topo, onde não há espaço em cima).
+ * fecha com Esc (WCAG 1.4.13) e fica fora do layout enquanto fechado. `end`: alinha o balão à borda direita do controle
+ * (último ícone da faixa, no canto da página), pra ele não passar da largura da tela.
  */
-export function Tooltip({ label, below = false, children }: { label: string; below?: boolean; children: ReactNode }) {
+export function Tooltip({ label, end = false, children }: { label: string; end?: boolean; children: ReactNode }) {
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -39,7 +39,7 @@ export function Tooltip({ label, below = false, children }: { label: string; bel
     >
       {children}
       {open && (
-        <span className={below ? "tip tip-below" : "tip"} aria-hidden="true">
+        <span className={end ? "tip tip-end" : "tip"} aria-hidden="true">
           <span className="tip-bubble">{label}</span>
         </span>
       )}

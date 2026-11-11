@@ -25,7 +25,7 @@ const matriz = (page: Page) =>
     return t === "none" ? [1, 0, 0, 1, 0, 0] : t.match(/-?[\d.]+(?:e-?\d+)?/g)!.map(Number);
   });
 
-for (const path of ["/", "/en"]) {
+for (const path of ["/", "/en", "/es"]) {
   test.describe(`preview do Carmine em ${path}`, () => {
     test("não existe no DOM antes do hover", async ({ page }) => {
       await page.goto(path);

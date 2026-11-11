@@ -14,15 +14,15 @@
   }
 }
 
-/* Assinatura (components/signature.tsx): decorativa, na cor do texto. Sem movimento reduzido ela é desenhada pelo motion. */
-.signature-mark { display: block; line-height: 0; }
+/* Assinatura (components/signature.tsx): decorativa, na cor do texto. Sem movimento reduzido ela é desenhada pelo motion.
+   #38: é a marca mais forte da primeira tela. Largura de --signature (288 px, 82 px de altura; a proporção do desenho é 3,52:1) e, quando o topo
+   aperta (celular, ou texto ampliado), só até onde cabe ao lado do seletor de idioma e do botão de tema (flex). */
+/* O invólucro encolhe (flex) até o que sobra ao lado dos botões, em qualquer tamanho de texto (também com zoom de 200 %). */
+.signature-mark { display: block; line-height: 0; flex: 0 1 var(--signature); min-width: 0; margin-right: 12px; }
 .signature {
   display: block;
-  flex: none;
-  height: 40px;
-  width: auto;
-  /* Reserva o que fica à direita: duas bandeiras (28 px + 2 × 10 de respiro), o espaço de 8 px e o botão de tema (44 px), mais 16 px de folga. */
-  max-width: calc(100vw - 2 * var(--gutter) - (2 * (28px + 20px) + 8px + 44px) - 16px);
+  width: 100%;
+  height: auto;
   overflow: visible;
   color: var(--ink);
 }
@@ -33,12 +33,11 @@
   /* Pulso do pino no mapa da primeira tela (#24, #29): só transform e opacity. */
   @keyframes pin-pulse { from { opacity: 0.4; transform: scale(1); } to { opacity: 0; transform: scale(3.2); } }
   .place-pulse { animation: pin-pulse 2.4s var(--ease) infinite; }
-  @keyframes tip-in-below { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
   .tip { animation: tip-in 140ms var(--ease) both; }
-  .tip-below { animation-name: tip-in-below; }
 
   /* A versão pronta (render do servidor) fica escondida até o script trocar pela animada; sem script, sem assinatura. */
-  .signature[data-static] { visibility: hidden; }
+  /* Depois da troca de idioma (`data-drawn`) ela já foi desenhada nesta visita: fica pronta e visível, sem desenhar de novo. */
+  .signature[data-static]:not([data-drawn]) { visibility: hidden; }
 
   /* Entrada escalonada: o estado escondido só existe se o script (components/reveal.tsx) o aplicar. */
   [data-reveal="pending"] { opacity: 0; transform: translateY(20px); }
@@ -51,9 +50,18 @@
   /* Troca de tema: fade da página inteira (View Transitions), 100% composição. Sem suporte, a troca é instantânea. */
   ::view-transition-old(root),
   ::view-transition-new(root) { animation-duration: 360ms; animation-timing-function: var(--ease); }
+  /* Troca de idioma (#38): crossfade curto da página (components/lang-menu.tsx dá o tipo `lang` à transição): o antigo some em 140 ms enquanto o novo entra em 160 ms, juntos, no máximo 200 ms. Só opacidade (o padrão do navegador). */
+  :root:active-view-transition-type(lang)::view-transition-group(root) { animation-duration: 160ms; }
+  :root:active-view-transition-type(lang)::view-transition-old(root) { animation-duration: 140ms; }
+  :root:active-view-transition-type(lang)::view-transition-new(root) { animation-duration: 160ms; }
 
-  /* Feedback dos controles: links (opacidade no clique). Os botões de tema e copiar ficam em globals.css. */
-  .link-external, .contact-link, .mail-address, :is(#experiencia, #formacao) h3 a { transition: opacity 140ms; }
-  .link-external:active, .contact-link:active, .mail-address:active, :is(#experiencia, #formacao) h3 a:active { opacity: 0.6; }
+  /* Feedback dos controles: links (opacidade no clique). Os botões de tema e de idioma ficam em globals.css. */
+  .link-external, .contact-link, :is(#experiencia, #formacao) h3 a { transition: opacity 140ms; }
+  .link-external:active, .contact-link:active, :is(#experiencia, #formacao) h3 a:active { opacity: 0.6; }
   :is(#experiencia, #formacao) h3 a::after { transition: transform 320ms var(--ease); }
+}
+
+/* Movimento reduzido: sem View Transitions em lugar nenhum (a troca de idioma e a de tema são imediatas). */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }

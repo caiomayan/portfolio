@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 // Issue #18: Lenis só no desktop, desligado com prefers-reduced-motion, sem quebrar links internos e teclado.
-for (const rota of ["/", "/en"]) {
+for (const rota of ["/", "/en", "/es"]) {
   test.describe(`rolagem suave em ${rota}`, () => {
     test("liga no desktop (ponteiro fino) e não liga com movimento reduzido", async ({ browser }) => {
       const desktop = await browser.newContext({ reducedMotion: "no-preference" });
@@ -40,14 +40,14 @@ for (const rota of ["/", "/en"]) {
       await page.goto(rota);
       await expect(page.locator("html")).toHaveClass(/lenis/);
       await page.waitForLoadState("networkidle");
-      await expect.poll(() => page.locator(".contact .mail").evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
+      await expect.poll(() => page.locator("#idiomas .language").first().evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
       await page.mouse.move(600, 400);
       for (let i = 0; i < 40; i++) {
         await page.mouse.wheel(0, 400);
         await page.waitForTimeout(40);
       }
       await expect.poll(() => page.evaluate(() => scrollY), { timeout: 8000 }).toBeGreaterThan(1500);
-      await expect.poll(() => page.locator(".contact .mail").evaluate((el) => getComputedStyle(el).opacity), { timeout: 8000 }).toBe("1");
+      await expect.poll(() => page.locator("#idiomas .language").first().evaluate((el) => getComputedStyle(el).opacity), { timeout: 8000 }).toBe("1");
     });
 
     test("link interno (#carmine) rola até a seção, atualiza o endereço e leva o foco; o próximo Tab parte dali", async ({ page }) => {

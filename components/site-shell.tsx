@@ -5,6 +5,7 @@ import type { Lang } from "@/content";
 import { locales } from "@/lib/locales";
 import { Reveal } from "@/components/reveal";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { ThemeKeeper } from "@/components/theme-keeper";
 import "lenis/dist/lenis.css";
 import "@/app/globals.css";
 import "@/app/motion.css";
@@ -24,6 +25,7 @@ export function SiteShell({ lang, children }: { lang: Lang; children: ReactNode 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {children}
         <Reveal />
+        <ThemeKeeper />
         <SmoothScroll />
         {/* Sem JavaScript a assinatura não é desenhada: aparece pronta (é o nome do site). */}
         <noscript>

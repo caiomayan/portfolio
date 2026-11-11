@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 // Tamanhos de ícone vêm dos tokens do CSS (DESIGN.md): conferimos o resultado na página.
-for (const path of ["/", "/en"]) {
+for (const path of ["/", "/en", "/es"]) {
   test(`${path}: ícones com os tamanhos dos tokens`, async ({ page }) => {
     await page.goto(path);
     const size = (sel: string) =>
@@ -10,6 +10,6 @@ for (const path of ["/", "/en"]) {
     expect(all(await size("#carmine .stack-logo-empty svg"), "16px x 16px")).toBe(true);
     expect(all(await size("#carmine .stack img"), "16px x 16px")).toBe(true);
     expect(all(await size("#formacao .stack img, #experiencia .stack img"), "16px x 16px")).toBe(true);
-    expect(all(await size(".contact-link .icon svg, .copy-button svg, .theme-toggle svg"), "20px x 20px")).toBe(true);
+    expect(all(await size(".contact-link .icon svg, .lang-button-icon, .theme-toggle svg"), "20px x 20px")).toBe(true);
   });
 }

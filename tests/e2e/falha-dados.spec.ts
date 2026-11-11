@@ -5,6 +5,7 @@ import { expect, test } from "@playwright/test";
 const rotas = [
   { path: "/", cidade: "João Pessoa, Brasil", contato: "Contato" },
   { path: "/en", cidade: "João Pessoa, Brazil", contato: "Contact" },
+  { path: "/es", cidade: "João Pessoa, Brasil", contato: "Contacto" },
 ] as const;
 
 for (const r of rotas) {
@@ -18,11 +19,11 @@ for (const r of rotas) {
     await expect(page.locator(".place-weather")).toHaveCount(0);
     await expect(page.locator(".weather-credit")).toHaveCount(0);
     await expect(page.getByText(/°C/)).toHaveCount(0);
-    // O resto da página (e-mail, mapa, hora) continua.
-    await expect(page.getByRole("heading", { level: 2, name: r.contato })).toBeVisible();
-    await expect(page.locator('a[href="mailto:mail@caiomayan.com"]')).toBeVisible();
+    // O resto da página (contato, mapa, hora, idiomas) continua.
+    await expect(page.getByRole("list", { name: r.contato }).getByRole("link")).toHaveCount(4);
+    await expect(page.locator("#idiomas")).toBeVisible();
     await expect(page.locator(".hero .place-city")).toHaveText(r.cidade);
-    await expect(page.locator(".place-time")).toHaveText(/\d{2}:\d{2} \(UTC−3\)/);
+    await expect(page.locator(".place-time")).toHaveText(/^\d{2}:\d{2}$/);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.waitForLoadState("networkidle");
     expect(erros).toEqual([]);

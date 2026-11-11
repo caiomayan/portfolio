@@ -1,93 +1,38 @@
 import { expect, test } from "@playwright/test";
-import { rotasTexto } from "./textos";
 
-// Issues #24 e #29: seletor de língua com as duas bandeiras, mapa compacto na primeira tela (no lugar da linha da cidade), com hora local.
+// Issues #24, #29 e #38: mapa compacto na primeira tela, ao lado de três linhas empilhadas: cidade, hora (sem o fuso na tela) e clima.
 const rotas = [
-  { path: "/", atual: "BR", paisAtual: "Brasil", outra: "US", pais: "Estados Unidos", destino: "/en", lang: "en", linguaAtual: "Português", cidade: "João Pessoa, Brasil" },
-  { path: "/en", atual: "US", paisAtual: "United States", outra: "BR", pais: "Brazil", destino: "/", lang: "pt", linguaAtual: "English", cidade: "João Pessoa, Brazil" },
+  { path: "/", cidade: "João Pessoa, Brasil" },
+  { path: "/en", cidade: "João Pessoa, Brazil" },
+  { path: "/es", cidade: "João Pessoa, Brasil" },
 ] as const;
 
 // Recorte do mapa na primeira tela (lib/map-crop.ts): longitude -100 a -20 (#34), latitude 48 a -42.
 const recorte = { lonMin: -100, lonMax: -20, latTop: 48, latBottom: -42 };
 
 for (const r of rotas) {
-  const t = rotasTexto[r.path];
-  test.describe(`seletor, mapa e hora em ${r.path}`, () => {
-    test("seletor com as duas bandeiras: a atual em destaque com aria-current, a outra é o link", async ({ page }) => {
+  test.describe(`mapa e hora em ${r.path}`, () => {
+    test("o mapa compacto fica na primeira tela, embaixo da frase, e é centrado na altura das três linhas", async ({ page }) => {
       await page.goto(r.path);
-      const seletor = page.locator(".top .lang-switch");
-      await expect(seletor.locator("svg.lang-flag")).toHaveCount(2);
-      // Atual: não é link, tem aria-current="page" e o nome da língua só em texto pra leitor de tela.
-      const atual = seletor.locator('[aria-current="page"]');
-      await expect(atual).toHaveCount(1);
-      await expect(atual.locator("svg")).toHaveAttribute("data-flag", r.atual);
-      await expect(atual).toContainText(r.linguaAtual);
-      expect(await atual.evaluate((el) => el.tagName)).not.toBe("A");
-      // Outra: o único link, com nome acessível, lang e hreflang da língua de destino.
-      await expect(seletor.getByRole("link")).toHaveCount(1);
-      const link = page.getByRole("link", { name: t.outraLingua });
-      await expect(link).toHaveAttribute("href", r.destino);
-      await expect(link).toHaveAttribute("lang", r.lang);
-      await expect(link).toHaveAttribute("hreflang", r.lang === "en" ? "en" : "pt-BR");
-      await expect(link.locator("svg")).toHaveAttribute("data-flag", r.outra);
-      await expect(link.locator("svg")).toHaveAttribute("aria-hidden", "true");
-      // Só bandeiras: nenhum texto visível.
-      expect(((await link.innerText()) ?? "").trim()).toBe("");
-      // Ordem fixa (português, inglês) e a atual com cor cheia, a outra apagada.
-      const ordem = await seletor.locator("svg.lang-flag").evaluateAll((els) => els.map((e) => e.getAttribute("data-flag")));
-      expect(ordem).toEqual(["BR", "US"]);
-      const op = async (l: typeof atual) => Number(await l.evaluate((el) => getComputedStyle(el).opacity));
-      expect(await op(atual)).toBe(1);
-      expect(await op(link)).toBeLessThan(0.8);
-      // Marca sutil de selecionado na atual (pseudo-elemento), nenhuma na outra.
-      expect(await atual.evaluate((el) => getComputedStyle(el, "::after").content)).not.toBe("none");
-      expect(await link.evaluate((el) => getComputedStyle(el, "::after").content)).toBe("none");
-      // Sem fundo em repouso.
-      for (const el of [atual, link]) expect(await el.evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
-    });
-
-    test("cada bandeira tem tooltip com o nome do país (no hover; a que é link também no foco)", async ({ page }) => {
-      await page.goto(r.path);
-      const atual = page.locator('.top .lang-switch [aria-current="page"]');
-      const link = page.getByRole("link", { name: t.outraLingua });
-      await link.hover();
-      await expect(page.locator(".tip-bubble")).toHaveText(r.pais);
-      await atual.hover();
-      await expect(page.locator(".tip-bubble")).toHaveText(r.paisAtual);
-      await page.mouse.move(0, 400);
-      await expect(page.locator(".tip-bubble")).toHaveCount(0);
-      await link.focus();
-      await expect(page.locator(".tip-bubble")).toHaveText(r.pais);
-    });
-
-    test("as bandeiras são a única cor da barra do topo", async ({ page }) => {
-      await page.goto(r.path);
-      const cores = await page.locator(".top").evaluate((top) => {
-        const out: string[] = [];
-        for (const el of [top, ...top.querySelectorAll("*")]) {
-          const cs = getComputedStyle(el);
-          for (const p of [cs.color, cs.backgroundColor, cs.borderTopColor]) {
-            const m = /^rgba?\(/.test(p) ? p.match(/[\d.]+/g)!.map(Number) : null;
-            if (m && (Math.abs(m[0] - m[1]) > 6 || Math.abs(m[1] - m[2]) > 6)) out.push(`${el.tagName} ${p}`);
-          }
-        }
-        return out;
-      });
-      expect(cores).toEqual([]);
-    });
-
-    test("o mapa compacto fica na primeira tela, embaixo da frase, e some do Contato", async ({ page }) => {
-      await page.goto(r.path);
-      await expect(page.locator(".contact-map")).toHaveCount(0);
-      await expect(page.locator(".contact .place-art")).toHaveCount(0);
+      await expect(page.locator(".place-time")).toHaveText(/^\d{2}:\d{2}$/);
       const lugar = page.locator(".hero .place");
       await expect(lugar.locator(".place-city")).toHaveText(r.cidade);
       const [lead, box] = await Promise.all([page.locator(".hero .lead").boundingBox(), lugar.boundingBox()]);
       expect(box!.y).toBeGreaterThanOrEqual(lead!.y + lead!.height - 1);
-      // O Contato segue com e-mail, ícones e as línguas.
-      await expect(page.locator(".contact .mail-address")).toBeVisible();
-      await expect(page.locator(".contact .contact-links li")).toHaveCount(3);
-      await expect(page.locator(".contact .contact-languages")).toBeVisible();
+      // Três linhas empilhadas: cidade, hora e clima (ícone e temperatura), uma embaixo da outra, alinhadas à esquerda.
+      const linhas = [lugar.locator(".place-city"), lugar.locator(".place-time"), lugar.locator(".place-weather")];
+      const caixas = await Promise.all(linhas.map((l) => l.boundingBox()));
+      for (let i = 1; i < caixas.length; i++) {
+        expect(caixas[i]!.y).toBeGreaterThanOrEqual(caixas[i - 1]!.y + caixas[i - 1]!.height - 1);
+        expect(Math.abs(caixas[i]!.x - caixas[0]!.x)).toBeLessThanOrEqual(1);
+      }
+      await expect(lugar.locator(".place-weather")).toContainText(/\d+°C/);
+      // O mapa fica centrado na altura das três linhas.
+      const mapa = (await lugar.locator(".place-art").boundingBox())!;
+      const texto = (await lugar.locator(".place-line").boundingBox())!;
+      expect(Math.abs(mapa.y + mapa.height / 2 - (texto.y + texto.height / 2))).toBeLessThanOrEqual(2);
+      // Sem o fuso na tela.
+      expect(await lugar.innerText()).not.toMatch(/UTC/);
     });
 
     test("mapa decorativo com o pino em João Pessoa no recorte, cidade e hora em texto", async ({ page }) => {
@@ -130,7 +75,7 @@ for (const r of rotas) {
       const ctx = await browser.newContext({ viewport: { width: 375, height: 667 } });
       const p = await ctx.newPage();
       await p.goto(r.path);
-      await expect(p.locator(".place-time")).toHaveText(/\d{2}:\d{2}/);
+      await expect(p.locator(".place-time")).toHaveText(/^\d{2}:\d{2}$/);
       expect(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       const box = (await p.locator(".place-art").boundingBox())!;
       expect(box.x).toBeGreaterThanOrEqual(0);
@@ -148,7 +93,7 @@ for (const r of rotas) {
 
     test("a hora local não vem no HTML do servidor", async ({ request }) => {
       const html = await (await request.get(r.path)).text();
-      expect(html).not.toMatch(/\d{2}:\d{2}\s*\(UTC/);
+      expect(html).not.toMatch(/UTC/);
       expect(html).toContain(r.cidade);
     });
 
@@ -159,15 +104,15 @@ for (const r of rotas) {
       await p.clock.install({ time: new Date("2026-06-15T17:32:10Z") });
       await p.goto(r.path);
       const hora = p.locator(".place-time");
-      await expect(hora).toHaveText("14:32 (UTC−3)");
+      await expect(hora).toHaveText("14:32");
       await p.clock.runFor(60_000);
-      await expect(hora).toHaveText("14:33 (UTC−3)");
+      await expect(hora).toHaveText("14:33");
       await ctx.close();
     });
 
     test("a hora entra sem pular o layout", async ({ page }) => {
       await page.goto(r.path);
-      await expect(page.locator(".place-time")).toHaveText(/\d{2}:\d{2} \(UTC−3\)/);
+      await expect(page.locator(".place-time")).toHaveText(/^\d{2}:\d{2}$/);
       const depois = (await page.locator(".hero .place").boundingBox())!.height;
       // Com JavaScript desligado a reserva de espaço é a mesma.
       const ctx = await page.context().browser()!.newContext({ javaScriptEnabled: false });

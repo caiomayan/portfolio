@@ -8,9 +8,9 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 
 - Nome: Caio Mayan
 - Título: Engenheiro de Software
-- Frase de abertura: Engenheiro de Software. Construo produtos com IA aplicada, sobre uma base sólida de backend.
-- Lugar (#29, no lugar da linha "João Pessoa, PB"): mapa de pontos compacto (recorte das Américas até logo depois do Brasil, com o pino em João Pessoa), decorativo, e ao lado, em texto, "João Pessoa, Brasil", a hora local, no formato "14:32 (UTC−3)" (24 h, fuso America/Fortaleza, atualizada a cada minuto; a hora não vem no HTML do servidor), e o clima (abaixo). Fica embaixo da frase de abertura, na primeira tela.
-- Link para o Contato (#34): "Contato ↓", texto simples embaixo do lugar, leva à seção Contato.
+- Frase de abertura (#38): A caminho da engenharia de IA: LLMs, agentes e o backend que os sustenta. (Título e frase formam a descrição da página e a prévia: "Engenheiro de Software. A caminho da engenharia de IA: …".)
+- Lugar (#38, três linhas empilhadas ao lado do mapa de pontos compacto, que fica centrado na altura delas): "João Pessoa, Brasil"; a hora local, só "18:06" (24 h, fuso America/Fortaleza, atualizada a cada minuto; a hora não vem no HTML do servidor; o "(UTC−3)" saiu da tela, o fuso segue no cálculo); e o clima (abaixo), ícone e temperatura, "27°C". Fica embaixo da frase de abertura, na primeira tela, na faixa à esquerda.
+- Contato na primeira tela (#38): a seção Contato e o link "Contato ↓" saíram. Na faixa da primeira tela, à direita, ficam só ícones (alvos de 44 px, tooltip, uma parada de Tab e setas): e-mail (`mailto:`, o endereço mail@caiomayan.com é o tooltip e o nome acessível), LinkedIn, GitHub e Currículo (PDF). Nome acessível do grupo (proposto, o Caio revisa): "Contato".
 - Foto: `assets/foto-original.jpg`
 
 ## Carmine
@@ -54,42 +54,46 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
   - Descrição curta embaixo (#27, proposto, o Caio revisa): "Onde construí e sigo fortalecendo minha base: Java e Spring Boot, bancos de dados, estrutura de dados e segurança da informação."
   - Linha de ícones "No curso" (#29), embaixo da descrição, só ícones (nome no tooltip): Java, Spring Boot, Node.js, TypeScript, Python, PostgreSQL, MongoDB, Next.js, Angular, Docker, Git.
   - Subitem (filho do curso): rótulo "Monitoria" + título "Disciplina de Segurança de Dados", período "semestre 2026.2". Sem dizer "atividade do curso".
-- "Inglês fluente" saiu de Formação (#27): as línguas vão pro Contato.
+- "Inglês fluente" saiu de Formação (#27): as línguas ficam na seção Idiomas (#38).
 
 ## Fundamentos (#29)
 
-Seção entre Formação e Contato, só texto, sem ícones: o que ele sabe de base (as ferramentas mudam; elas aparecem só onde têm contexto, em Formação, Experiência e Carmine). Título: "Fundamentos". Três grupos lado a lado no desktop e empilhados no celular; cada grupo tem um rótulo pequeno e 3 itens, cada item com o nome e, quando houver, o detalhe numa linha menor embaixo (pedido do Caio; o texto de cada item é dele):
+Seção entre Formação e Atividade, só texto, sem ícones: o que ele sabe de base (as ferramentas mudam; elas aparecem só onde têm contexto, em Formação, Experiência e Carmine). Título: "Fundamentos". Três grupos lado a lado no desktop e empilhados no celular; cada grupo tem um rótulo pequeno e 3 itens, cada item com o nome e, quando houver, o detalhe numa linha menor embaixo (pedido do Caio; o texto de cada item é dele):
 
 - **Base:** Estruturas de dados · Bancos de dados e modelagem · Análise e projeto de sistemas
 - **Engenharia:** Backend e APIs · Segurança da informação · Infraestrutura e entrega (detalhe: containers, cloud, CI/CD)
 - **Método e IA:** Testes e qualidade (detalhe: TDD, quality gates) · Desenvolvimento guiado por especificação (detalhe: SDD) · IA aplicada (detalhe: LLMs e agentes)
 
-## Contato
+## Contato (#38: sem seção própria)
 
-- Título (#29): "Contato", no mesmo título grande das outras seções.
+A seção Contato saiu: os ícones moram na faixa da primeira tela (ver Apresentação). Dados:
 
-- E-mail: mail@caiomayan.com (com botão de copiar)
+- E-mail: mail@caiomayan.com (só ícone, sem botão de copiar)
 - LinkedIn: https://www.linkedin.com/in/caiomayan/
 - GitHub: https://github.com/caiomayan
-- Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en). Só ícone no site (#18): o rótulo "Currículo (PDF)" vira tooltip e nome acessível, assim como "LinkedIn" e "GitHub". O e-mail continua escrito.
-- Mapa e hora (#24): a partir da #29 estão na primeira tela (ver Apresentação); o Contato não tem mais mapa.
-- Clima (#28, proposto, o Caio revisa; na primeira tela desde a #29): junto da hora, na mesma linha e separados por um ponto discreto, ícone do tempo e temperatura atual de João Pessoa, por exemplo "14:32 (UTC−3) · ☁ 28°C". O nome do tempo só é lido por leitor de tela: "Céu limpo", "Parcialmente nublado", "Nublado", "Neblina", "Chuva", "Tempestade". De noite o ícone é o da versão noturna (lua; nuvem com lua), pelo `is_day` do Open-Meteo. O crédito (licença CC BY 4.0 do Open-Meteo) fica no rodapé (abaixo): "Dados do clima por Open-Meteo.com" (o nome é um link). Se a API falha, nada disso aparece.
-- Idiomas (#27), grupo pequeno no Contato, embaixo dos ícones: rótulo "Idiomas" e duas linhas, nome à esquerda e nível à direita: Português — nativo; Inglês — fluente · C2, EF SET.
+- Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en e es). Só ícone: o rótulo "Currículo (PDF)" vira tooltip e nome acessível, assim como "LinkedIn" e "GitHub".
+- Clima (#28, proposto, o Caio revisa; na primeira tela desde a #29): ícone do tempo e temperatura atual de João Pessoa, por exemplo "☁ 28°C", na terceira linha do lugar. O nome do tempo só é lido por leitor de tela: "Céu limpo", "Parcialmente nublado", "Nublado", "Neblina", "Chuva", "Tempestade". De noite o ícone é o da versão noturna (lua; nuvem com lua), pelo `is_day` do Open-Meteo. O crédito (licença CC BY 4.0 do Open-Meteo) fica no rodapé (abaixo): "Dados do clima por Open-Meteo.com" (o nome é um link). Se a API falha, nada disso aparece.
+
+## Idiomas (#38)
+
+Seção própria no fim da página, depois de Atividade, com o mesmo título grande das outras seções e sem bandeiras. Lista o que o Caio fala, por isso não tem espanhol. Duas linhas de duas pontas (nome à esquerda, nível à direita):
+
+- Inglês — Avançado. Logo abaixo, subnível no estilo da monitoria do curso (ícone de hierarquia, texto menor): "Certificado EF SET · C2".
+- Português — Nativo.
 
 ## Rodapé (#29)
 
-- Faixa mínima no fim da página, separada do Contato só por espaço (sem linha nem fundo): "© 2026 Caio Mayan" à esquerda e o crédito do clima, "Dados do clima por Open-Meteo.com", à direita (o crédito só aparece quando há clima). No celular os dois empilham. O ano é o corrente, calculado ao gerar a página (`{year}` em `content/`).
+- Faixa mínima no fim da página, separada da última seção só por espaço (sem linha nem fundo): "© 2026 Caio Mayan" à esquerda e o crédito do clima, "Dados do clima por Open-Meteo.com", à direita (o crédito só aparece quando há clima). No celular os dois empilham. O ano é o corrente, calculado ao gerar a página (`{year}` em `content/`).
 
 ## Atividade (#28, proposto, o Caio revisa)
 
-- Bloco curto entre Fundamentos e Contato (logo depois de Fundamentos): título "Atividade" e o total do ano em texto, "1.234 contribuições no último ano" (singular: "1 contribuição no último ano"), com a grade de contribuições do GitHub do usuário caiomayan embaixo. Sem token ou com a API fora, o bloco inteiro não aparece.
+- Bloco curto entre Fundamentos e Idiomas (logo depois de Fundamentos): título "Atividade" e o total do ano em texto, "1.234 contribuições no último ano" (singular: "1 contribuição no último ano"), com a grade de contribuições do GitHub do usuário caiomayan embaixo. Sem token ou com a API fora, o bloco inteiro não aparece.
 
 ## Interface
 
-- Troca de língua (#24, #29): as duas bandeiras lado a lado, sempre na mesma ordem (Brasil, EUA). A da língua atual fica em destaque (cor cheia e uma marca sutil), com `aria-current="page"`, e não é link; a outra fica apagada e é o link pra rota equivalente. Nome acessível e `lang` do link: a língua de destino ("English" na página em português, "Português" na página em inglês); a atual tem o nome da própria língua só pra leitor de tela. Tooltip de cada bandeira: o nome do país, em português "Brasil" e "Estados Unidos"; em inglês "Brazil" e "United States".
-- Botão de copiar e-mail: "Copiar e-mail" → "Copiado". Se a cópia falhar: "Não deu pra copiar. Selecione o e-mail." (anunciada e discreta na tela; o e-mail fica selecionado).
+- Troca de idioma (#38, no lugar das bandeiras): botão com ícone de globo e a sigla da língua atual ("PT"), com `aria-expanded`; nome acessível "Idioma" (proposto, o Caio revisa). Abre um menu pequeno com "Português", "English" e "Español" (cada nome na própria língua, em todas as páginas), com um ✓ no idioma atual. Setas navegam, Esc fecha, clique fora fecha e o foco volta pro botão. Trocar de idioma não recarrega a página: o conteúdo troca na hora, com um crossfade curto (até 200 ms), o endereço muda (`/`, `/en`, `/es`), a rolagem fica onde estava, e o `lang`, o título e as metas acompanham. Com movimento reduzido, a troca é imediata.
 - Botão de tema (nome acessível; proposto pelo build, o Caio revisa): "Tema escuro" (pt). Em inglês: "Dark theme" (seção English).
-- Título da aba (proposto, o Caio revisa): "Caio Mayan — Engenheiro de Software".
+- Título da aba (proposto, o Caio revisa): "Caio Mayan — Engenheiro de Software". A descrição e a prévia (OG) usam a frase de abertura.
 
 ## English
 
@@ -99,9 +103,9 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 
 - Name: Caio Mayan
 - Title: Software Engineer
-- Opening line: Software Engineer. I build applied AI products on a solid backend foundation.
-- Place (#29, replaces the "João Pessoa, Brazil" line): compact dot map (crop of the Americas up to just past Brazil, with a pin on João Pessoa), decorative, and next to it, as text, "João Pessoa, Brazil", the local time, formatted "14:32 (UTC−3)" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML), and the weather (below). Sits under the opening line, on the first screen.
-- Link to Contact (#34): "Contact ↓", plain text under the place, leads to the Contact section.
+- Opening line (#38): On the path to AI engineering: LLMs, agents and the backend that holds them up. (Title and line form the page description and the preview: "Software Engineer. On the path to AI engineering: …".)
+- Place (#38, three stacked lines next to the compact dot map, which is centered on their height): "João Pessoa, Brazil"; the local time, just "18:06" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML; "(UTC−3)" left the screen, the time zone stays in the calculation); and the weather (below), icon and temperature, "27°C". Sits under the opening line, on the first screen, in the strip on the left.
+- Contact on the first screen (#38): the Contact section and the "Contact ↓" link are gone. In the first screen's strip, on the right, icons only (44 px targets, tooltip, one Tab stop and arrow keys): email (`mailto:`, the address mail@caiomayan.com is the tooltip and the accessible name), LinkedIn, GitHub and Resume (PDF). Accessible name of the group (proposed, Caio reviews): "Contact".
 - Photo alt: "Portrait of Caio Mayan"
 
 ### Carmine
@@ -145,37 +149,117 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
   - Short description below (#27, proposed, Caio reviews): "Where I built, and keep strengthening, my foundation: Java and Spring Boot, databases, data structures and information security."
   - Icon row "In the course" (#29), below the description, icons only (name in the tooltip): Java, Spring Boot, Node.js, TypeScript, Python, PostgreSQL, MongoDB, Next.js, Angular, Docker, Git.
   - Sub-item (child of the course): label "Teaching assistant" + title "Data Security course", period "2nd semester of 2026".
-- "Fluent English" left Education (#27): languages moved to Contact.
+- "Fluent English" left Education (#27): languages are in the Languages section (#38).
 
 ### Foundations (#29)
 
-Section between Education and Contact, text only, no icons: what he knows at the base (tools change; they appear only where they have context: Education, Experience and Carmine). Title: "Foundations". Three groups side by side on desktop and stacked on mobile; each group has a small label and 3 items, each with the name and, when there is one, a detail on a smaller line below. The first group's label is "Core" (not "Foundations", to avoid repeating the title):
+Section between Education and Activity, text only, no icons: what he knows at the base (tools change; they appear only where they have context: Education, Experience and Carmine). Title: "Foundations". Three groups side by side on desktop and stacked on mobile; each group has a small label and 3 items, each with the name and, when there is one, a detail on a smaller line below. The first group's label is "Core" (not "Foundations", to avoid repeating the title):
 
 - **Core:** Data structures · Databases and data modeling · Systems analysis and design
 - **Engineering:** Backend and APIs · Information security · Infrastructure and delivery (detail: containers, cloud, CI/CD)
 - **Method and AI:** Testing and quality (detail: TDD, quality gates) · Spec-driven development (detail: SDD) · Applied AI (detail: LLMs and agents)
 
-### Contact
+### Contact (#38: no section of its own)
 
-- Heading: Contact (same large heading as the other sections, #29)
-- Email: mail@caiomayan.com (with copy button)
-- Resume (PDF): icon only (#18); "Resume (PDF)" is the tooltip and accessible name, file `caio-mayan-resume.pdf`. Email stays as text.
-- Map and time (#24): since #29 they are on the first screen (see Presentation); Contact no longer has a map.
-- Weather (#28, proposed, Caio reviews; on the first screen since #29): together with the time, on the same line and separated by a discreet dot, a weather icon and the current temperature in João Pessoa, e.g. "14:32 (UTC−3) · ☁ 28°C". The weather name is read by screen readers only: "Clear sky", "Partly cloudy", "Cloudy", "Fog", "Rain", "Thunderstorm". At night the icon is the night version (moon; cloud with moon), from Open-Meteo’s `is_day`. The credit (Open-Meteo CC BY 4.0) sits in the footer (below): "Weather data by Open-Meteo.com" (the name is a link). If the API fails, none of this shows.
-- Languages (#27), small group in Contact, under the icons: label "Languages" and two lines, name left and level right: Portuguese — native; English — fluent · C2, EF SET.
+The Contact section is gone: the icons live in the first screen's strip (see Presentation). Data:
+
+- Email: mail@caiomayan.com (icon only, no copy button)
+- Resume (PDF): icon only; "Resume (PDF)" is the tooltip and accessible name, file `caio-mayan-resume.pdf`.
+- Weather (#28, proposed, Caio reviews; on the first screen since #29): a weather icon and the current temperature in João Pessoa, e.g. "☁ 28°C", on the third line of the place. The weather name is read by screen readers only: "Clear sky", "Partly cloudy", "Cloudy", "Fog", "Rain", "Thunderstorm". At night the icon is the night version (moon; cloud with moon), from Open-Meteo’s `is_day`. The credit (Open-Meteo CC BY 4.0) sits in the footer (below): "Weather data by Open-Meteo.com" (the name is a link). If the API fails, none of this shows.
+
+### Languages (#38)
+
+Section of its own at the end of the page, after Activity, with the same large heading as the other sections and no flags. It lists what Caio speaks, so it has no Spanish. Two two-ended rows (name on the left, level on the right):
+
+- English — Advanced. Right below, a sub-level in the style of the course's teaching assistant row (hierarchy icon, smaller text): "EF SET certificate · C2".
+- Portuguese — Native.
 
 ### Footer (#29)
 
-- Minimal strip at the end of the page, separated from Contact by space only (no line, no background): "© 2026 Caio Mayan" on the left and the weather credit "Weather data by Open-Meteo.com" on the right (the credit only shows when there is weather). On mobile the two stack. The year is the current year, computed when the page is generated (`{year}` in `content/`).
+- Minimal strip at the end of the page, separated from the last section by space only (no line, no background): "© 2026 Caio Mayan" on the left and the weather credit "Weather data by Open-Meteo.com" on the right (the credit only shows when there is weather). On mobile the two stack. The year is the current year, computed when the page is generated (`{year}` in `content/`).
 
 ### Activity (#28, proposed, Caio reviews)
 
-- Short block between Foundations and Contact (right after Foundations): heading "Activity" and the yearly total as text, "1,234 contributions in the last year" (singular: "1 contribution in the last year"), with the GitHub contribution grid for user caiomayan below. Without a token or with the API down, the whole block is absent.
+- Short block between Foundations and Languages (right after Foundations): heading "Activity" and the yearly total as text, "1,234 contributions in the last year" (singular: "1 contribution in the last year"), with the GitHub contribution grid for user caiomayan below. Without a token or with the API down, the whole block is absent.
 
 ### Interface
 
-- Language switch (#24, #29): both flags side by side, always in the same order (Brazil, US). The current language’s flag is highlighted (full color and a subtle mark), with `aria-current="page"`, and is not a link; the other is dimmed and is the link to the equivalent route. The link’s accessible name and `lang`: the target language ("English" on the Portuguese page, "Português" on the English page); the current one carries its own language name for screen readers only. Tooltip on each flag: the country name, in Portuguese "Brasil" and "Estados Unidos"; in English "Brazil" and "United States".
-- Copy email button: "Copy email" → "Copied". If copying fails: "Couldn't copy. Select the email." (announced and shown discreetly; the email is selected).
+- Language switch (#38, replaces the flags): a button with a globe icon and the current language code ("EN"), with `aria-expanded`; accessible name "Language" (proposed, Caio reviews). It opens a small menu with "Português", "English" and "Español" (each name in its own language, on every page), with a ✓ on the current one. Arrow keys move, Esc closes, a click outside closes, and focus returns to the button. Switching language does not reload the page: the content changes at once, with a short crossfade (up to 200 ms), the address changes (`/`, `/en`, `/es`), the scroll stays where it was, and `lang`, the title and the metas follow. With reduced motion, the switch is immediate.
 - Theme button (accessible name): "Dark theme".
-- Tab title: "Caio Mayan — Software Engineer".
-- Section headings: "Experience", "Education", "Foundations".
+- Tab title: "Caio Mayan — Software Engineer". The description and the preview (OG) use the opening line.
+- Section headings: "Experience", "Education", "Foundations", "Activity", "Languages".
+
+## Español (#38)
+
+Traducción fiel del texto de arriba, escrita en la tarea del español. Valen las mismas reglas del inicio de este archivo. Nombres propios, stack y enlaces no cambian. La sección Idiomas no tiene español: lista lo que Caio habla. **El Caio revisa este texto en el PR.**
+
+### Presentación
+
+- Nombre: Caio Mayan
+- Título: Ingeniero de Software
+- Frase de apertura: Rumbo a la ingeniería de IA: LLMs, agentes y el backend que los sostiene. (Descripción de la página: "Ingeniero de Software. Rumbo a la ingeniería de IA: …".)
+- Lugar: "João Pessoa, Brasil"; la hora local, "18:06"; el clima, ícono y temperatura, "27°C". Mapa de puntos compacto al lado, decorativo.
+- Contacto en la primera pantalla: solo íconos a la derecha de la franja (nombre accesible del grupo: "Contacto"): correo (mail@caiomayan.com), LinkedIn, GitHub y "Currículum (PDF)" (el archivo es `caio-mayan-resume.pdf`, en inglés).
+- Alt de la foto: "Retrato de Caio Mayan"
+
+### Carmine
+
+- Nombre: Carmine
+- Título de la sección: "Carmine" y debajo, discreto, "Proyecto personal".
+- Qué es: SaaS para jugadores y equipos competitivos de Counter-Strike 2.
+- Situación: En desarrollo, lanzamiento previsto para 2027
+- Cómo está hecho: Desarrollado con agentes de IA que abren issues y pull requests y mantienen las specs y el backlog al día, con un entorno de pruebas separado de producción.
+- Stack (solo íconos): Nest.js · Next.js · Valkey · CounterStrikeSharp · AWS EC2 · Oracle Cloud
+- Etiqueta de la lista: "Hecho con". Enlaces: stcarmine.com · "Repositorio"
+
+### Experiencia
+
+#### TechEduConnect
+- Cargo: Pasante de Ingeniería de Software
+- Período: oct. 2026 – actual · remoto
+- Sobre la empresa: Edtech especializada en Moodle (implantación, plugins, integraciones y hosting) para instituciones educativas y empresas.
+- Líneas:
+  - Plugin de corrección de redacciones con IA para Moodle, en producción en una institución de educación superior. La IA propone la evaluación y el tutor la revisa y la aprueba.
+  - Plataformas de enseñanza propias en Next.js y TypeScript, y personalizaciones e integraciones para Moodle en PHP.
+  - Desarrollo con agentes de código (Claude Code con skills), a partir de specs, pruebas y quality gates.
+  - Fila de íconos "Hecho con": Next.js, TypeScript, PHP, Moodle.
+
+#### Hospital Napoleão Laureano
+- Cargo: Joven Aprendiz, área de Compras
+- Período: may. 2024 – may. 2025 · João Pessoa
+- Línea: compras de EPP, ingeniería clínica y TI, contratos y proveedores, en un hospital especializado en oncología.
+
+### Formación
+
+- Tecnología en Sistemas para Internet, Instituto Federal de Paraíba (IFPB), campus João Pessoa. Oct. 2024 – jul. 2027 (previsión).
+  - Descripción corta: "Donde construí, y sigo fortaleciendo, mi base: Java y Spring Boot, bases de datos, estructuras de datos y seguridad de la información."
+  - Fila de íconos "En el curso": Java, Spring Boot, Node.js, TypeScript, Python, PostgreSQL, MongoDB, Next.js, Angular, Docker, Git.
+  - Subítem: etiqueta "Monitoría" + título "Asignatura de Seguridad de Datos", período "semestre 2026.2".
+
+### Fundamentos
+
+Título: "Fundamentos". Tres grupos:
+
+- **Base:** Estructuras de datos · Bases de datos y modelado · Análisis y diseño de sistemas
+- **Ingeniería:** Backend y APIs · Seguridad de la información · Infraestructura y entrega (detalle: contenedores, cloud, CI/CD)
+- **Método e IA:** Pruebas y calidad (detalle: TDD, quality gates) · Desarrollo guiado por especificación (detalle: SDD) · IA aplicada (detalle: LLMs y agentes)
+
+### Actividad
+
+- Título "Actividad" y el total del año, "1.234 contribuciones en el último año" (singular: "1 contribución en el último año"), con la grilla de contribuciones de GitHub debajo. Sin token o con la API caída, el bloque no aparece.
+
+### Idiomas
+
+- Título: "Idiomas". Inglés — Avanzado; debajo, subnivel: "Certificado EF SET · C2". Portugués — Nativo. Sin español.
+
+### Pie de página
+
+- "© {year} Caio Mayan" a la izquierda y el crédito del clima, "Datos del clima de Open-Meteo.com" (el nombre es un enlace), a la derecha.
+
+### Interfaz
+
+- Cambio de idioma: botón con globo y la sigla actual ("ES"), nombre accesible "Idioma"; menú con "Português", "English" y "Español", con ✓ en el actual.
+- Botón de tema (nombre accesible): "Tema oscuro".
+- Título de la pestaña: "Caio Mayan — Ingeniero de Software".
+- Clima (nombres solo para lector de pantalla): "Cielo despejado", "Parcialmente nublado", "Nublado", "Niebla", "Lluvia", "Tormenta".
+- Títulos de sección: "Experiencia", "Formación", "Fundamentos", "Actividad", "Idiomas".

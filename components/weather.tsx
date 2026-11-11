@@ -16,16 +16,15 @@ const icons: Record<WeatherIcon, LucideIcon> = {
 };
 
 /**
- * Clima de João Pessoa (#28), renderizado no servidor: `now` vai ao lado da hora, na primeira tela (#29), e `credit` numa linha discreta no fim do Contato.
+ * Clima de João Pessoa (#28), renderizado no servidor: `now` é a terceira linha do lugar, na primeira tela (#29, #38), e `credit` vai numa linha discreta no rodapé.
  * Sem dado (`null`), nada aparece. O ícone é decorativo; o nome do tempo vai só pra leitor de tela.
  */
-export function weatherSlots(weather: Weather | null, w: Content["contact"]["weather"]) {
+export function weatherSlots(weather: Weather | null, w: Content["weather"]) {
   if (!weather) return null;
   const Icon = icons[weatherIcon(weather.kind, weather.isDay)];
   return {
     now: (
       <span className="place-weather">
-        <span className="place-sep" aria-hidden="true">·</span>
         <Icon className="weather-icon" size={16} strokeWidth={1.75} aria-hidden="true" focusable="false" />
         <span className="sr-only">{w.labels[weather.kind]}, </span>
         {`${weather.temperature}°C`}

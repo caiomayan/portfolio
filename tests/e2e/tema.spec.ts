@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { rotasTexto } from "./textos";
 
-const rotas = ["/", "/en"] as const;
+const rotas = ["/", "/en", "/es"] as const;
 
 for (const path of rotas) {
   const t = rotasTexto[path];

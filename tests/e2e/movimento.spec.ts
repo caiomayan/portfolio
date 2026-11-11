@@ -17,7 +17,7 @@ async function scrollToEnd(page: Page) {
 const opacities = (page: Page, sel: string) =>
   page.locator(sel).evaluateAll((els) => els.map((el) => Number(getComputedStyle(el).opacity)));
 
-for (const path of ["/", "/en"] as RotaTexto[]) {
+for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
   const t = rotasTexto[path];
   test.describe(`movimento em ${path}`, () => {
     test("com prefers-reduced-motion: reduce, nada anima e a assinatura aparece pronta", async ({ browser }) => {
@@ -102,7 +102,7 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await page.goto(path);
       await page.waitForLoadState("networkidle");
       // Escondidas até chegarem na tela...
-      await expect.poll(() => page.locator(".contact .mail").evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
+      await expect.poll(() => page.locator("#idiomas .language").first().evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
       await scrollToEnd(page);
       // ...e visíveis depois; voltar pro topo não esconde de novo.
       await expect.poll(async () => Math.min(...(await opacities(page, REVEAL_TARGETS))), { timeout: 5000 }).toBe(1);
@@ -127,8 +127,7 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       });
       const controles = [
         page.getByRole("button", { name: t.tema }),
-        page.getByRole("link", { name: t.outraLingua }),
-        page.getByRole("button", { name: t.copiar }),
+        page.getByRole("button", { name: new RegExp(`^${t.idioma}`) }),
       ];
       for (const c of controles) {
         await c.scrollIntoViewIfNeeded();
@@ -137,7 +136,7 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
         await expect(c).toHaveCSS("transition-duration", "0s");
         await expect(c).toHaveCSS("transform", "none");
         expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
-        await page.mouse.move(2, 2); // solta fora do controle: sem clique (o link de língua navegaria)
+        await page.mouse.move(2, 2); // solta fora do controle: sem clique
         await page.mouse.up();
       }
       await page.getByRole("button", { name: t.tema }).click();

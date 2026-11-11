@@ -1,11 +1,11 @@
 import { expect, test } from "@playwright/test";
 import { rotasTexto, type RotaTexto } from "./textos";
 
-// Texto: docs/copy-deck.md (seções Fundamentos, Formação, Experiência e Contato). Issues #27 e #29.
-for (const path of ["/", "/en"] as RotaTexto[]) {
+// Texto: docs/copy-deck.md (seções Fundamentos, Formação, Experiência e Idiomas). Issues #27, #29 e #38.
+for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
   const t = rotasTexto[path];
   test.describe(`fundamentos, ícones e línguas em ${path}`, () => {
-    test("seção Fundamentos entre Formação e Contato: três grupos de texto, na ordem do copy deck, sem ícones", async ({ page }) => {
+    test("seção Fundamentos entre Formação e Atividade: três grupos de texto, na ordem do copy deck, sem ícones", async ({ page }) => {
       await page.goto(path);
       const sec = page.locator("#fundamentos");
       await expect(sec.getByRole("heading", { level: 2, name: t.fundamentos.heading })).toBeVisible();
@@ -25,7 +25,7 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       expect(t.fundamentos.grupos[0].rotulo).not.toBe(t.fundamentos.heading);
       await expect(sec.locator("img, svg")).toHaveCount(0);
       await expect(page.locator("#tecnologias")).toHaveCount(0);
-      const tops = await Promise.all([page.locator("#formacao"), sec, page.locator(".contact")].map(async (l) => (await l.boundingBox())!.y));
+      const tops = await Promise.all([page.locator("#formacao"), sec, page.locator("#idiomas")].map(async (l) => (await l.boundingBox())!.y));
       expect(tops).toEqual([...tops].sort((a, b) => a - b));
     });
 
@@ -76,39 +76,57 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       }
     });
 
-    test("idiomas no Contato: rótulo e duas linhas de duas pontas, com bandeira, embaixo dos ícones", async ({ page }) => {
+    test("Idiomas é a última seção, depois de Atividade, com o título das outras e sem bandeiras", async ({ page }) => {
       await page.goto(path);
-      const grupo = page.locator(".contact .contact-languages");
-      await expect(grupo.getByRole("heading", { name: t.linguas.heading })).toBeVisible();
-      const linhas = grupo.locator("li");
-      await expect(linhas).toHaveCount(t.linguas.itens.length);
-      for (const [i, [nome, nivel]] of t.linguas.itens.entries()) {
-        const li = linhas.nth(i);
-        await expect(li.locator(".contact-language-name")).toHaveText(nome);
-        await expect(li.locator(".contact-language-level")).toHaveText(nivel);
-        await expect(li.locator("svg.lang-flag")).toHaveCount(1);
-        await expect(li.locator("svg.lang-flag")).toHaveAttribute("data-flag", i === 0 ? "BR" : "US");
-      }
-      await grupo.scrollIntoViewIfNeeded();
-      // As partes entram em sequência (reveal): espera o layout assentar antes de medir.
-      await expect
-        .poll(async () => {
-          const cidade = (await page.locator(".contact .contact-links").boundingBox())!;
-          const g = (await grupo.boundingBox())!;
-          const nome = (await linhas.first().locator(".contact-language-name").boundingBox())!;
-          const nivel = (await linhas.first().locator(".contact-language-level").boundingBox())!;
-          const li = (await linhas.first().boundingBox())!;
-          // abaixo dos ícones de contato; nome à esquerda, nível colado na borda direita da linha
-          return g.y > cidade.y && nome.x < nivel.x && Math.abs(nivel.x + nivel.width - (li.x + li.width)) < 2;
-        })
-        .toBe(true);
+      const sec = page.locator("#idiomas");
+      await expect(sec.getByRole("heading", { level: 2, name: t.linguas.heading })).toBeVisible();
+      // Título igual ao das outras seções.
+      const titulo = (sel: string) => page.locator(sel).evaluate((el) => { const c = getComputedStyle(el); return [c.fontSize, c.fontWeight, c.letterSpacing, c.color].join("|"); });
+      expect(await titulo("#idiomas h2")).toBe(await titulo("#fundamentos h2"));
+      // Ordem: ... Atividade (quando há dados), Idiomas, rodapé; e nenhuma seção depois.
+      const ids = await page.locator("main > section").evaluateAll((els) => els.map((e) => e.id));
+      expect(ids.at(-1)).toBe("idiomas");
+      expect(ids.indexOf("idiomas")).toBeGreaterThan(ids.indexOf("fundamentos"));
+      expect(ids.indexOf("atividade")).toBeLessThan(ids.indexOf("idiomas"));
+      await expect(page.locator("svg[data-flag], .lang-flag")).toHaveCount(0);
+      await expect(page.locator("#contato, .contact")).toHaveCount(0);
     });
 
-    test("idiomas: nome em --ink, nível e rótulo em --soft", async ({ page }) => {
+    test("Idiomas: duas linhas de duas pontas e o subnível no estilo da monitoria; sem espanhol", async ({ page }) => {
+      await page.goto(path);
+      const sec = page.locator("#idiomas");
+      const linhas = sec.locator("li.language");
+      await expect(linhas).toHaveCount(t.linguas.itens.length);
+      await sec.scrollIntoViewIfNeeded();
+      for (const [i, [nome, nivel, sub]] of t.linguas.itens.entries()) {
+        const li = linhas.nth(i);
+        await expect(li.locator(".language-name")).toHaveText(nome);
+        await expect(li.locator(".language-level")).toHaveText(nivel);
+        if (sub) {
+          await expect(li.locator(".language-sub")).toHaveText(sub);
+          await expect(li.locator(".language-sub svg")).toHaveCount(1); // ícone de hierarquia, como na monitoria
+        } else {
+          await expect(li.locator(".language-sub")).toHaveCount(0);
+        }
+      }
+      // O subnível fica logo abaixo do inglês (primeira linha), e o português vem depois.
+      await expect
+        .poll(async () => {
+          const nome = (await linhas.first().locator(".language-name").boundingBox())!;
+          const nivel = (await linhas.first().locator(".language-level").boundingBox())!;
+          const li = (await linhas.first().boundingBox())!;
+          const sub = (await linhas.first().locator(".language-sub").boundingBox())!;
+          const port = (await linhas.nth(1).boundingBox())!;
+          return nome.x < nivel.x && Math.abs(nivel.x + nivel.width - (li.x + li.width)) < 2 && sub.y >= nome.y + nome.height - 1 && port.y >= sub.y + sub.height - 1;
+        })
+        .toBe(true);
+      expect(await sec.innerText()).not.toMatch(/Español|Spanish|Espanhol|Spanisch/i);
+    });
+
+    test("Idiomas: nome em --ink, nível em --soft", async ({ page }) => {
       await page.goto(path);
       const cor = (sel: string) => page.locator(sel).first().evaluate((el) => getComputedStyle(el).color);
-      const [nome, nivel, rotulo] = await Promise.all([cor(".contact-language-name"), cor(".contact-language-level"), cor(".contact-languages h3")]);
-      expect(nivel).toBe(rotulo);
+      const [nome, nivel] = await Promise.all([cor("#idiomas .language-name"), cor("#idiomas .language-level")]);
       expect(nome).not.toBe(nivel);
     });
 

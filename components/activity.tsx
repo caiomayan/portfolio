@@ -10,7 +10,7 @@ import { locales, type Lang } from "@/lib/locales";
  */
 export function Activity({ content, data, lang }: { content: Content["activity"]; data: ActivityData | null; lang: Lang }) {
   if (!data) return null;
-  const total = (data.total === 1 ? content.total.one : content.total.other).replace("{n}", data.total.toLocaleString(locales[lang].htmlLang));
+  const total = (data.total === 1 ? content.total.one : content.total.other).replace("{n}", data.total.toLocaleString(locales[lang].htmlLang, { useGrouping: "always" }));
   return (
     <section className="activity" aria-labelledby="atividade">
       <h2 id="atividade" data-reveal-part>

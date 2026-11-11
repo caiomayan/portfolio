@@ -13,7 +13,7 @@
  * (scripts/generate-signature.mjs), então nem a fonte nem o opentype.js vão pro navegador.
  */
 import { motion } from "motion/react";
-import { useId, useSyncExternalStore } from "react";
+import { useEffect, useId, useSyncExternalStore } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
 import { signature } from "@/lib/signature";
 
@@ -37,6 +37,9 @@ const maskRegion = {
 const drawnLetters = signature.glyphs.map((d, i) => ({ d, i })).filter((l) => l.d);
 
 const noSubscription = () => () => {};
+
+/** A assinatura já foi desenhada nesta sessão do navegador? A troca de idioma (#38) recria a barra do topo sem recarregar a página: ali ela aparece pronta, sem desenhar de novo. */
+let drawn = false;
 
 const variants = { hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength: 1, opacity: 1 } };
 
@@ -66,7 +69,14 @@ export function Signature({ name }: { name: string }) {
 function SignatureArt() {
   const maskId = `signature-reveal-${useId().replace(/:/g, "")}`;
   // Primeiro render (servidor e cliente) = assinatura pronta; só depois do mount, sem movimento reduzido, passa a desenhar.
-  const animated = useSyncExternalStore(noSubscription, () => !prefersReducedMotion(), () => false);
+  const animated = useSyncExternalStore(noSubscription, () => !drawn && !prefersReducedMotion(), () => false);
+  // Só marca ao sair: durante a vida deste componente o valor não muda, e a próxima montagem (troca de idioma) já nasce pronta.
+  useEffect(
+    () => () => {
+      drawn = true;
+    },
+    [],
+  );
 
   const timing = (i: number) => ({
     pathLength: { delay: START_S + i * LETTER_GAP_S, duration: DRAW_S, ease: "easeInOut" as const },
@@ -75,7 +85,7 @@ function SignatureArt() {
 
   if (!animated) {
     return (
-      <svg className="signature" data-static="" viewBox={signature.viewBox} aria-hidden="true" focusable="false">
+      <svg className="signature" data-static="" data-drawn={drawn ? "" : undefined} viewBox={signature.viewBox} aria-hidden="true" focusable="false">
         <g fill="currentColor">
           <Filled />
         </g>

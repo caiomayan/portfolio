@@ -5,7 +5,7 @@ import { expect, test } from "@playwright/test";
 // Movimento reduzido: o conteúdo que entra com animação já aparece pronto e também é auditado.
 test.use({ reducedMotion: "reduce" });
 
-for (const path of ["/", "/en"]) {
+for (const path of ["/", "/en", "/es"]) {
   for (const tema of ["light", "dark"] as const) {
     test(`${path} (${tema}): sem violações de acessibilidade`, async ({ page }) => {
       await page.addInitScript((t) => localStorage.setItem("theme", t), tema);

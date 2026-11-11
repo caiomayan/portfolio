@@ -1,53 +1,112 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { rotasTexto } from "./textos";
 
+// #38: a seção Contato saiu. Os ícones (e-mail, LinkedIn, GitHub, Currículo) ficam na faixa da primeira tela, à direita.
 const rotas = [
   { path: "/", pdf: "/caio-mayan-curriculo.pdf" },
   { path: "/en", pdf: "/caio-mayan-resume.pdf" },
+  { path: "/es", pdf: "/caio-mayan-resume.pdf" }, // o currículo do /es é o PDF em inglês
 ] as const;
 
 for (const { path, pdf } of rotas) {
   const t = rotasTexto[path];
-  test.describe(`contato em ${path}`, () => {
-    test("links certos pra e-mail, LinkedIn e GitHub", async ({ page }) => {
+  const lista = (page: Page) => page.getByRole("list", { name: t.contato });
+  const nomes = [t.email, "LinkedIn", "GitHub", t.curriculo];
+
+  test.describe(`contato na primeira tela em ${path}`, () => {
+    test("não há seção Contato, botão de copiar nem link pra #contato", async ({ page }) => {
       await page.goto(path);
-      await expect(page.locator('a[href="mailto:mail@caiomayan.com"]')).toBeVisible();
-      await expect(page.locator('a[href="https://www.linkedin.com/in/caiomayan/"]')).toBeVisible();
-      await expect(page.locator('a[href="https://github.com/caiomayan"]')).toBeVisible();
+      await expect(page.locator("#contato, .contact, .copy-button, .to-contact")).toHaveCount(0);
+      await expect(page.locator('a[href="#contato"]')).toHaveCount(0);
+      await expect(page.getByRole("status")).toHaveCount(0);
+      await expect(page.getByRole("heading", { name: t.contato, exact: true })).toHaveCount(0);
+    });
+
+    test("quatro ícones à direita da faixa, só com ícone, com nome acessível e links certos", async ({ page }) => {
+      await page.goto(path);
+      const strip = page.locator(".hero-strip");
+      await expect(strip.locator(".place")).toBeVisible();
+      const icones = lista(page).getByRole("link");
+      await expect(icones).toHaveCount(4);
+      for (const nome of nomes) {
+        const link = lista(page).getByRole("link", { name: nome, exact: true });
+        await expect(link).toBeVisible();
+        await expect(link).toHaveText("");
+        await expect(link.locator("svg").first()).toBeVisible();
+      }
+      await expect(lista(page).locator('a[href="mailto:mail@caiomayan.com"]')).toHaveCount(1);
+      await expect(lista(page).locator('a[href="https://www.linkedin.com/in/caiomayan/"]')).toHaveCount(1);
+      await expect(lista(page).locator('a[href="https://github.com/caiomayan"]')).toHaveCount(1);
       expect(await page.locator("a[href^='tel:']").count()).toBe(0);
+      // À direita: o último ícone fica depois do lugar.
+      const lugar = (await strip.locator(".place").boundingBox())!;
+      const ultimo = (await icones.last().boundingBox())!;
+      expect(ultimo.x).toBeGreaterThan(lugar.x + lugar.width);
+    });
+
+    test("alvos de 44 px", async ({ page }) => {
+      await page.goto(path);
+      for (const link of await lista(page).getByRole("link").all()) {
+        const box = (await link.boundingBox())!;
+        // 0,1 px de folga: a caixa é medida em ponto flutuante (43,99994 num quadro do CI) e o alvo é de 44 px.
+        expect(box.width).toBeGreaterThanOrEqual(43.9);
+        expect(box.height).toBeGreaterThanOrEqual(43.9);
+      }
     });
 
     test("o currículo é o PDF da língua da página e responde 200", async ({ page, request }) => {
       await page.goto(path);
-      const link = page.locator(`a[href="${pdf}"]`);
-      await expect(link).toBeVisible();
+      await expect(page.locator(`a[href="${pdf}"]`)).toBeVisible();
       await expect(page.locator("a[href$='.pdf']")).toHaveCount(1);
       const res = await request.get(pdf);
       expect(res.status()).toBe(200);
       expect(res.headers()["content-type"]).toContain("application/pdf");
     });
 
-    test("copiar coloca o e-mail na área de transferência e confirma", async ({ browser }) => {
-      const ctx = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"] });
-      const page = await ctx.newPage();
+    test("uma parada de Tab só, com as setas, Home e End andando entre os ícones", async ({ page }) => {
       await page.goto(path);
-      const botao = page.getByRole("button", { name: t.copiar });
-      await expect(botao).toBeVisible();
-      await botao.click();
-      expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("mail@caiomayan.com");
-      // Confirmação visual e anunciada por leitor de tela.
-      await expect(page.getByRole("status")).toHaveText(t.copiado);
-      await expect(botao).toHaveAttribute("data-copied", "true");
-      await ctx.close();
+      const links = lista(page).getByRole("link");
+      const tabIndex = () => links.evaluateAll((els) => els.map((el) => (el as HTMLElement).tabIndex));
+      expect(await tabIndex()).toEqual([0, -1, -1, -1]);
+      await links.first().focus();
+      await page.keyboard.press("ArrowRight");
+      await expect(links.nth(1)).toBeFocused();
+      await page.keyboard.press("End");
+      await expect(links.nth(3)).toBeFocused();
+      expect(await tabIndex()).toEqual([-1, -1, -1, 0]);
+      await page.keyboard.press("Home");
+      await expect(links.first()).toBeFocused();
+      await page.keyboard.press("ArrowLeft");
+      await expect(links.first()).toBeFocused();
     });
 
-    test("o botão de copiar tem foco visível pelo teclado", async ({ page }) => {
+    test("tooltip no hover e no foco: o e-mail mostra o endereço; Esc fecha", async ({ page }) => {
       await page.goto(path);
-      const botao = page.getByRole("button", { name: t.copiar });
-      await botao.focus();
-      await expect(botao).toBeFocused();
-      const outline = await botao.evaluate((el) => getComputedStyle(el).outlineStyle);
-      expect(outline).not.toBe("none");
+      const tip = page.locator(".contact-icons .tip");
+      for (const nome of nomes) {
+        await lista(page).getByRole("link", { name: nome, exact: true }).hover();
+        await expect(tip).toHaveText(nome);
+        await page.mouse.move(2, 2);
+        await expect(tip).toHaveCount(0);
+      }
+      await lista(page).getByRole("link", { name: "GitHub", exact: true }).focus();
+      await expect(tip).toHaveText("GitHub");
+      await page.keyboard.press("Escape");
+      await expect(tip).toHaveCount(0);
+    });
+
+    test("o tooltip não cria rolagem horizontal a 375 e 320 px", async ({ page }) => {
+      for (const width of [375, 320]) {
+        await page.setViewportSize({ width, height: 700 });
+        await page.goto(path);
+        await lista(page).getByRole("link").last().focus();
+        await expect(page.locator(".contact-icons .tip")).toHaveCount(1);
+        const { sw, cw } = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
+        expect(sw).toBeLessThanOrEqual(cw);
+        const box = (await page.locator(".contact-icons .tip-bubble").boundingBox())!;
+        expect(box.x).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width).toBeLessThanOrEqual(width);
+      }
     });
 
     test("telefone não aparece em lugar nenhum", async ({ page }) => {
@@ -86,92 +145,21 @@ for (const { path, pdf } of rotas) {
         return w.__vistos.size;
       });
     };
-    const alvos = (page: Page) => [
-      page.getByRole("link", { name: /LinkedIn/ }),
-      page.getByRole("button", { name: t.copiar }),
-    ];
+    const alvos = (page: Page) => [lista(page).getByRole("link", { name: /LinkedIn/ }), lista(page).getByRole("link", { name: t.email, exact: true })];
 
     test("sem preferência de movimento, o hover muda o desenho dos ícones", async ({ page }) => {
       await page.goto(path);
       for (const alvo of alvos(page)) expect(await desenhosVistos(page, alvo)).toBeGreaterThan(1);
     });
 
-    test("com prefers-reduced-motion, os ícones não mudam no hover nem no clique", async ({ browser }) => {
-      const ctx = await browser.newContext({ reducedMotion: "reduce", permissions: ["clipboard-read", "clipboard-write"] });
+    test("com prefers-reduced-motion, os ícones não mudam no hover", async ({ browser }) => {
+      const ctx = await browser.newContext({ reducedMotion: "reduce" });
       const page = await ctx.newPage();
       await page.goto(path);
       await page.waitForLoadState("networkidle"); // hidratação concluída: os ícones já assumiram o estado inicial
       await page.waitForTimeout(500);
       for (const alvo of alvos(page)) expect(await desenhosVistos(page, alvo)).toBe(1);
-      await page.getByRole("button", { name: t.copiar }).click();
-      await expect(page.getByRole("status")).toHaveText(t.copiado);
-      const anim = await page.getByRole("button", { name: t.copiar }).evaluate((el) => getComputedStyle(el).animationName);
-      expect(anim).toBe("none");
       await ctx.close();
-    });
-
-    test("o clique em copiar anima o botão (sem reduced-motion)", async ({ browser }) => {
-      const ctx = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"] });
-      const page = await ctx.newPage();
-      await page.goto(path);
-      const botao = page.getByRole("button", { name: t.copiar });
-      await botao.click();
-      await expect(botao).toHaveAttribute("data-copied", "true");
-      expect(await botao.evaluate((el) => getComputedStyle(el).animationName)).toBe("pop");
-      await ctx.close();
-    });
-  });
-}
-
-// #18: contato só com ícones; o nome de cada um é tooltip (hover e foco) e nome acessível. O e-mail continua escrito.
-const nomesIcones = {
-  "/": ["LinkedIn", "GitHub", "Currículo (PDF)"],
-  "/en": ["LinkedIn", "GitHub", "Resume (PDF)"],
-} as const;
-
-for (const path of ["/", "/en"] as const) {
-  test.describe(`contato só com ícones em ${path}`, () => {
-    test("links sem texto, com nome acessível; e-mail escrito, com copiar", async ({ page }) => {
-      await page.goto(path);
-      const lista = page.locator(".contact-links");
-      for (const nome of nomesIcones[path]) {
-        const link = lista.getByRole("link", { name: nome });
-        await expect(link).toBeVisible();
-        await expect(link).toHaveText("");
-        await expect(link.locator("svg").first()).toBeVisible();
-      }
-      await expect(page.locator(".contact-links li")).toHaveCount(3);
-      await expect(page.locator('a[href="mailto:mail@caiomayan.com"]')).toHaveText("mail@caiomayan.com");
-      await expect(page.getByRole("button", { name: rotasTexto[path].copiar })).toBeVisible();
-    });
-
-    test("tooltip no hover e no foco do teclado, fechando com Esc", async ({ page }) => {
-      await page.goto(path);
-      const tip = page.locator(".contact .tip");
-      for (const nome of nomesIcones[path]) {
-        const link = page.locator(".contact-links").getByRole("link", { name: nome });
-        await link.hover();
-        await expect(tip).toHaveText(nome);
-        await page.mouse.move(2, 2);
-        await expect(tip).toHaveCount(0);
-      }
-      const gh = page.locator(".contact-links").getByRole("link", { name: "GitHub" });
-      await gh.focus();
-      await expect(tip).toHaveText("GitHub");
-      await page.keyboard.press("Escape");
-      await expect(tip).toHaveCount(0);
-    });
-
-    test("o tooltip não cria rolagem horizontal a 375 px", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 812 });
-      await page.goto(path);
-      await page.locator(".contact-links li").last().getByRole("link").focus();
-      await expect(page.locator(".contact .tip")).toHaveCount(1);
-      const { sw, cw } = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
-      expect(sw).toBeLessThanOrEqual(cw);
-      const box = (await page.locator(".contact .tip-bubble").boundingBox())!;
-      expect(box.x).toBeGreaterThanOrEqual(0);
-      expect(box.x + box.width).toBeLessThanOrEqual(375);
     });
   });
 }

@@ -11,12 +11,14 @@
   --text-small: 0.875rem;
   --text-body: 1.0625rem;
   --text-lead: clamp(1.375rem, 1.05rem + 1.4vw, 2rem);
-  --text-display: clamp(2.75rem, 1rem + 7.4vw, 6.5rem);
+  --text-display: clamp(2.25rem, 1rem + 5vw, 4.5rem); /* h1 (#38: desceu um degrau pra assinatura ser a marca mais forte da primeira tela) */
 
   --font: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
   --gutter: 24px;
   --max: 1120px;
   --photo: clamp(256px, 30vw, 360px); /* foto da primeira tela no desktop (#36) */
+  --top-height: 122px; /* altura do topo no desktop: assinatura de 82 px mais 20 px de respiro em cima e embaixo (#38) */
+  --signature: 288px; /* largura da assinatura no topo (#38): 82 px de altura; encolhe sozinha quando falta espaço (app/motion.css) */
 
   /* Seção Carmine (ver DESIGN.md) */
   --carmine-column: 640px;
@@ -26,7 +28,7 @@
   --entry-gap: 16px;
 
   /* Ícones: tamanhos só aqui (ver DESIGN.md). Os componentes não carregam medida própria. */
-  --icon-ui: 20px; /* contato, copiar e-mail, botão de tema */
+  --icon-ui: 20px; /* ícones de contato, globo do seletor de idioma e botão de tema */
   --icon-entry: 26px; /* ícone de reserva em experiência e formação */
   --icon-stack: 16px; /* logo ou ícone de reserva da linha de ícones (Carmine, curso, TechEduConnect): discreta */
   --measure: 70ch; /* medida de leitura dos textos de apoio */
@@ -64,29 +66,59 @@ img { display: block; max-width: 100%; height: auto; }
   margin-inline: auto;
   padding-block: 20px;
 }
-.top-actions { display: flex; align-items: center; gap: 8px; }
-/* Seletor de língua (#29): as duas bandeiras lado a lado. A atual é um span com aria-current (cor cheia e uma marca sutil embaixo); a outra é o link, apagada. */
-.lang-switch { display: inline-flex; align-items: center; }
-.lang-option {
-  position: relative;
+.top-actions { display: flex; flex: none; align-items: center; gap: 4px; }
+/* Seletor de idioma (#38): botão com o globo e a sigla, e um menu pequeno embaixo, alinhado à direita. Sem fundo em repouso; fundo no hover, no foco e com o menu aberto. */
+.lang-menu { position: relative; }
+.lang-button {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   height: 44px;
-  padding-inline: 10px;
+  padding-inline: 12px;
+  border: 0;
   border-radius: 22px;
   background: transparent;
   color: var(--ink);
+  font: 500 var(--text-small) / 1 var(--font);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+.lang-button[aria-expanded="true"] { background: var(--surface); }
+.lang-button-icon { width: var(--icon-ui); height: var(--icon-ui); flex: none; }
+.lang-list {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 176px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.lang-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  padding-inline: 12px;
+  border-radius: 10px;
+  color: var(--ink);
+  font-size: var(--text-small);
   text-decoration: none;
 }
-a.lang-option { opacity: 0.5; }
-.lang-option[aria-current="page"]::after { content: ""; position: absolute; left: 50%; bottom: 3px; width: 14px; height: 2px; margin-left: -7px; border-radius: 1px; background: var(--ink); }
-/* Bandeira: a única cor da barra do topo (decisão do Caio, #24). Proporção 3:2, cantos suaves. */
-.lang-flag { display: block; width: 28px; height: auto; border-radius: 4px; }
+.lang-item[aria-checked="true"] { font-weight: 600; }
+.lang-item-check { width: 16px; height: 16px; flex: none; }
 /* Sem fundo em repouso; o fundo aparece no hover e no foco (o contorno do foco continua). A cor muda sem transição. */
-a.lang-option:focus-visible, .theme-toggle:focus-visible, .copy-button:focus-visible { background: var(--surface); }
+.lang-button:focus-visible, .theme-toggle:focus-visible { background: var(--surface); }
+.lang-item:focus-visible { background: var(--bg); }
 /* Hover só com mouse: no toque o :hover fica preso depois do toque e deixaria o fundo em repouso. */
 @media (hover: hover) {
-  a.lang-option:hover, .theme-toggle:hover, .copy-button:hover { background: var(--surface); }
+  .lang-button:hover, .theme-toggle:hover { background: var(--surface); }
+  .lang-item:hover { background: var(--bg); }
 }
 .theme-toggle {
   position: relative;
@@ -108,11 +140,11 @@ a.lang-option:focus-visible, .theme-toggle:focus-visible, .copy-button:focus-vis
 :root[data-theme="dark"] .theme-toggle .icon-sun { opacity: 1; transform: none; }
 :root[data-theme="dark"] .theme-toggle .icon-moon { opacity: 0; transform: rotate(60deg) scale(0.6); }
 
-/* Primeira tela (#36, moldura): meio (foto e título lado a lado) e, logo abaixo, a faixa de lugar e Contato (sem linha); o conjunto fica centrado na altura da primeira tela. */
+/* Primeira tela (#36, moldura): meio (foto e título lado a lado) e, logo abaixo, a faixa de lugar e ícones de contato (sem linha, #38); o conjunto fica centrado na altura da primeira tela. */
 .hero {
   width: min(var(--max), 100% - 2 * var(--gutter));
   margin-inline: auto;
-  min-height: calc(100svh - 84px);
+  min-height: calc(100svh - var(--top-height));
   display: flex;
   flex-direction: column;
   justify-content: center; /* meio + faixa formam um conjunto só, centrado na altura da primeira tela; as sobras se dividem em cima e embaixo */
@@ -123,7 +155,7 @@ a.lang-option:focus-visible, .theme-toggle:focus-visible, .copy-button:focus-vis
   column-gap: clamp(40px, 6vw, 88px);
 }
 /* O bloco de texto tem a altura da foto: o topo das maiúsculas do título bate com o topo da foto e a linha de base da última linha da frase com a base dela. */
-.intro { display: flex; flex-direction: column; justify-content: space-between; }
+.intro { display: flex; flex-direction: column; justify-content: center; } /* título e frase juntos, centrados na altura da foto (#38: com o h1 menor, esticar o bloco abria um vão entre eles) */
 .hero-strip {
   display: flex;
   align-items: center;
@@ -149,12 +181,11 @@ h1 {
   /* Com texto grande no celular "Engenheiro" não cabe: hifeniza (pela língua da página) e, em último caso, quebra. */
   hyphens: auto;
   overflow-wrap: anywhere;
-  margin-top: -0.127em; /* o topo da caixa fica acima das maiúsculas (meia-entrelinha + ascendente − altura das maiúsculas do Inter): sobe isso pro topo das letras bater com o topo da foto */
 }
 /* Ponto final do título: ornamento tipográfico (ver DESIGN.md), fora da árvore de acessibilidade. */
 h1::after { content: "." / ""; }
 .lead {
-  margin: clamp(20px, 3vw, 36px) 0 -0.286em; /* embaixo: sobe a caixa até a linha de base da última linha, que bate com a base da foto */
+  margin: clamp(20px, 3vw, 36px) 0 0; /* espaço normal entre o título e a frase */
   max-width: 24ch;
   font-size: var(--text-lead);
   font-weight: 400;
@@ -163,7 +194,7 @@ h1::after { content: "." / ""; }
   color: var(--soft);
   text-wrap: pretty;
 }
-/* Lugar (#29, #36): mapa compacto à esquerda (a altura da faixa) e, ao lado, uma linha só com cidade, hora e clima. Pontos em tons do tema, pino em João Pessoa. Decorativo. */
+/* Lugar (#29, #36): mapa compacto à esquerda (a altura da faixa) e, ao lado, três linhas empilhadas (cidade, hora e clima, #38), com o mapa centrado na altura delas. Pontos em tons do tema, pino em João Pessoa. Decorativo. */
 .place { display: flex; align-items: center; gap: 16px; min-width: 0; margin: 0; font-size: var(--text-small); color: var(--soft); }
 .place-art {
   position: relative; flex: none; height: 96px; /* a largura vem do aspect-ratio do recorte (inline) */
@@ -185,54 +216,17 @@ h1::after { content: "." / ""; }
 .place-dot { background: var(--ink); }
 /* Em repouso (movimento reduzido ou sem animação) o anel fica parado; o pulso é só de quem aceita movimento. */
 .place-pulse { background: var(--ink); opacity: 0.18; transform: scale(2.4); }
-.place-line { margin: 0; min-width: 0; flex: 1 1 0; }
+.place-line { margin: 0; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
 .place-city { color: var(--ink); font-weight: 500; }
-/* Espaço reservado pra hora (14:32 (UTC−3)): ela entra no cliente sem mover nada. */
-.place-time { display: inline-block; min-width: 11.5ch; min-height: 1.2em; color: var(--soft); font-variant-numeric: tabular-nums; }
+/* Espaço reservado pra hora (18:06): ela entra no cliente sem mover nada (uma linha de altura, números tabulares). */
+.place-time { display: block; min-height: 1lh; color: var(--soft); font-variant-numeric: tabular-nums; }
 
-/* Link "Contato ↓" (#34): texto simples em --soft, no padrão dos outros links (sublinhado fino que ganha --ink no hover e no foco). Alvo de 44 px de altura por padding, sem mudar a medida da linha. */
-.to-contact { flex: none; display: inline-block; padding-block: 12px; margin-block: -12px; color: var(--soft); font-size: var(--text-small); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); white-space: nowrap; }
-.to-contact:is(:hover, :focus-visible) { color: var(--ink); text-decoration-color: var(--ink); }
-
-/* Contato */
+/* Ícones de contato (#38): e-mail, LinkedIn, GitHub e Currículo, à direita da faixa da primeira tela. Alvos de 44 px, sem espaço entre eles. */
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
-.contact {
-  width: min(var(--max), 100% - 2 * var(--gutter));
-  margin-inline: auto;
-  padding-block: clamp(40px, 6vw, 72px) clamp(56px, 8vw, 96px);
-}
-.contact h2 { margin: 0 0 20px; font-size: var(--text-lead); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
-.mail { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.mail-address {
-  font-size: var(--text-lead);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  color: var(--ink);
-  text-decoration: none;
-  overflow-wrap: anywhere;
-}
-.mail-address:hover { text-decoration: underline; text-decoration-color: var(--ink); text-underline-offset: 6px; text-decoration-thickness: 2px; }
-.copy-button {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--soft);
-  cursor: pointer;
-}
-.copy-note { font-size: var(--text-small); color: var(--soft); }
-.copy-button > div { display: grid; line-height: 0; }
-.contact-link .icon svg, .copy-button svg, .theme-toggle svg { width: var(--icon-ui); height: var(--icon-ui); }
+.contact-icons { list-style: none; margin: 0; padding: 0; display: flex; flex: none; }
+.contact-link .icon svg, .theme-toggle svg { width: var(--icon-ui); height: var(--icon-ui); }
 .fallback-icon { width: 100%; height: 100%; }
 :is(#experiencia, #formacao) .entry-logo-gap .fallback-icon { width: var(--icon-entry); height: var(--icon-entry); }
-.copy-button:hover { color: var(--ink); }
-.copy-button[data-copied="true"] { color: var(--ink); }
-.contact-links { list-style: none; margin: 32px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .contact-link {
   display: inline-grid;
   place-items: center;
@@ -244,11 +238,12 @@ h1::after { content: "." / ""; }
 }
 .contact-link .icon { display: grid; line-height: 0; color: var(--soft); }
 .contact-link:hover .icon, .contact-link:focus-visible .icon { color: var(--ink); }
+.contact-link:focus-visible { background: var(--surface); }
 
-/* Tooltip (components/tooltip.tsx): o mesmo na stack e no contato. Fora do layout enquanto fechado. */
+/* Tooltip (components/tooltip.tsx): o mesmo na stack e nos ícones de contato. Fora do layout enquanto fechado. */
 .tip-host { position: relative; display: inline-flex; }
 .tip { position: absolute; z-index: 10; bottom: 100%; left: 50%; translate: -50% 0; padding-bottom: 6px; }
-.tip-below { bottom: auto; top: 100%; left: auto; right: 0; translate: none; padding: 6px 0 0; }
+.tip-end { left: auto; right: 0; translate: none; }
 .tip-bubble { display: block; padding: 6px 10px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: var(--text-small); font-weight: 500; line-height: 1.2; white-space: nowrap; }
 
 /* Preview do site do Carmine no hover do link (components/hover-link-preview.tsx, #21). Só mouse; o motion move x/y/rotate/opacity. */
@@ -269,12 +264,12 @@ h1::after { content: "." / ""; }
 .link-preview img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 /* Experiência e formação: linhas de duas pontas (texto à esquerda, período à direita). */
-:is(#experiencia, #formacao, #fundamentos) {
+:is(#experiencia, #formacao, #fundamentos, #idiomas) {
   width: min(var(--max), 100% - 2 * var(--gutter));
   margin-inline: auto;
   padding-block: clamp(40px, 6vw, 72px) 0;
 }
-:is(#experiencia, #formacao, #fundamentos) h2 {
+:is(#experiencia, #formacao, #fundamentos, #idiomas) h2 {
   margin: 0 0 12px;
   font-size: var(--text-lead);
   font-weight: 700;
@@ -312,6 +307,8 @@ h1::after { content: "." / ""; }
 :is(#experiencia, #formacao) .entry-period { white-space: nowrap; font-variant-numeric: tabular-nums; padding-top: 3px; }
 :is(#experiencia, #formacao) .entry-lines { margin-top: 10px; display: grid; gap: 8px; }
 :is(#experiencia, #formacao) .entry-lines li { font-size: var(--text-body); line-height: 1.5; }
+/* Palavras longas ("personalizaciones") não estouram a coluna com texto a 200 %: hifeniza pela língua da página e, em último caso, quebra. */
+:is(#experiencia, #formacao) :is(.entry-lines li, .entry-sub) { hyphens: auto; overflow-wrap: anywhere; }
 
 @media (max-width: 899px) {
   :is(#experiencia, #formacao) .entry { grid-template-columns: 1fr; row-gap: 4px; }
@@ -345,14 +342,14 @@ h1::after { content: "." / ""; }
 @media (min-width: 900px) {
   #fundamentos .foundations { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
-/* Idiomas: rótulo em --soft e linhas de duas pontas (bandeira e nome em --ink, nível em --soft), como as outras linhas do site. */
-.contact-languages { margin-top: 40px; max-width: 400px; font-size: var(--text-small); }
-.contact-languages h3 { margin: 0 0 8px; font-size: var(--text-small); font-weight: 500; color: var(--soft); }
-.contact-languages ul { list-style: none; margin: 0; padding: 0; }
-.contact-languages li { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0 24px; padding-block: 6px; line-height: 1.5; }
-.contact-language-name { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); }
-.contact-languages .contact-language-flag { width: 20px; flex: none; border-radius: 3px; }
-.contact-language-level { color: var(--soft); }
+/* Idiomas (#38): última seção; linhas de duas pontas (nome em --ink à esquerda, nível em --soft à direita) como as de Experiência e Formação, e o subnível no estilo da monitoria (ícone de hierarquia em --soft, texto pequeno). Fecha a página, então leva o respiro de baixo. */
+#idiomas { padding-block-end: clamp(56px, 8vw, 96px); }
+#idiomas .languages { list-style: none; margin: 0; padding: 0; }
+#idiomas .language { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 32px; align-items: baseline; padding-block: 12px; }
+#idiomas .language-name { margin: 0; font-size: var(--text-body); font-weight: 600; letter-spacing: -0.01em; line-height: 1.4; }
+#idiomas .language-level { color: var(--soft); font-size: var(--text-small); line-height: 1.5; white-space: nowrap; }
+#idiomas .language-sub { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin: 6px 0 0; font-size: var(--text-small); line-height: 1.5; }
+#idiomas .language-sub-icon { width: 16px; height: 16px; flex: none; color: var(--soft); }
 
 .notfound { min-height: 100svh; display: grid; place-items: center; }
 .notfound h1 { font-size: var(--text-display); }
@@ -371,7 +368,7 @@ h1::after { content: "." / ""; }
   .hero-strip { flex-wrap: wrap; margin-top: 40px; }
   .place { flex: 1 1 100%; }
   .place-art { height: 72px; }
-  .to-contact { margin-inline-start: auto; }
+  .contact-icons { margin-inline-start: auto; }
 }
 @media (max-width: 359px) { .place-art { height: 64px; } }
 
@@ -381,26 +378,19 @@ h1::after { content: "." / ""; }
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: none; }
   }
-  @keyframes pop {
-    40% { transform: scale(1.14); }
-  }
-  .copy-button[data-copied="true"] { animation: pop 320ms var(--ease); }
-  .who, h1, .lead, .place, .to-contact { animation: rise 700ms var(--ease) both; }
+  .who, h1, .lead, .place, .contact-icons { animation: rise 700ms var(--ease) both; }
   h1 { animation-delay: 80ms; }
   .lead { animation-delay: 180ms; }
   .place { animation-delay: 240ms; }
-  .to-contact { animation-delay: 300ms; }
+  .contact-icons { animation-delay: 300ms; }
 
-  /* Botões da barra do topo e de copiar: só transform e opacity (a cor muda sem transição). */
-  a.lang-option, .theme-toggle { transition: transform 160ms var(--ease), opacity 160ms var(--ease); }
-  a.lang-option:hover { transform: scale(1.04); }
-  a.lang-option:active { transform: scale(0.96); }
+  /* Botões da barra do topo: só transform e opacity (a cor muda sem transição). */
+  .lang-button, .theme-toggle { transition: transform 160ms var(--ease), opacity 160ms var(--ease); }
+  .lang-button:hover { transform: scale(1.04); }
+  .lang-button:active { transform: scale(0.96); }
   .theme-toggle:hover { transform: scale(1.06); }
   .theme-toggle:active { transform: scale(0.94); }
   .theme-toggle .icon-sun, .theme-toggle .icon-moon { transition: transform 320ms var(--ease), opacity 200ms; }
-  .copy-button { transition: transform 160ms var(--ease); }
-  .copy-button:hover { transform: scale(1.06); }
-  .copy-button:active { transform: scale(0.94); }
 }
 
 /* Seção Carmine: rótulo à esquerda, coluna de conteúdo à direita */

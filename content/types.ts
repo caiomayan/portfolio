@@ -26,32 +26,26 @@ export type Content = {
     name: string;
     /** Título profissional: é o h1 da página. */
     title: string;
-    /** Resto da frase de abertura; título + lead formam a frase do copy deck. */
+    /** Frase de abertura (#38); título + frase formam a descrição da página e a prévia. */
     lead: string;
-    /** Lugar embaixo da frase de abertura (#29): cidade ao lado do mapa compacto e fuso da hora local (a hora em si vem do relógio). */
-    place: { city: string; offset: string };
-    /** Link de texto embaixo do lugar (#34), leva a `#contato`; a seta ↓ é ornamento e não faz parte do nome. */
-    toContact: string;
+    /** Lugar ao lado do mapa compacto (#29, #38): cidade, hora (o relógio) e clima em três linhas. */
+    place: { city: string };
     photoAlt: string;
   };
+  /** Ícones de contato na faixa da primeira tela (#38): e-mail, LinkedIn, GitHub e currículo. O rótulo de cada um é o tooltip e o nome acessível (o do e-mail é o endereço). */
   contact: {
-    heading: string;
-    email: string;
-    /** Nome acessível do botão de copiar (só ícone). */
-    copyEmail: string;
-    /** Confirmação anunciada por leitor de tela depois de copiar. */
-    copied: string;
-    /** Falha ao copiar: anunciada pela região de status e mostrada discreta; o e-mail fica selecionado. */
-    copyFailed: string;
+    /** Nome acessível do grupo de ícones. */
+    label: string;
+    email: ContactLink;
     linkedin: ContactLink;
     github: ContactLink;
     /** `null` quando não há PDF nessa língua: o link não aparece. */
     resume: ContactLink | null;
-    /** Clima ao lado da hora (#28, na primeira tela desde a #29): nome de cada tempo (lido por leitor de tela) e o crédito do Open-Meteo (CC BY 4.0). */
-    weather: { labels: Record<WeatherKind, string>; credit: { prefix: string; name: string; href: string } };
-    /** Línguas que ele fala: grupo pequeno com rótulo, uma linha por língua (bandeira e nome à esquerda, nível à direita). */
-    languages: { heading: string; items: { name: string; level: string; flag: "BR" | "US" }[] };
   };
+  /** Clima ao lado da hora (#28, na primeira tela): nome de cada tempo (lido por leitor de tela) e o crédito do Open-Meteo (CC BY 4.0). */
+  weather: { labels: Record<WeatherKind, string>; credit: { prefix: string; name: string; href: string } };
+  /** Seção Idiomas (#38): o que ele fala. `sub`: subnível no estilo da monitoria do curso. */
+  languages: { heading: string; items: { name: string; level: string; sub?: string }[] };
   experience: {
     heading: string;
     jobs: (EntryBase & {
@@ -80,17 +74,8 @@ export type Content = {
   };
   ui: {
     themeToggle: string;
-    /** Língua da página atual no seletor (#29): bandeira em destaque, `aria-current="page"`, não é link. O nome vai só pra leitor de tela. */
-    currentLang: { label: string; lang: Lang; flag: "US" | "BR"; country: string };
-    /** Link pra rota equivalente na outra língua: o texto está na língua de destino ("English" / "Português"). */
-    otherLang: {
-      label: string;
-      href: string;
-      lang: Lang;
-      /** Bandeira do país da língua de destino (a única cor da barra do topo) e o nome dele, que é o tooltip. */
-      flag: "US" | "BR";
-      country: string;
-    };
+    /** Seletor de idioma (#38): nome acessível do botão do globo e do menu. Os nomes das línguas ficam em `locales` (cada uma na própria língua). */
+    language: string;
   };
   /** Gráfico de contribuições do GitHub (#28). `total`: `one` com 1, `other` nos demais; `{n}` vira o número. */
   activity: { heading: string; total: { one: string; other: string } };
