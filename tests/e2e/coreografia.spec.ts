@@ -257,4 +257,19 @@ test.describe("coreografia das seções (#39)", () => {
     }
     expect((await opacidades(page, "#experiencia .entry")).every((o) => o === 1)).toBe(true);
   });
+
+  for (const [largura, altura] of [[1440, 900], [375, 667]] as const) {
+    test(`sem os fios de Experiência e Formação: nada de .timeline e nenhum recuo sobrando (borda esquerda das entradas = a do título) a ${largura} px`, async ({ page }) => {
+      await page.setViewportSize({ width: largura, height: altura });
+      await page.goto("/");
+      expect(await page.locator(".timeline, .timeline-wrap").count()).toBe(0);
+      for (const sec of ["#experiencia", "#formacao"]) {
+        const h2 = (await page.locator(`${sec} h2`).boundingBox())!;
+        const entrada = (await page.locator(`${sec} .entry`).first().boundingBox())!;
+        expect(Math.abs(h2.x - entrada.x), sec).toBeLessThan(0.5);
+        const lista = (await page.locator(`${sec} > ul`).boundingBox())!;
+        expect(Math.abs(lista.x - h2.x), sec).toBeLessThan(0.5);
+      }
+    });
+  }
 });

@@ -9,20 +9,26 @@ const terminou = async (page: Page) => {
   await expect(cobertura(page)).toHaveCount(0, { timeout: 8000 });
   await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
 };
-/** Pausa a abertura num instante (ms depois do início): traço, respiro, voo e cobertura vão todos pra esse ponto da linha do tempo (lib/opening.ts). */
+const PRIMEIRA_TELA = [".hero .who", ".hero h1", ".hero .lead", ".hero .place", ".hero .contact-icons", ".top-actions"];
+/** Pausa a abertura num instante (ms depois do início): traço, respiro, voo, cobertura e a entrada da primeira tela vão todos pra esse ponto da linha do tempo (lib/opening.ts). */
 const irPara = (page: Page, ms: number) =>
-  page.evaluate((t) => {
-    let n = 0;
-    for (const a of document.getAnimations()) {
-      const alvo = (a.effect as KeyframeEffect | null)?.target as Element | null;
-      if (alvo?.closest(".opening")) {
-        a.pause();
-        a.currentTime = t;
-        n++;
+  page.evaluate(
+    ([t, sels]) => {
+      let n = 0;
+      for (const a of document.getAnimations()) {
+        const alvo = (a.effect as KeyframeEffect | null)?.target as Element | null;
+        const daAbertura = !!alvo?.closest(".opening") || (a.constructor.name !== "CSSAnimation" && sels.some((s) => alvo?.matches(s)));
+        if (daAbertura) {
+          a.pause();
+          a.currentTime = t;
+          n++;
+        }
       }
-    }
-    return n;
-  }, ms);
+      return n;
+    },
+    [ms, PRIMEIRA_TELA] as [number, string[]],
+  );
+const opac = (page: Page) => page.evaluate((sels) => sels.map((s) => Number(getComputedStyle(document.querySelector(s)!).opacity)), PRIMEIRA_TELA);
 const svgGrande = (page: Page) => page.locator(".opening-art-svg").boundingBox();
 
 /** Quanta tinta (preto sobre branco, soma de 255 − luminância) há num recorte da tela: mede a espessura de verdade, em pixels renderizados. */
@@ -142,18 +148,53 @@ test.describe("abertura (#39)", () => {
     expect(fim).toBeLessThan(3600);
   });
 
-  test("a primeira tela entra em sequência enquanto a assinatura pousa e fica no estado final", async ({ page }) => {
+  test("a primeira tela entra em sequência na ordem foto, título, frase, lugar, contato, controles enquanto a assinatura pousa", async ({ page }) => {
     await page.goto("/");
     await expect(cobertura(page)).toBeVisible();
-    await page.waitForTimeout(2300); // a entrada já foi montada (pouco antes do voo) e está em andamento
-    const durante = await page.evaluate(() => document.getAnimations().filter((a) => (a.effect as KeyframeEffect | null)?.target?.matches?.(".hero h1, .hero .who, .hero .lead")).length);
-    expect(durante).toBeGreaterThanOrEqual(3);
+    await expect.poll(() => irPara(page, 1900)).toBeGreaterThan(20);
+    expect(await opac(page)).toEqual([1, 1, 1, 1, 1, 1]); // visível até o fim do respiro (é o que o LCP mede)
+    await irPara(page, 2020 + 120 + 90); // começando a entrar: a ordem decide quem está mais adiantado
+    const o = await opac(page);
+    for (let i = 1; i < o.length; i++) expect(o[i], PRIMEIRA_TELA[i]).toBeLessThanOrEqual(o[i - 1] + 1e-6);
+    expect(o[0]).toBeGreaterThan(o[o.length - 1]);
+    await irPara(page, 2020 + 860 + 400);
+    expect(await opac(page)).toEqual([1, 1, 1, 1, 1, 1]);
     await terminou(page);
-    for (const sel of [".hero .who", ".hero h1", ".hero .lead", ".hero .place", ".hero .contact-icons", ".top-actions"]) {
+    for (const sel of PRIMEIRA_TELA) {
       await expect(page.locator(sel).first()).toHaveCSS("opacity", "1");
       await expect(page.locator(sel).first()).toHaveCSS("transform", /^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
     }
   });
+
+  for (const [largura, altura] of [[1440, 900], [375, 667]] as const) {
+    test(`a primeira tela nunca pisca a ${largura} px com a CPU 4× mais lenta: depois que a cobertura começa a levantar, o título só ganha opacidade`, async ({ browser }) => {
+      for (let rodada = 0; rodada < 3; rodada++) {
+        const ctx = await browser.newContext({ viewport: { width: largura, height: altura }, reducedMotion: "no-preference" });
+        const page = await ctx.newPage();
+        const cdp = await ctx.newCDPSession(page);
+        await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+        await page.addInitScript(() => {
+          const w = window as unknown as { __amostras: number[][] };
+          w.__amostras = [];
+          const tick = () => {
+            const h1 = document.querySelector("h1");
+            const cob = document.querySelector(".opening-scrim");
+            if (h1) w.__amostras.push([Number(getComputedStyle(h1).opacity), cob ? Number(getComputedStyle(cob).opacity) : 0]);
+            if (w.__amostras.length < 600) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        });
+        await page.goto("/");
+        await expect(page.locator("html")).not.toHaveAttribute("data-opening", /.*/, { timeout: 9000 });
+        const amostras = await page.evaluate(() => (window as unknown as { __amostras: number[][] }).__amostras);
+        const depois = amostras.filter(([, cob]) => cob < 0.999);
+        expect(depois.length).toBeGreaterThan(5);
+        for (let i = 1; i < depois.length; i++) expect(depois[i][0], `rodada ${rodada}, amostra ${i}`).toBeGreaterThanOrEqual(depois[i - 1][0] - 0.001);
+        expect(depois[depois.length - 1][0]).toBe(1);
+        await ctx.close();
+      }
+    });
+  }
 
   test("ao recarregar na mesma aba, a página aparece pronta; numa aba nova, a abertura roda de novo", async ({ page, context }) => {
     await page.goto("/");
