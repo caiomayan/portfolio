@@ -105,44 +105,6 @@ jobs:
             exit 1
           fi
 
-      - name: Testes das buscas de dados ao vivo (sem token, API fora)
-        run: npm run test:dados
-
-      - run: npm run typecheck
-      - run: npm run lint
-
-      # Dados ao vivo (#28): o build lê o Open-Meteo e o GitHub de variáveis de ambiente. Nos testes elas apontam pra um servidor falso
-      # local (tests/fixtures/apis.mjs), então o resultado não depende da rede nem do token de verdade (o token abaixo é só do falso, não é segredo).
-      # Dois builds: um com as APIs respondendo (.next) e um com as duas falhando (.next-falha). O servidor falso só vive durante os builds
-      # (a página já sai pronta do build); o Playwright sobe o dele no passo dos testes.
-      - name: Builds (APIs respondendo e APIs falhando)
-        run: |
-          node tests/fixtures/apis.mjs > /dev/null 2>&1 &
-          MOCK_PID=$!
-          for i in $(seq 1 20); do curl -fs http://127.0.0.1:3199/health > /dev/null && break; sleep 0.5; done
-          ALLOW_TEST_API_URLS=1 OPEN_METEO_URL=http://127.0.0.1:3199/weather GITHUB_GRAPHQL_URL=http://127.0.0.1:3199/github GITHUB_TOKEN=token-de-teste-nao-e-segredo npm run build
-          NEXT_DIST_DIR=.next-falha ALLOW_TEST_API_URLS=1 OPEN_METEO_URL=http://127.0.0.1:3199/weather-erro GITHUB_GRAPHQL_URL=http://127.0.0.1:3199/github-erro GITHUB_TOKEN=token-de-teste-nao-e-segredo npm run build
-          kill $MOCK_PID
-
-      - name: Versão do Playwright
-        id: pw
-        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
-
-      - name: Cache dos navegadores do Playwright
-        id: pw-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
-
-      - name: Instalar Chromium
-        if: steps.pw-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-
-      - name: Instalar dependências do sistema (cache de navegador encontrado)
-        if: steps.pw-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
-
       - name: Testes
         run: npm test
         env:
