@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-// Primeira tela em moldura (#36): foto e título alinhados no meio e, logo abaixo, a faixa de lugar (à esquerda) e ícones de contato (à direita, #38; sem linha em cima); o conjunto fica centrado na primeira tela.
+// Primeira tela em moldura (#36): foto e título (centrado na altura da foto, #38) no meio e, logo abaixo, a faixa de lugar (à esquerda) e ícones de contato (à direita, #38; sem linha em cima); o conjunto fica centrado na primeira tela.
 // Movimento reduzido: a entrada (`rise`, translateY) não desloca as caixas durante a medida.
 const rotas = ["/", "/en", "/es"];
 
@@ -20,6 +20,9 @@ async function medir(page: import("@playwright/test").Page) {
     const lead = document.querySelector(".lead")!;
     const a = metricas(h1, "E");
     const b = metricas(lead, "x");
+    const blocoTopo = box("h1").top;
+    const blocoBase = box(".lead").bottom;
+    const vaoTituloFrase = box(".lead").top - box("h1").bottom;
     const topoMaiusculas = box("h1").top + (a.lh - (a.asc + a.desc)) / 2 + a.asc - a.cap;
     const baseFrase = box(".lead").bottom - (b.lh - (b.asc + b.desc)) / 2 - b.desc;
     const photo = box(".photo");
@@ -27,7 +30,7 @@ async function medir(page: import("@playwright/test").Page) {
     const strip = box(".hero-strip");
     const main = box(".hero-main");
     return {
-      fotoTopo: photo.top, fotoBase: photo.bottom, topoMaiusculas, baseFrase,
+      fotoTopo: photo.top, fotoBase: photo.bottom, topoMaiusculas, baseFrase, blocoTopo, blocoBase, vaoTituloFrase,
       heroBase: hero.bottom, faixaTopo: strip.top, faixaBase: strip.bottom, meioBase: main.bottom,
       janela: innerHeight, largura: document.documentElement.scrollWidth, vw: innerWidth,
     };
@@ -37,13 +40,17 @@ async function medir(page: import("@playwright/test").Page) {
 for (const path of rotas) {
   test.describe(`primeira tela em moldura em ${path}`, () => {
     for (const [w, h] of [[1920, 900], [1440, 900]] as const) {
-      test(`${w}×${h}: o topo da foto bate com o topo das maiúsculas do título, a base com o fim da frase`, async ({ browser }) => {
+      test(`${w}×${h}: título e frase ficam juntos (espaço normal) e o bloco é centrado na altura da foto`, async ({ browser }) => {
         const ctx = await browser.newContext({ viewport: { width: w, height: h }, reducedMotion: "reduce" });
         const page = await ctx.newPage();
         await page.goto(path);
         const m = await medir(page);
-        expect(Math.abs(m.fotoTopo - m.topoMaiusculas), "topo").toBeLessThanOrEqual(4);
-        expect(Math.abs(m.fotoBase - m.baseFrase), "base").toBeLessThanOrEqual(4);
+        const centroBloco = (m.blocoTopo + m.blocoBase) / 2;
+        const centroFoto = (m.fotoTopo + m.fotoBase) / 2;
+        expect(Math.abs(centroBloco - centroFoto), "centro do bloco x centro da foto").toBeLessThanOrEqual(4);
+        expect(m.blocoTopo, "o bloco cabe na altura da foto").toBeGreaterThanOrEqual(m.fotoTopo - 1);
+        expect(m.blocoBase).toBeLessThanOrEqual(m.fotoBase + 1);
+        expect(m.vaoTituloFrase, "vão título→frase normal (20–36 px mais a folga da entrelinha)").toBeLessThanOrEqual(50);
         // A primeira tela continua com a altura cheia da janela.
         expect(Math.abs(m.heroBase - m.janela)).toBeLessThanOrEqual(1);
         expect(m.largura).toBeLessThanOrEqual(m.vw);
@@ -85,7 +92,7 @@ for (const path of rotas) {
         expect(m.fotoTopo, `${w}×${h}`).toBeGreaterThanOrEqual(topo);
         expect(m.meioBase, `${w}×${h}`).toBeLessThanOrEqual(m.faixaTopo + 0.5);
         expect(m.fotoBase, `${w}×${h}`).toBeLessThanOrEqual(m.faixaTopo);
-        expect(Math.abs(m.fotoTopo - m.topoMaiusculas), `${w}×${h}`).toBeLessThanOrEqual(4);
+        expect(m.vaoTituloFrase, `${w}×${h}`).toBeLessThanOrEqual(50);
         expect(m.largura).toBeLessThanOrEqual(m.vw);
         await ctx.close();
       }

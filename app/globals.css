@@ -155,7 +155,7 @@ img { display: block; max-width: 100%; height: auto; }
   column-gap: clamp(40px, 6vw, 88px);
 }
 /* O bloco de texto tem a altura da foto: o topo das maiúsculas do título bate com o topo da foto e a linha de base da última linha da frase com a base dela. */
-.intro { display: flex; flex-direction: column; justify-content: space-between; }
+.intro { display: flex; flex-direction: column; justify-content: center; } /* título e frase juntos, centrados na altura da foto (#38: com o h1 menor, esticar o bloco abria um vão entre eles) */
 .hero-strip {
   display: flex;
   align-items: center;
@@ -181,12 +181,11 @@ h1 {
   /* Com texto grande no celular "Engenheiro" não cabe: hifeniza (pela língua da página) e, em último caso, quebra. */
   hyphens: auto;
   overflow-wrap: anywhere;
-  margin-top: -0.127em; /* o topo da caixa fica acima das maiúsculas (meia-entrelinha + ascendente − altura das maiúsculas do Inter): sobe isso pro topo das letras bater com o topo da foto */
 }
 /* Ponto final do título: ornamento tipográfico (ver DESIGN.md), fora da árvore de acessibilidade. */
 h1::after { content: "." / ""; }
 .lead {
-  margin: clamp(20px, 3vw, 36px) 0 -0.286em; /* embaixo: sobe a caixa até a linha de base da última linha, que bate com a base da foto */
+  margin: clamp(20px, 3vw, 36px) 0 0; /* espaço normal entre o título e a frase */
   max-width: 24ch;
   font-size: var(--text-lead);
   font-weight: 400;

@@ -118,3 +118,40 @@ test("o topo não é recriado a ponto de redesenhar a assinatura: ela aparece pr
   await expect(page.locator(".signature")).toHaveAttribute("data-static", "");
   expect(await page.locator(".signature").evaluate((el) => getComputedStyle(el).visibility)).toBe("visible");
 });
+
+test("o tema escuro sobrevive à troca de idioma, sem piscar", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("theme", "dark"));
+  await page.goto("/");
+  const html = page.locator("html");
+  await expect(html).toHaveAttribute("data-theme", "dark");
+  // Grava toda mudança do atributo durante as trocas: nenhum quadro pode ficar sem o tema escuro.
+  await page.evaluate(() => {
+    const w = window as unknown as { __claro: number };
+    w.__claro = 0;
+    const olha = () => {
+      if (document.documentElement.dataset.theme !== "dark") w.__claro++;
+    };
+    new MutationObserver(olha).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    const tick = () => {
+      olha();
+      requestAnimationFrame(tick);
+    };
+    tick();
+  });
+  for (const [nome, caminho] of [["Español", "/es"], ["English", "/en"], ["Português", "/"]] as const) {
+    await page.getByRole("button", { name: /^(Idioma|Language)/ }).click();
+    await page.getByRole("menuitemradio", { name: nome }).click();
+    await expect(page).toHaveURL(new RegExp(`${caminho === "/" ? "/$" : caminho + "$"}`));
+    await expect(html).toHaveAttribute("data-theme", "dark");
+    await page.waitForTimeout(400);
+    await expect(html).toHaveAttribute("data-theme", "dark");
+  }
+  expect(await page.evaluate(() => (window as unknown as { __claro: number }).__claro), "algum quadro ficou claro").toBe(0);
+  // O botão de tema segue coerente e o tema claro também sobrevive.
+  await page.getByRole("button", { name: "Tema escuro" }).click();
+  await expect(html).not.toHaveAttribute("data-theme", "dark");
+  await page.getByRole("button", { name: /^Idioma/ }).click();
+  await page.getByRole("menuitemradio", { name: "English" }).click();
+  await expect(page).toHaveURL(/\/en$/);
+  await expect(html).not.toHaveAttribute("data-theme", "dark");
+});
