@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "./base";
+import { assentarTudo, expect, test, type Page } from "./base";
 
 // Issue #41: o seletor de idioma e o botão de tema acompanham a rolagem numa cápsula flutuante (uma cópia só no DOM).
 declare global {
@@ -116,6 +116,7 @@ for (const [w, h] of [
       await rolarPara(page, 1500);
       await expect(capsula(page)).toHaveAttribute("data-floating", "true");
       await pousada(page);
+      await assentarTudo(page); // a coreografia das seções (#39) tem que ter assentado: o axe mede o contraste do que está na tela
       for (const b of [await idioma(page).boundingBox(), await tema(page).boundingBox()]) {
         expect(b!.width).toBeGreaterThanOrEqual(43.9);
         expect(b!.height).toBeGreaterThanOrEqual(43.9);

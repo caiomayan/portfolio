@@ -16,6 +16,20 @@ import { signature } from "@/lib/signature";
 // Um caminho por letra (o "" do espaço não entra); calculado uma vez, no módulo.
 export const drawnLetters = signature.glyphs.map((d, i) => ({ d, i })).filter((l) => l.d);
 
+/** Espessura do contorno em px de tela, igual à da assinatura de antes da #39 (`non-scaling-stroke`: não muda com o tamanho do desenho). */
+export const OUTLINE_PX = 1.5;
+
+/** O contorno de cada letra: uma camada de traço sobre o preenchimento, como na assinatura desenhada de antes da #39 (é ele que dá o peso do traço). */
+export function Outline() {
+  return (
+    <>
+      {drawnLetters.map((l) => (
+        <path key={l.i} className="signature-outline" d={l.d} fill="none" stroke="currentColor" strokeWidth={OUTLINE_PX} vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
+      ))}
+    </>
+  );
+}
+
 /** As letras já prontas, sem animação. */
 export function Filled() {
   return (
@@ -28,13 +42,14 @@ export function Filled() {
 }
 
 /**
- * Assinatura "Caio Mayan" do topo: sempre pronta e visível (é o nome do site; o nome acessível fica no invólucro, que nunca é escondido).
+ * Assinatura "Caio Mayan" do topo, igual ao estado final da assinatura desenhada de antes da #39 (contorno de 1,5 px mais o preenchimento) em todos os casos (recarregar, movimento reduzido, sem JavaScript, troca de idioma): sempre pronta e visível (é o nome do site; o nome acessível fica no invólucro, que nunca é escondido).
  * Só durante a abertura (#39, `html[data-opening]`) o CSS a deixa invisível, porque a mesma assinatura está sendo desenhada, grande, por cima.
  */
 export function Signature({ name }: { name: string }) {
   return (
     <span className="signature-mark" role="img" aria-label={name}>
       <svg className="signature" data-static="" viewBox={signature.viewBox} aria-hidden="true" focusable="false">
+        <Outline />
         <g fill="currentColor">
           <Filled />
         </g>

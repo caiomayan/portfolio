@@ -4,9 +4,8 @@ import type { ReactNode } from "react";
 import type { Lang } from "@/content";
 import { openingFlightScript, openingScript } from "@/lib/opening";
 import { locales } from "@/lib/locales";
+import { Choreography } from "@/components/choreography";
 import { Opening } from "@/components/opening";
-import { Parallax } from "@/components/parallax";
-import { Reveal } from "@/components/reveal";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { ThemeKeeper } from "@/components/theme-keeper";
 import "lenis/dist/lenis.css";
@@ -32,10 +31,9 @@ export function SiteShell({ lang, children }: { lang: Lang; children: ReactNode 
         {children}
         {/* #39: o voo, o fade e o pular da abertura, sem esperar a hidratação (a cobertura e a assinatura do topo já estão no DOM). */}
         <script dangerouslySetInnerHTML={{ __html: openingFlightScript }} />
-        <Reveal />
         <ThemeKeeper />
+        <Choreography />
         <SmoothScroll />
-        <Parallax />
         {/* Vercel Web Analytics (sem cookies). Só no deploy da Vercel: fora dela o script não existe e daria 404. */}
         {process.env.VERCEL && <Analytics />}
       </body>

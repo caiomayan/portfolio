@@ -1,5 +1,4 @@
 import type { Content } from "@/content";
-import { PARALLAX_MAP } from "@/lib/parallax";
 import { cropViewBox, projectInCrop } from "@/lib/map-crop";
 import { worldMap } from "@/lib/world-map";
 import { LocalTime } from "./local-time";
@@ -19,7 +18,7 @@ export function Place({ place, weather }: { place: Content["hero"]["place"]; wea
   const v = cropViewBox;
   return (
     <div className="place">
-      <div className="place-art" data-parallax={PARALLAX_MAP} data-parallax-from="top" aria-hidden="true" style={{ aspectRatio: `${v.width} / ${v.height}` }}>
+      <div className="place-art" aria-hidden="true" style={{ aspectRatio: `${v.width} / ${v.height}` }}>
         <svg viewBox={`${v.x} ${v.y} ${v.width} ${v.height}`} focusable="false">
           <path d={worldMap.dots} />
         </svg>

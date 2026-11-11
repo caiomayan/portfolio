@@ -3,9 +3,8 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { signature } from "@/lib/signature";
 import { OPENING_ATTR } from "@/lib/opening";
-import { drawnLetters, Filled } from "./signature";
+import { drawnLetters, Filled, OUTLINE_PX } from "./signature";
 
-const OUTLINE_PX = 1.5;
 const MASK_STROKE = signature.fontSize * 0.22; // espessura do traço da máscara, proporcional à fonte
 const [vx, vy, vw, vh] = signature.viewBox.split(" ").map(Number);
 const maskRegion = { x: vx - MASK_STROKE, y: vy - MASK_STROKE, width: vw + 2 * MASK_STROKE, height: vh + 2 * MASK_STROKE };

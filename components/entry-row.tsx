@@ -29,7 +29,7 @@ type Props = {
 export function EntryRow({ title, titleUrl, sub, role, about, lines, subitems, stack, period, logo, icon }: Props) {
   const l = logo ? orgLogos[logo] : null;
   return (
-    <li className="entry" data-reveal-part>
+    <li className="entry">
       <div className="entry-main">
         {l ? (
           <Image className="entry-logo" data-colored={l.colored ? "" : undefined} src={l.src} alt="" width={40} height={l.height} unoptimized />

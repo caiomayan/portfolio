@@ -1,4 +1,4 @@
-/** O Lenis (components/smooth-scroll.tsx) avisa aqui a cada quadro de rolagem; o parallax (components/parallax.tsx) escuta, pra andar junto com ele. */
+/** O Lenis (components/smooth-scroll.tsx) avisa aqui a cada quadro de rolagem; o ScrollTrigger (lib/choreography.ts) escuta, pra andar junto com ele. */
 type Listener = () => void;
 const listeners = new Set<Listener>();
 export const onLenisScroll = (l: Listener) => {

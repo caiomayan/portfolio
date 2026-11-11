@@ -1,10 +1,10 @@
 import { expect, test, type Page } from "./base";
 import { rotasTexto, type RotaTexto } from "./textos";
 
-// Mesma marcação que o componente Reveal usa: nenhuma lista de seletores própria.
-const REVEAL_TARGETS = "[data-reveal-part]";
+// As partes que a coreografia (#39, lib/choreography.ts) esconde e anima: com movimento reduzido ou sem JavaScript nenhuma pode ficar escondida.
+const REVEAL_TARGETS = "h2 .title-text, .carmine-body, .timeline, .entry, .foundation-group, .activity-week, .language, .site-footer, .stack li";
 
-/** Rola até o fim da página, devagar o bastante pro observer ver cada parte. */
+/** Rola até o fim da página, devagar o bastante pra cada parte chegar na tela. */
 async function scrollToEnd(page: Page) {
   await page.evaluate(async () => {
     for (let y = 0; y <= document.documentElement.scrollHeight; y += 300) {
@@ -29,12 +29,14 @@ for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
         await expect(el).toHaveCSS("animation-name", "none");
         await expect(el).toHaveCSS("opacity", "1");
       }
-      // Assinatura pronta e visível, sem animação: uma forma preenchida por letra (9 letras em "Caio Mayan").
+      // Assinatura pronta e visível, sem animação: por letra, uma forma preenchida e o contorno de 1,5 px (9 letras em "Caio Mayan"; igual ao estado final de antes da #39).
       const sig = page.locator(".signature");
       await expect(sig).toBeVisible();
       await expect(sig).toHaveAttribute("data-static", "");
-      await expect(sig.locator("path")).toHaveCount(9);
-      await expect(sig.locator("path").first()).toHaveCSS("fill", /rgb\(/);
+      await expect(sig.locator("path")).toHaveCount(18);
+      await expect(sig.locator("g > path")).toHaveCount(9);
+      await expect(sig.locator("g > path").first()).toHaveCSS("fill", /rgb\(/);
+      await expect(sig.locator("path.signature-outline")).toHaveCount(9);
       expect(await sig.locator("mask").count()).toBe(0);
 
       // Rolar e trocar de tema: nada vira animação nem transição.
@@ -90,18 +92,18 @@ for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
       await ctx.close();
     });
 
-    test("sem preferência, as partes abaixo da dobra entram uma vez, em sequência", async ({ browser }) => {
+    test("sem preferência, as partes abaixo da dobra ficam escondidas até a coreografia e voltar ao topo não as esconde de novo", async ({ browser }) => {
       const ctx = await browser.newContext({ reducedMotion: "no-preference", viewport: { width: 1280, height: 800 } });
       const page = await ctx.newPage();
       await page.goto(path);
-      await page.waitForLoadState("networkidle");
+      await expect(page.locator("html")).toHaveAttribute("data-choreography", "armed", { timeout: 8000 });
       // Escondidas até chegarem na tela...
       await expect.poll(() => page.locator("#idiomas .language").first().evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
       await scrollToEnd(page);
-      // ...e visíveis depois; voltar pro topo não esconde de novo.
-      await expect.poll(async () => Math.min(...(await opacities(page, REVEAL_TARGETS))), { timeout: 5000 }).toBe(1);
+      // ...e visíveis depois (assentaram); voltar pro topo não esconde de novo.
+      await expect.poll(async () => Math.min(...(await opacities(page, REVEAL_TARGETS))), { timeout: 8000 }).toBe(1);
       await page.evaluate(() => window.scrollTo(0, 0));
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(500);
       expect(await opacities(page, REVEAL_TARGETS)).not.toContain(0);
       await ctx.close();
     });

@@ -1,4 +1,4 @@
-import { expect, test } from "./base";
+import { assentar, expect, test } from "./base";
 
 // Issue #29, acabamento: medida de leitura, stack do Carmine mais leve, mapa maior no desktop e Fundamentos em três grupos (#29).
 for (const path of ["/", "/en", "/es"]) {
@@ -29,6 +29,7 @@ for (const path of ["/", "/en", "/es"]) {
       await page.goto(path);
       const rotulo = { "/": "Feito com", "/en": "Built with", "/es": "Hecho con" }[path]!;
       await expect(page.locator("#carmine .icon-row-label")).toHaveText(rotulo);
+      await assentar(page, "#carmine .stack img");
       const img = await page.locator("#carmine .stack img").first().evaluate((el) => ({ w: el.getBoundingClientRect().width, o: getComputedStyle(el).opacity }));
       expect(img.w).toBe(16);
       expect(Number(img.o)).toBeLessThan(1);

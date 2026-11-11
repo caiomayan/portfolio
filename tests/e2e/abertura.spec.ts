@@ -20,6 +20,33 @@ const pausaNoInstante = (page: Page, fracao: number) =>
     return true;
   }, fracao);
 
+
+/** Quanta tinta (preto sobre branco, soma de 255 − luminância) há num recorte da tela: mede a espessura de verdade, em pixels renderizados. */
+async function tinta(page: Page, clip: { x: number; y: number; width: number; height: number }) {
+  const png = (await page.screenshot({ clip })).toString("base64");
+  const leitor = await page.context().newPage();
+  const n = await leitor.evaluate(async (b64) => {
+    const img = new Image();
+    img.src = "data:image/png;base64," + b64;
+    await img.decode();
+    const c = document.createElement("canvas");
+    c.width = img.width;
+    c.height = img.height;
+    const g = c.getContext("2d")!;
+    g.drawImage(img, 0, 0);
+    const d = g.getImageData(0, 0, c.width, c.height).data;
+    let soma = 0;
+    for (let i = 0; i < d.length; i += 4) soma += 255 - (d[i] + d[i + 1] + d[i + 2]) / 3;
+    return Math.round(soma / 255);
+  }, png);
+  await leitor.close();
+  return n;
+}
+const recorteDaAssinatura = async (page: Page) => {
+  const b = (await page.locator(".top .signature-mark").boundingBox())!;
+  return { x: Math.floor(b.x) - 4, y: Math.floor(b.y) - 4, width: Math.ceil(b.width) + 8, height: Math.ceil(b.height) + 8 };
+};
+
 test.describe("abertura (#39)", () => {
   test("na primeira visita da aba, a assinatura aparece grande no centro e a do topo fica no lugar, invisível", async ({ page }) => {
     await page.goto("/");
@@ -206,5 +233,59 @@ test.describe("abertura (#39)", () => {
     expect(props.filter((p) => !permitidas.has(p))).toEqual([]);
     expect(props).toContain("strokeDashoffset");
     expect(props).toContain("transform");
+  });
+
+  for (const [largura, altura] of [[1440, 900], [375, 667]] as const) {
+    test(`a assinatura do topo depois da abertura tem o mesmo traço (1,5 px de contorno) da recarregada, da com movimento reduzido e do último quadro do voo, a ${largura} px`, async ({ browser }) => {
+      const ctx = await browser.newContext({ viewport: { width: largura, height: altura }, reducedMotion: "no-preference", deviceScaleFactor: 1 });
+      const page = await ctx.newPage();
+      await page.goto("/");
+      await expect(cobertura(page)).toBeVisible();
+      const clip = await recorteDaAssinatura(page);
+      // Último quadro do voo: tudo no fim (traço e voo), o que se vê é a assinatura grande já no tamanho final.
+      await page.evaluate(() => {
+        for (const a of document.getAnimations()) {
+          const t = (a.effect as KeyframeEffect | null)?.target?.classList;
+          if (t?.contains("opening-art") || t?.contains("opening-scrim") || t?.contains("opening-stroke")) {
+            a.pause();
+            const tm = a.effect!.getTiming();
+            a.currentTime = Number(tm.delay) + Number(tm.duration);
+          }
+        }
+      });
+      const ultimoQuadro = await tinta(page, clip);
+      await terminou(page);
+      const depois = await tinta(page, clip);
+      // Estrutura: o contorno de antes da #39 (1,5 px, não escala com o desenho) está presente, em todos os caminhos.
+      const traco = await page.locator(".top .signature path.signature-outline").evaluateAll((ps) => ps.map((p) => ({ w: getComputedStyle(p).strokeWidth, v: getComputedStyle(p).vectorEffect, s: getComputedStyle(p).stroke })));
+      expect(traco).toHaveLength(9);
+      for (const t of traco) {
+        expect(t.w).toBe("1.5px");
+        expect(t.v).toBe("non-scaling-stroke");
+        expect(t.s).not.toBe("none");
+      }
+      await page.reload();
+      await expect(topo(page)).toBeVisible();
+      const recarregada = await tinta(page, clip);
+      const reduzido = await browser.newContext({ viewport: { width: largura, height: altura }, reducedMotion: "reduce", deviceScaleFactor: 1 });
+      const p2 = await reduzido.newPage();
+      await p2.goto("/");
+      const semMovimento = await tinta(p2, await recorteDaAssinatura(p2));
+      await reduzido.close();
+      expect(depois).toBe(recarregada);
+      expect(semMovimento).toBe(recarregada);
+      expect(Math.abs(ultimoQuadro - depois) / depois).toBeLessThan(0.03); // sem "pulo" de espessura na troca pela assinatura do topo
+      await ctx.close();
+    });
+  }
+
+  test("a coreografia das seções só carrega depois da abertura e sem nenhuma entrada do usuário a abertura segue até o fim", async ({ page }) => {
+    await page.goto("/");
+    await expect(html(page)).toHaveAttribute("data-opening", "run");
+    await page.waitForTimeout(900);
+    await expect(html(page)).toHaveAttribute("data-opening", "run"); // ainda rodando com ~1 s e sem ninguém ter tocado na página
+    await expect(html(page)).not.toHaveAttribute("data-choreography", /.*/);
+    await terminou(page);
+    await expect(html(page)).toHaveAttribute("data-choreography", "armed", { timeout: 8000 });
   });
 });

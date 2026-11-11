@@ -477,3 +477,11 @@ h1::after { content: "." / ""; }
 @media (min-width: 640px) {
   .site-footer { flex-direction: row; justify-content: space-between; align-items: baseline; gap: 24px; }
 }
+
+/* Coreografia das seções (#39, lib/choreography.ts). A máscara do título é estática: só o texto interno anima (transform), conduzido pela rolagem.
+   O recorte desce um pouco (padding com margem negativa) pra não cortar a haste de baixo das letras. */
+.title-mask { display: block; overflow: clip; padding-bottom: 0.14em; margin-bottom: -0.14em; }
+.title-text { display: block; }
+/* Linha de tempo de Experiência e Formação: um fio fino na margem à esquerda das entradas, desenhado pela rolagem (scaleY) e depois parado. */
+.timeline-wrap { position: relative; }
+.timeline { position: absolute; left: -14px; top: 18px; bottom: 18px; width: 1px; background: color-mix(in srgb, var(--ink) 18%, transparent); transform-origin: top; }

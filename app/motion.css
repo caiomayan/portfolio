@@ -53,14 +53,6 @@
   }
   .opening-stroke { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; animation: opening-draw 450ms ease-in-out calc(50ms + var(--i) * 55ms) both; }
 
-  /* Entrada escalonada: o estado escondido só existe se o script (components/reveal.tsx) o aplicar. */
-  [data-reveal="pending"] { opacity: 0; transform: translateY(20px); }
-  [data-reveal="in"] {
-    transition:
-      opacity 600ms var(--ease) var(--reveal-delay, 0ms),
-      transform 900ms var(--spring) var(--reveal-delay, 0ms);
-  }
-
   /* Troca de tema: fade da página inteira (View Transitions), 100% composição. Sem suporte, a troca é instantânea. */
   ::view-transition-old(root),
   ::view-transition-new(root) { animation-duration: 360ms; animation-timing-function: var(--ease); }
