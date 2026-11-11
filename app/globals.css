@@ -67,6 +67,20 @@ img { display: block; max-width: 100%; height: auto; }
   padding-block: 20px;
 }
 .top-actions { display: flex; flex: none; align-items: center; gap: 4px; }
+/* Cápsula (#41): com o topo fora da tela, os mesmos controles ficam fixos no canto superior direito, alinhados à borda do contêiner. O único backdrop-filter do site; não é animado. */
+.top-actions[data-floating] {
+  position: fixed;
+  z-index: 20;
+  top: 12px;
+  right: calc((100% - min(var(--max), 100% - 2 * var(--gutter))) / 2);
+  padding: 4px;
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+}
 /* Seletor de idioma (#38): botão com o globo e a sigla, e um menu pequeno embaixo, alinhado à direita. Sem fundo em repouso; fundo no hover, no foco e com o menu aberto. */
 .lang-menu { position: relative; }
 .lang-button {
@@ -383,6 +397,18 @@ h1::after { content: "." / ""; }
   .lead { animation-delay: 180ms; }
   .place { animation-delay: 240ms; }
   .contact-icons { animation-delay: 300ms; }
+
+  /* Cápsula dos controles (#41): entra deslizando um pouco de cima e some de volta; só transform e opacity (o blur não anima). */
+  @keyframes capsule-in {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes capsule-out {
+    from { opacity: 1; transform: none; }
+    to { opacity: 0; transform: translateY(-8px); }
+  }
+  .top-actions[data-motion="enter"] { animation: capsule-in 320ms var(--ease) both; }
+  .top-actions[data-motion="exit"] { animation: capsule-out 160ms var(--ease) both; }
 
   /* Botões da barra do topo: só transform e opacity (a cor muda sem transição). */
   .lang-button, .theme-toggle { transition: transform 160ms var(--ease), opacity 160ms var(--ease); }
