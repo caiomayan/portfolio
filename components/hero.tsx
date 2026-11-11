@@ -3,18 +3,19 @@ import type { Content } from "@/content";
 import foto from "@/assets/foto-original.jpg";
 import { Signature } from "./signature";
 import { ThemeToggle } from "./theme-toggle";
-import { LangSwitch } from "./lang-switch";
+import type { Lang } from "@/lib/locales";
+import { ContactIcons } from "./contact-icons";
+import { LangMenu } from "./lang-menu";
 import { Place } from "./place";
 import type { WeatherSlots } from "./weather";
 
-/** `weather`: clima já renderizado no servidor (#28), vai ao lado da hora; `null` quando a API falhou. */
 /** Barra do topo: fica fora do <main>, como o rodapé. */
-export function SiteHeader({ content }: { content: Content }) {
+export function SiteHeader({ content, lang }: { content: Content; lang: Lang }) {
   return (
     <header className="top">
       <Signature name={content.hero.name} />
       <div className="top-actions">
-        <LangSwitch ui={content.ui} />
+        <LangMenu lang={lang} label={content.ui.language} />
         <ThemeToggle label={content.ui.themeToggle} />
       </div>
     </header>
@@ -22,6 +23,7 @@ export function SiteHeader({ content }: { content: Content }) {
 }
 
 /** Primeira tela: uma seção do <main> (que envolve todas as seções, montado em cada página). */
+/** `weather`: clima já renderizado no servidor (#28), na terceira linha do lugar; `null` quando a API falhou. */
 export function Hero({ content, weather = null }: { content: Content; weather?: WeatherSlots | null }) {
   return (
     <section className="hero" aria-labelledby="hero-title">
@@ -41,13 +43,10 @@ export function Hero({ content, weather = null }: { content: Content; weather?: 
           <p className="lead">{content.hero.lead}</p>
         </div>
       </div>
-      {/* Faixa de baixo (#36): presa à base da primeira tela; lugar à esquerda, Contato à direita. */}
+      {/* Faixa de baixo (#36): presa à base da primeira tela; lugar à esquerda e os ícones de contato à direita (#38). */}
       <div className="hero-strip">
         <Place place={content.hero.place} weather={weather} />
-        <a className="to-contact" href="#contato">
-          {content.hero.toContact}
-          <span aria-hidden="true"> ↓</span>
-        </a>
+        <ContactIcons contact={content.contact} />
       </div>
     </section>
   );

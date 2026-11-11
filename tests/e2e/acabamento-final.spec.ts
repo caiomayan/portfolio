@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 // Issue #29, acabamento: medida de leitura, stack do Carmine mais leve, mapa maior no desktop e Fundamentos em três grupos (#29).
-for (const path of ["/", "/en"]) {
+for (const path of ["/", "/en", "/es"]) {
   test.describe(`acabamento em ${path}`, () => {
     test("textos de apoio ficam numa medida de leitura (até 75 caracteres), o período segue à direita", async ({ browser }) => {
       const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
@@ -27,7 +27,7 @@ for (const path of ["/", "/en"]) {
 
     test("a linha de ícones é discreta: 16 px, tom suave, rótulo Feito com; o Valkey perde a cor", async ({ page }) => {
       await page.goto(path);
-      const rotulo = path === "/" ? "Feito com" : "Built with";
+      const rotulo = { "/": "Feito com", "/en": "Built with", "/es": "Hecho con" }[path]!;
       await expect(page.locator("#carmine .icon-row-label")).toHaveText(rotulo);
       const img = await page.locator("#carmine .stack img").first().evaluate((el) => ({ w: el.getBoundingClientRect().width, o: getComputedStyle(el).opacity }));
       expect(img.w).toBe(16);

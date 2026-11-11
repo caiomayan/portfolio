@@ -3,7 +3,7 @@ import { rotasTexto } from "./textos";
 
 // Revisão final da #29 (PR #33): estrutura (main), teclado nas linhas de ícones, ordem no celular, largura em telas estreitas,
 // falha ao copiar o e-mail e colunas dos ícones no celular.
-const rotas = ["/", "/en"] as const;
+const rotas = ["/", "/en", "/es"] as const;
 
 const semRolagemLateral = (page: Page) =>
   page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
@@ -19,7 +19,8 @@ for (const path of rotas) {
       expect(await page.locator("main header, main footer").count()).toBe(0);
       await expect(page.locator("body > header")).toHaveCount(1);
       await expect(page.locator("body > footer")).toHaveCount(1);
-      await expect(page.locator("main #contato")).toHaveCount(1);
+      await expect(page.locator("main #idiomas")).toHaveCount(1);
+      await expect(page.locator("main #contato")).toHaveCount(0);
     });
 
     test("cada linha de ícones é uma parada de Tab; setas, Home e End andam entre os ícones e abrem o tooltip", async ({ page }) => {
@@ -55,19 +56,6 @@ for (const path of rotas) {
       expect(await page.evaluate(() => document.activeElement?.closest(".stack"))).toBeNull();
     });
 
-    test("falha ao copiar: anuncia e mostra o aviso, e deixa o e-mail selecionado", async ({ page }) => {
-      await page.addInitScript(() => {
-        Object.defineProperty(navigator, "clipboard", { value: { writeText: () => Promise.reject(new Error("negado")) }, configurable: true });
-      });
-      await page.goto(path);
-      await page.getByRole("button", { name: t.copiar }).click();
-      const status = page.getByRole("status");
-      await expect(status).toHaveText(t.copiarFalha);
-      await expect(status).toBeVisible();
-      await expect(page.getByRole("button", { name: t.copiar })).toHaveAttribute("data-copied", "false");
-      expect(await page.evaluate(() => window.getSelection()?.toString())).toBe("mail@caiomayan.com");
-    });
-
     for (const width of [320, 375]) {
       test(`${width} px: sem rolagem lateral, nem com texto a 200 %`, async ({ page }) => {
         await page.setViewportSize({ width, height: 800 });
@@ -77,7 +65,7 @@ for (const path of rotas) {
         expect(await semRolagemLateral(page)).toBe(true);
         const topo = await page.locator(".top").evaluate((el) => {
           const r = el.getBoundingClientRect();
-          return [...el.querySelectorAll(".signature-mark, .theme-toggle, .lang-option")].every((c) => c.getBoundingClientRect().right <= r.right + 0.5);
+          return [...el.querySelectorAll(".signature-mark, .theme-toggle, .lang-button")].every((c) => c.getBoundingClientRect().right <= r.right + 0.5);
         });
         expect(topo).toBe(true);
         expect(await page.locator("h1").evaluate((h) => h.scrollWidth <= h.clientWidth)).toBe(true);

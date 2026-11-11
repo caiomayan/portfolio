@@ -6,6 +6,7 @@ import { rotasTexto } from "./textos";
 const rotas = [
   { path: "/", contato: "Contato" },
   { path: "/en", contato: "Contact" },
+  { path: "/es", contato: "Contacto" },
 ] as const;
 const temas = ["light", "dark"] as const;
 
@@ -33,58 +34,17 @@ async function abrir(page: Page, path: string, tema: (typeof temas)[number]) {
 
 for (const r of rotas) {
   test.describe(`ajustes da revisão 2 em ${r.path}`, () => {
-    test("o link de texto leva a #contato, em --soft, à direita do lugar na faixa de baixo (#36)", async ({ page }) => {
-      await page.goto(r.path);
-      const link = page.locator(".hero").getByRole("link", { name: r.contato, exact: true });
-      await expect(link).toHaveAttribute("href", "#contato");
-      await expect(link).toContainText("↓");
-      // Posição de layout (offset), não boundingBox: o lugar entra com `rise` (translateY) e, no CI lento, ainda estaria em movimento.
-      const m = await page.evaluate(() => {
-        const strip = document.querySelector<HTMLElement>(".hero-strip")!;
-        const place = document.querySelector<HTMLElement>(".place")!;
-        const a = document.querySelector<HTMLElement>(".hero .to-contact")!;
-        return { mesmaFaixa: a.parentElement === strip && place.parentElement === strip, placeRight: place.offsetLeft + place.offsetWidth, linkLeft: a.offsetLeft, linkRight: a.offsetLeft + a.offsetWidth, stripW: strip.clientWidth };
-      });
-      expect(m.mesmaFaixa).toBe(true);
-      expect(m.linkLeft).toBeGreaterThanOrEqual(m.placeRight); // o link fica depois do lugar, na mesma linha: sem sobreposição
-      expect(m.stripW - m.linkRight).toBeLessThanOrEqual(1); // e encostado na borda direita da faixa
-      // Texto simples: sem ícone, sem fundo, sem borda.
-      expect(await link.locator("svg, img").count()).toBe(0);
-      await expect(link).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
-      const soft = await page.evaluate(() => getComputedStyle(document.querySelector(".place")!).color);
-      await expect(link).toHaveCSS("color", soft);
-      // Foco no padrão dos outros links: passa a --ink.
-      const ink = await page.evaluate(() => getComputedStyle(document.querySelector(".place-city")!).color);
-      await link.focus();
-      await expect(link).toHaveCSS("color", ink);
-    });
-
-    test("o clique leva à seção Contato (endereço #contato) e o título dela aparece na tela", async ({ page }) => {
-      await page.goto(r.path);
-      await page.locator(".hero").getByRole("link", { name: r.contato, exact: true }).click();
-      await expect(page).toHaveURL(/#contato$/);
-      await expect.poll(() => page.locator("#contato").evaluate((el) => el.getBoundingClientRect().top < innerHeight), { timeout: 8000 }).toBe(true);
-    });
-
-    test("com Lenis o foco vai pra seção Contato", async ({ page }) => {
-      await page.emulateMedia({ reducedMotion: "no-preference" });
-      await page.goto(r.path);
-      await expect(page.locator("html")).toHaveClass(/lenis/);
-      await page.locator(".hero").getByRole("link", { name: r.contato, exact: true }).click();
-      await expect.poll(() => page.evaluate(() => document.activeElement?.id)).toBe("contato");
-    });
-
     for (const vp of [
       { width: 375, height: 667 },
       { width: 390, height: 844 },
     ]) {
-      test(`o título e o link cabem na primeira tela a ${vp.width}×${vp.height}`, async ({ browser }) => {
+      test(`o título e os ícones de contato cabem na primeira tela a ${vp.width}×${vp.height}`, async ({ browser }) => {
         const ctx = await browser.newContext({ viewport: vp });
         const page = await ctx.newPage();
         await page.goto(r.path);
         await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity)); // a entrada (translateY) acabou
         const h1 = (await page.locator("h1").boundingBox())!;
-        const link = (await page.locator(".to-contact").boundingBox())!;
+        const link = (await page.locator(".contact-icons").boundingBox())!;
         expect(h1.y + h1.height).toBeLessThan(vp.height);
         expect(link.y + link.height).toBeLessThanOrEqual(vp.height + 1);
         await ctx.close();
@@ -124,37 +84,6 @@ for (const r of rotas) {
       expect(m.linhas).toBeGreaterThan(1); // o teste só vale se quebrou
       expect(Math.abs(m.centroDot - m.meioPrimeiraLinha)).toBeLessThan(1.5);
       await ctx.close();
-    });
-
-    test("o separador nunca abre uma linha: quando um item da linha do lugar quebra, o separador fica fora do bloco", async ({ browser }) => {
-      for (const width of [320, 360, 390]) {
-        const ctx = await browser.newContext({ viewport: { width, height: 700 } });
-        const page = await ctx.newPage();
-        await page.goto(r.path);
-        // Texto maior (como o zoom de 200 %) força a quebra em qualquer largura.
-        for (const px of [14, 28]) {
-          await page.addStyleTag({ content: `.place-line{font-size:${px}px}` });
-          const m = await page.evaluate(() => {
-            const box = (s: string) => document.querySelector(s)!.getBoundingClientRect();
-            const line = box(".place-line");
-            const itens = [
-              { item: box(".place-city"), sep: null, antes: null },
-              { item: box(".place-clock"), sep: box(".place-clock .place-sep"), antes: box(".place-city") },
-              { item: box(".place-weather"), sep: box(".place-weather .place-sep"), antes: box(".place-clock") },
-            ];
-            return itens.slice(1).map(({ item, sep, antes }) => ({
-              quebrou: item.top > antes!.top + antes!.height / 2,
-              noInicio: sep!.right <= line.left + 0.5,
-              depoisDoAnterior: sep!.left >= antes!.right - 0.5,
-            }));
-          });
-          for (const x of m) {
-            if (x.quebrou) expect(x.noInicio, `${width}px, fonte ${px}`).toBe(true);
-            else expect(x.depoisDoAnterior, `${width}px, fonte ${px}`).toBe(true);
-          }
-        }
-        await ctx.close();
-      }
     });
 
     test("o mapa termina depois do Brasil (sem a África), com os pontos do mesmo tamanho e o texto perto do pino", async ({ browser }) => {

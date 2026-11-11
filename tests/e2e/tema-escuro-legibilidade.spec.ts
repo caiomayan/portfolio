@@ -11,7 +11,7 @@ const contrast = (a: string, b: string) => {
   return (hi + 0.05) / (lo + 0.05);
 };
 
-for (const path of ["/", "/en"]) {
+for (const path of ["/", "/en", "/es"]) {
   test.describe(`${path} no tema escuro`, () => {
     test.beforeEach(async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce" });

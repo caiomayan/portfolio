@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-// Primeira tela em moldura (#36): foto e título alinhados no meio e, logo abaixo, a faixa de lugar e Contato (sem linha em cima); o conjunto fica centrado na primeira tela.
+// Primeira tela em moldura (#36): foto e título alinhados no meio e, logo abaixo, a faixa de lugar (à esquerda) e ícones de contato (à direita, #38; sem linha em cima); o conjunto fica centrado na primeira tela.
 // Movimento reduzido: a entrada (`rise`, translateY) não desloca as caixas durante a medida.
-const rotas = ["/", "/en"];
+const rotas = ["/", "/en", "/es"];
 
 /** Mede, no navegador, o topo das maiúsculas do h1 e a linha de base da última linha da frase (com as métricas da fonte), e as caixas da foto e da faixa. */
 async function medir(page: import("@playwright/test").Page) {
@@ -91,29 +91,20 @@ for (const path of rotas) {
       }
     });
 
-    test("celular: foto, título, frase e só depois a faixa; o lugar e o Contato ficam na faixa, sem rolagem lateral a 320 px", async ({ browser }) => {
+    test("celular: foto, título, frase e só depois a faixa; o lugar e os ícones de contato ficam na faixa, sem rolagem lateral a 320 px", async ({ browser }) => {
       for (const [w, h] of [[375, 667], [320, 640]] as const) {
         const ctx = await browser.newContext({ viewport: { width: w, height: h }, reducedMotion: "reduce" });
         const page = await ctx.newPage();
         await page.goto(path);
         const m = await page.evaluate(() => {
           const box = (s: string) => document.querySelector(s)!.getBoundingClientRect();
-          const linha = document.querySelector(".place-line")!;
           return {
             ordem: [box(".photo").bottom, box("h1").top, box(".lead").top, box(".hero-strip").top],
             tituloBase: box("h1").bottom,
-            contatoDentro: document.querySelector(".hero-strip")!.contains(document.querySelector(".to-contact")),
-            contatoAbaixoDoLugar: box(".to-contact").top >= box(".place").bottom - 12 || box(".to-contact").left >= box(".place").right,
-            contatoDir: box(".to-contact").right,
+            contatoDentro: document.querySelector(".hero-strip")!.contains(document.querySelector(".contact-icons")),
+            contatoAbaixoDoLugar: box(".contact-icons").top >= box(".place").bottom - 12 || box(".contact-icons").left >= box(".place").right,
+            contatoDir: box(".contact-icons").right,
             stripDir: box(".hero-strip").right,
-            comecaComPonto: ((): boolean => {
-              const itens = [...linha.querySelectorAll<HTMLElement>(":scope > *")];
-              const esq = linha.getBoundingClientRect().left;
-              return itens.some((i) => {
-                const s = i.querySelector(".place-sep");
-                return !!s && Math.abs(i.getBoundingClientRect().left - esq) < 1 && s.getBoundingClientRect().right > esq + 0.5;
-              });
-            })(),
             largura: document.documentElement.scrollWidth, vw: innerWidth,
           };
         });
@@ -121,8 +112,7 @@ for (const path of rotas) {
         expect(m.tituloBase, `${w}px: título acima da dobra`).toBeLessThanOrEqual(h);
         expect(m.contatoDentro).toBe(true);
         expect(m.contatoAbaixoDoLugar).toBe(true);
-        expect(Math.abs(m.contatoDir - m.stripDir), "Contato na borda direita da faixa").toBeLessThanOrEqual(1);
-        expect(m.comecaComPonto, "nenhuma linha começa com ·").toBe(false);
+        expect(Math.abs(m.contatoDir - m.stripDir), "ícones de contato na borda direita da faixa").toBeLessThanOrEqual(1);
         expect(m.largura).toBeLessThanOrEqual(m.vw);
         await ctx.close();
       }

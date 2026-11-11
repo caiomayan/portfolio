@@ -1,4 +1,3 @@
-import { locales } from "@/lib/locales";
 import type { Content } from "./types";
 
 // Fonte do texto: docs/copy-deck.md
@@ -7,31 +6,27 @@ export const pt: Content = {
   hero: {
     name: "Caio Mayan",
     title: "Engenheiro de Software",
-    lead: "Construo produtos com IA aplicada, sobre uma base sólida de backend.",
-    place: { city: "João Pessoa, Brasil", offset: "UTC−3" },
-    toContact: "Contato",
+    lead: "A caminho da engenharia de IA: LLMs, agentes e o backend que os sustenta.",
+    place: { city: "João Pessoa, Brasil" },
     photoAlt: "Retrato de Caio Mayan",
   },
   contact: {
-    heading: "Contato",
-    email: "mail@caiomayan.com",
-    copyEmail: "Copiar e-mail",
-    copied: "Copiado",
-    copyFailed: "Não deu pra copiar. Selecione o e-mail.",
+    label: "Contato",
+    email: { label: "mail@caiomayan.com", href: "mailto:mail@caiomayan.com" },
     linkedin: { label: "LinkedIn", href: "https://www.linkedin.com/in/caiomayan/", external: true },
     github: { label: "GitHub", href: "https://github.com/caiomayan", external: true },
     resume: { label: "Currículo (PDF)", href: "/caio-mayan-curriculo.pdf" },
-    weather: {
-      labels: { clear: "Céu limpo", partly: "Parcialmente nublado", cloudy: "Nublado", fog: "Neblina", rain: "Chuva", storm: "Tempestade" },
-      credit: { prefix: "Dados do clima por", name: "Open-Meteo.com", href: "https://open-meteo.com/" },
-    },
-    languages: {
-      heading: "Idiomas",
-      items: [
-        { name: "Português", level: "nativo", flag: "BR" },
-        { name: "Inglês", level: "fluente · C2, EF SET", flag: "US" },
-      ],
-    },
+  },
+  weather: {
+    labels: { clear: "Céu limpo", partly: "Parcialmente nublado", cloudy: "Nublado", fog: "Neblina", rain: "Chuva", storm: "Tempestade" },
+    credit: { prefix: "Dados do clima por", name: "Open-Meteo.com", href: "https://open-meteo.com/" },
+  },
+  languages: {
+    heading: "Idiomas",
+    items: [
+      { name: "Inglês", level: "Avançado", sub: "Certificado EF SET · C2" },
+      { name: "Português", level: "Nativo" },
+    ],
   },
   experience: {
     heading: "Experiência",
@@ -100,7 +95,7 @@ export const pt: Content = {
       },
     ],
   },
-  ui: { themeToggle: "Tema escuro", currentLang: { label: "Português", lang: "pt", flag: "BR", country: "Brasil" }, otherLang: { label: "English", href: locales.en.path, lang: "en", flag: "US", country: "Estados Unidos" } },
+  ui: { themeToggle: "Tema escuro", language: "Idioma" },
   activity: { heading: "Atividade", total: { one: "{n} contribuição no último ano", other: "{n} contribuições no último ano" } },
   foundations: {
     heading: "Fundamentos",

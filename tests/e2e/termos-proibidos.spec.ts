@@ -23,7 +23,7 @@ const terms = (process.env.FORBIDDEN_TERMS ?? "")
   .map((t) => t.trim().toLowerCase())
   .filter(Boolean);
 
-const rotas = ["/", "/en"] as const;
+const rotas = ["/", "/en", "/es"] as const;
 const pdfs = ["/caio-mayan-curriculo.pdf", "/caio-mayan-resume.pdf"] as const;
 
 /** Procura os termos e o telefone em `text`; devolve só rótulos, nunca o conteúdo achado. */

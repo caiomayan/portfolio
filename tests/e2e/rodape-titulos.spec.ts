@@ -4,6 +4,7 @@ import { expect, test } from "@playwright/test";
 const rotas = [
   { path: "/", carmine: "Carmine", nota: "Projeto pessoal", contato: "Contato", credito: /^Dados do clima por Open-Meteo\.com$/ },
   { path: "/en", carmine: "Carmine", nota: "Personal project", contato: "Contact", credito: /^Weather data by Open-Meteo\.com$/ },
+  { path: "/es", carmine: "Carmine", nota: "Proyecto personal", contato: "Contacto", credito: /^Datos del clima de Open-Meteo\.com$/ },
 ] as const;
 
 // Parte opaca do recorte, em fração (iguais a --fade-x, --fade-right e --fade-y em app/globals.css): tem que conter o pino com folga pro pulso.
@@ -52,9 +53,8 @@ for (const r of rotas) {
           return `${cs.fontSize}/${cs.fontWeight}/${cs.letterSpacing}/${cs.color}`;
         });
       const base = await estilo("#experiencia h2");
-      for (const sel of ["#formacao h2", "#fundamentos h2", "#carmine h2", "#contato"]) expect(await estilo(sel), sel).toBe(base);
-      await expect(page.locator("#contato")).toHaveJSProperty("tagName", "H2");
-      await expect(page.getByRole("heading", { level: 2, name: r.contato })).toHaveAttribute("id", "contato");
+      for (const sel of ["#formacao h2", "#fundamentos h2", "#carmine h2", "#idiomas h2"]) expect(await estilo(sel), sel).toBe(base);
+      await expect(page.locator("#contato")).toHaveCount(0); // a seção Contato saiu (#38)
       await expect(page.getByRole("heading", { level: 2, name: r.carmine, exact: true })).toBeVisible();
       await expect(page.locator("section#carmine")).toHaveAttribute("aria-labelledby", "carmine-title");
     });
@@ -73,17 +73,7 @@ for (const r of rotas) {
       await expect(secao.locator("h2 img")).toHaveAttribute("alt", "");
     });
 
-    test("idiomas no desktop: bloco de largura contida (≤ 420 px)", async ({ page }) => {
-      await page.setViewportSize({ width: 1440, height: 900 });
-      await page.goto(r.path);
-      const grupo = page.locator(".contact-languages");
-      await grupo.scrollIntoViewIfNeeded();
-      const li = (await grupo.locator("li").first().boundingBox())!;
-      expect(li.width).toBeLessThanOrEqual(420);
-      expect(li.width).toBeGreaterThanOrEqual(300);
-    });
-
-    test("rodapé mínimo: © com o ano atual à esquerda, crédito do clima à direita, sem linha nem fundo, fora do Contato", async ({ page }) => {
+    test("rodapé mínimo: © com o ano atual à esquerda, crédito do clima à direita, sem linha nem fundo, depois de Idiomas", async ({ page }) => {
       await page.setViewportSize({ width: 1440, height: 900 });
       await page.goto(r.path);
       const rodape = page.locator("footer.site-footer");
@@ -91,15 +81,15 @@ for (const r of rotas) {
       await rodape.scrollIntoViewIfNeeded();
       await expect(rodape.locator(".site-footer-copy")).toHaveText(`© ${new Date().getFullYear()} Caio Mayan`);
       await expect(rodape.locator(".weather-credit")).toHaveText(r.credito);
-      await expect(page.locator(".contact footer, .contact .weather-credit")).toHaveCount(0);
+      await expect(page.locator("#idiomas footer, #idiomas .weather-credit")).toHaveCount(0);
       const [copy, cred, contato] = await Promise.all([
         rodape.locator(".site-footer-copy").boundingBox(),
         rodape.locator(".weather-credit").boundingBox(),
-        page.locator("section.contact").boundingBox(),
+        page.locator("#idiomas").boundingBox(),
       ]);
       expect(cred!.x).toBeGreaterThan(copy!.x + copy!.width);
       expect(Math.abs(cred!.y - copy!.y)).toBeLessThan(6); // mesma linha
-      expect(copy!.y).toBeGreaterThan(contato!.y + contato!.height - 1); // depois do Contato
+      expect(copy!.y).toBeGreaterThan(contato!.y + contato!.height - 1); // depois de Idiomas
       const caixa = await rodape.evaluate((e) => {
         const cs = getComputedStyle(e);
         return { borda: cs.borderTopWidth, fundo: cs.backgroundColor };

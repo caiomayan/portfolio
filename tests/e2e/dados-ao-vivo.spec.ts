@@ -8,11 +8,12 @@ const TOKEN_FALSO = "token-de-teste-nao-e-segredo";
 const rotas = [
   { path: "/", clima: "Parcialmente nublado", titulo: "Atividade", total: "1.234 contribuições no último ano", credito: "Dados do clima por" },
   { path: "/en", clima: "Partly cloudy", titulo: "Activity", total: "1,234 contributions in the last year", credito: "Weather data by" },
+  { path: "/es", clima: "Parcialmente nublado", titulo: "Actividad", total: "1.234 contribuciones en el último año", credito: "Datos del clima de" },
 ] as const;
 
 for (const r of rotas) {
   test.describe(`dados ao vivo em ${r.path}`, () => {
-    test("clima na primeira tela, ao lado da hora, no HTML do servidor, com ícone da noite; crédito no rodapé", async ({ page, request }) => {
+    test("clima na primeira tela, na linha embaixo da hora, no HTML do servidor, com ícone da noite; crédito no rodapé", async ({ page, request }) => {
       const html = await (await request.get(r.path)).text();
       expect(html).toContain("28°C");
       await page.goto(r.path);
@@ -25,33 +26,30 @@ for (const r of rotas) {
       // O servidor falso responde is_day: 0 (noite): parcialmente nublado vira nuvem com lua, não nuvem com sol.
       await expect(clima.locator("svg")).toHaveClass(/lucide-cloud-moon/);
       await expect(clima.locator("svg")).not.toHaveClass(/lucide-cloud-sun/);
-      // Ao lado da hora (mesma linha da legenda do mapa), sem mexer no texto da hora.
-      await expect(page.locator(".place-time")).toHaveText(/^\d{2}:\d{2} \(UTC−3\)$/);
+      // Terceira linha do lugar (#38): embaixo da hora, alinhado à esquerda com ela, sem separador e sem o fuso na tela.
+      await expect(page.locator(".place-time")).toHaveText(/^\d{2}:\d{2}$/);
       const [t, c] = await Promise.all([page.locator(".place-time").boundingBox(), clima.boundingBox()]);
-      expect(Math.abs(t!.y - c!.y)).toBeLessThan(12);
-      expect(c!.x).toBeGreaterThan(t!.x);
-      // Juntos na mesma linha, com um separador discreto: o vão entre o fim da hora e o início do clima é curto (sem o buraco de antes).
-      expect(c!.x - (t!.x + t!.width)).toBeLessThan(32);
-      await expect(clima.locator(".place-sep")).toHaveText("·"); // separador ornamental (#34), aria-hidden
-      await expect(clima.locator(".place-sep")).toHaveAttribute("aria-hidden", "true");
-      // Crédito CC BY 4.0 do Open-Meteo: no rodapé (nunca na primeira tela nem no Contato), depois das línguas.
-      await expect(page.locator(".hero .weather-credit, .contact .weather-credit")).toHaveCount(0);
+      expect(c!.y).toBeGreaterThanOrEqual(t!.y + t!.height - 1);
+      expect(Math.abs(c!.x - t!.x)).toBeLessThan(2);
+      await expect(clima.locator(".place-sep")).toHaveCount(0);
+      // Crédito CC BY 4.0 do Open-Meteo: no rodapé (nunca na primeira tela), depois da seção Idiomas.
+      await expect(page.locator(".hero .weather-credit")).toHaveCount(0);
       const credito = page.locator("footer .weather-credit");
       await credito.scrollIntoViewIfNeeded();
-      const [lg, cr] = await Promise.all([page.locator(".contact .contact-languages").boundingBox(), credito.boundingBox()]);
+      const [lg, cr] = await Promise.all([page.locator("#idiomas").boundingBox(), credito.boundingBox()]);
       expect(cr!.y).toBeGreaterThan(lg!.y + lg!.height - 1);
       await expect(credito).toContainText(r.credito);
       await expect(credito.getByRole("link", { name: "Open-Meteo.com" })).toHaveAttribute("href", "https://open-meteo.com/");
     });
 
-    test("gráfico de contribuições antes do Contato, com título e total", async ({ page }) => {
+    test("gráfico de contribuições antes de Idiomas, com título e total", async ({ page }) => {
       await page.goto(r.path);
       const secao = page.locator("section.activity");
       await expect(secao.getByRole("heading", { level: 2, name: r.titulo })).toBeVisible();
       await expect(secao.locator(".activity-total")).toHaveText(r.total);
       await expect(secao.getByRole("img", { name: r.total })).toHaveCount(1);
-      const ordem = await page.evaluate(() => [...document.querySelectorAll("section")].map((s) => s.className || s.id));
-      expect(ordem.indexOf("activity")).toBe(ordem.indexOf("contact") - 1);
+      const ordem = await page.evaluate(() => [...document.querySelectorAll("main > section")].map((s) => s.className || s.id));
+      expect(ordem.indexOf("activity")).toBe(ordem.indexOf("idiomas") - 1);
       // 53 semanas de 7 dias.
       await expect(secao.locator(".activity-week")).toHaveCount(53);
       await expect(secao.locator(".activity-day")).toHaveCount(53 * 7);

@@ -4,12 +4,12 @@ import { rotasTexto, type RotaTexto } from "./textos";
 // Issue #18: botões sem fundo em repouso, hero sem legenda, logo da TechEduConnect inteiro.
 const TRANSPARENTE = "rgba(0, 0, 0, 0)";
 
-for (const path of ["/", "/en"] as RotaTexto[]) {
+for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
   const t = rotasTexto[path];
   test.describe(`ajustes em ${path}`, () => {
-    test("tema e língua: sem fundo em repouso; fundo no hover e no foco; foco visível", async ({ page }) => {
+    test("tema e idioma: sem fundo em repouso; fundo no hover e no foco; foco visível", async ({ page }) => {
       await page.goto(path);
-      const alvos = [page.getByRole("button", { name: t.tema }), page.getByRole("link", { name: t.outraLingua })];
+      const alvos = [page.getByRole("button", { name: t.tema }), page.getByRole("button", { name: new RegExp(`^${t.idioma}`) })];
       for (const alvo of alvos) {
         await expect(alvo).toHaveCSS("background-color", TRANSPARENTE);
         await alvo.hover();
@@ -26,23 +26,6 @@ for (const path of ["/", "/en"] as RotaTexto[]) {
       await expect(alvos[0]).toBeFocused();
       await expect(alvos[0]).not.toHaveCSS("background-color", TRANSPARENTE);
       expect(await alvos[0].evaluate((el) => getComputedStyle(el).outlineStyle)).not.toBe("none");
-    });
-
-    test("copiar e-mail: sem fundo em repouso; fundo no hover e no foco do teclado", async ({ page }) => {
-      await page.goto(path);
-      const copiar = page.getByRole("button", { name: t.copiar });
-      await copiar.scrollIntoViewIfNeeded();
-      await expect(copiar).toHaveCSS("background-color", TRANSPARENTE);
-      await copiar.hover();
-      await expect(copiar).not.toHaveCSS("background-color", TRANSPARENTE);
-      await page.mouse.move(2, 2);
-      await expect(copiar).toHaveCSS("background-color", TRANSPARENTE);
-      // Foco pelo teclado (:focus-visible): sai e volta com Shift+Tab e Tab.
-      await copiar.focus();
-      await page.keyboard.press("Shift+Tab");
-      await page.keyboard.press("Tab");
-      await expect(copiar).toBeFocused();
-      await expect(copiar).not.toHaveCSS("background-color", TRANSPARENTE);
     });
 
     test("sem nome nem cidade embaixo da foto; o lugar (mapa, cidade e hora) embaixo da frase, do conteúdo", async ({ page }) => {

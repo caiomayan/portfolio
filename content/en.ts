@@ -1,4 +1,3 @@
-import { locales } from "@/lib/locales";
 import type { Content } from "./types";
 
 // Fonte do texto: docs/copy-deck.md (seção English). O Caio revisa no PR da versão em inglês.
@@ -7,31 +6,27 @@ export const en: Content = {
   hero: {
     name: "Caio Mayan",
     title: "Software Engineer",
-    lead: "I build applied AI products on a solid backend foundation.",
-    place: { city: "João Pessoa, Brazil", offset: "UTC−3" },
-    toContact: "Contact",
+    lead: "On the path to AI engineering: LLMs, agents and the backend that holds them up.",
+    place: { city: "João Pessoa, Brazil" },
     photoAlt: "Portrait of Caio Mayan",
   },
   contact: {
-    heading: "Contact",
-    email: "mail@caiomayan.com",
-    copyEmail: "Copy email",
-    copied: "Copied",
-    copyFailed: "Couldn't copy. Select the email.",
+    label: "Contact",
+    email: { label: "mail@caiomayan.com", href: "mailto:mail@caiomayan.com" },
     linkedin: { label: "LinkedIn", href: "https://www.linkedin.com/in/caiomayan/", external: true },
     github: { label: "GitHub", href: "https://github.com/caiomayan", external: true },
     resume: { label: "Resume (PDF)", href: "/caio-mayan-resume.pdf" },
-    weather: {
-      labels: { clear: "Clear sky", partly: "Partly cloudy", cloudy: "Cloudy", fog: "Fog", rain: "Rain", storm: "Thunderstorm" },
-      credit: { prefix: "Weather data by", name: "Open-Meteo.com", href: "https://open-meteo.com/" },
-    },
-    languages: {
-      heading: "Languages",
-      items: [
-        { name: "Portuguese", level: "native", flag: "BR" },
-        { name: "English", level: "fluent · C2, EF SET", flag: "US" },
-      ],
-    },
+  },
+  weather: {
+    labels: { clear: "Clear sky", partly: "Partly cloudy", cloudy: "Cloudy", fog: "Fog", rain: "Rain", storm: "Thunderstorm" },
+    credit: { prefix: "Weather data by", name: "Open-Meteo.com", href: "https://open-meteo.com/" },
+  },
+  languages: {
+    heading: "Languages",
+    items: [
+      { name: "English", level: "Advanced", sub: "EF SET certificate · C2" },
+      { name: "Portuguese", level: "Native" },
+    ],
   },
   experience: {
     heading: "Experience",
@@ -100,7 +95,7 @@ export const en: Content = {
       },
     ],
   },
-  ui: { themeToggle: "Dark theme", currentLang: { label: "English", lang: "en", flag: "US", country: "United States" }, otherLang: { label: "Português", href: locales.pt.path, lang: "pt", flag: "BR", country: "Brazil" } },
+  ui: { themeToggle: "Dark theme", language: "Language" },
   activity: { heading: "Activity", total: { one: "{n} contribution in the last year", other: "{n} contributions in the last year" } },
   foundations: {
     heading: "Foundations",

@@ -1,20 +1,15 @@
 /* Dados ao vivo (#28): clima ao lado da hora, na primeira tela (#29), e gráfico de contribuições do GitHub. Preto e branco: só tons do tema. */
 
 /* Clima: renderizado no servidor, ao lado da hora (que entra no cliente). */
-/* Hora e clima na mesma linha, juntos, alinhados pela linha de base: "07:02 (UTC−3) · ☁ 28°C". O separador é ornamento (sem texto alternativo). */
-/* O separador (#34) mora no espaço à esquerda do clima (position absolute, right: 100%), e o contêiner corta o que passa da borda: se o clima quebrar pra linha de baixo, o separador cai fora e a linha nunca começa com "·". */
-/* #36: a linha do lugar é uma só (cidade · hora · clima); cada item pendura o próprio separador à esquerda, e o contêiner corta o que passa da borda. */
-.place-line { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 16px; white-space: nowrap; overflow-x: clip; }
-.place-clock { position: relative; }
-.place-weather { position: relative; display: inline-flex; align-items: baseline; gap: 6px; color: var(--soft); font-variant-numeric: tabular-nums; }
-.place-sep { position: absolute; right: 100%; width: 16px; text-align: center; }
+/* #38: o lugar são três linhas empilhadas (cidade, hora, clima); a pilha em si está em app/globals.css (`.place-line`). */
+.place-weather { display: inline-flex; align-items: center; gap: 6px; color: var(--soft); font-variant-numeric: tabular-nums; }
 .weather-icon { flex: none; align-self: center; color: var(--soft); }
 /* Crédito do Open-Meteo no rodapé (CC BY 4.0). */
 .weather-credit { margin: 0; font-size: var(--text-small); color: var(--soft); }
 .weather-credit a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
 .weather-credit a:hover { color: var(--ink); text-decoration-color: var(--ink); }
 
-/* Atividade: depois das seções de conteúdo e antes do Contato. */
+/* Atividade: depois das seções de conteúdo e antes de Idiomas. */
 .activity { width: min(var(--max), 100% - 2 * var(--gutter)); margin: 0 auto; padding-block: 96px 0; }
 .activity h2 { margin: 0 0 8px; font-size: var(--text-lead); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
 .activity-total { margin: 0 0 24px; font-size: var(--text-small); color: var(--soft); font-variant-numeric: tabular-nums; }

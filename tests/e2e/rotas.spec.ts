@@ -4,6 +4,7 @@ import { rotasTexto } from "./textos";
 const rotas = [
   { path: "/", lang: "pt-BR" },
   { path: "/en", lang: "en" },
+  { path: "/es", lang: "es" },
 ] as const;
 
 for (const { path, lang } of rotas) {

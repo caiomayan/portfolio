@@ -4,8 +4,9 @@ import { rotasTexto } from "./textos";
 
 // Issue #8: prévia de link por língua, sitemap e robots.
 const rotas = [
-  { path: "/", titulo: "Caio Mayan — Engenheiro de Software", locale: "pt_BR", imagem: "/opengraph-image", url: SITE_URL },
-  { path: "/en", titulo: "Caio Mayan — Software Engineer", locale: "en_US", imagem: "/en/opengraph-image", url: `${SITE_URL}/en` },
+  { path: "/", titulo: "Caio Mayan — Engenheiro de Software", locale: "pt_BR", imagem: "/og/pt", url: SITE_URL },
+  { path: "/en", titulo: "Caio Mayan — Software Engineer", locale: "en_US", imagem: "/og/en", url: `${SITE_URL}/en` },
+  { path: "/es", titulo: "Caio Mayan — Ingeniero de Software", locale: "es_ES", imagem: "/og/es", url: `${SITE_URL}/es` },
 ] as const;
 
 for (const r of rotas) {
@@ -32,7 +33,7 @@ for (const r of rotas) {
       const og = await page.locator('head meta[property="og:image"]').getAttribute("content");
       const tw = await page.locator('head meta[name="twitter:image"]').getAttribute("content");
       expect(og).toMatch(new RegExp(`^${SITE_URL}${r.imagem}`));
-      expect(tw).toMatch(new RegExp(`^${SITE_URL}${r.imagem.replace("opengraph", "twitter")}`));
+      expect(tw).toMatch(new RegExp(`^${SITE_URL}${r.imagem}`));
       for (const url of [og!, tw!]) {
         const res = await request.get(new URL(url).pathname);
         expect(res.status()).toBe(200);
@@ -42,12 +43,14 @@ for (const r of rotas) {
   });
 }
 
-test("sitemap.xml lista as duas rotas com alternativas de língua", async ({ request }) => {
+test("sitemap.xml lista as três rotas com alternativas de língua", async ({ request }) => {
   const res = await request.get("/sitemap.xml");
   expect(res.status()).toBe(200);
   const xml = await res.text();
   expect(xml).toContain(`<loc>${SITE_URL}</loc>`);
   expect(xml).toContain(`<loc>${SITE_URL}/en</loc>`);
+  expect(xml).toContain(`<loc>${SITE_URL}/es</loc>`);
+  expect(xml).toContain(`hreflang="es"`);
   expect(xml).toContain(`hreflang="en"`);
   expect(xml).toContain(`hreflang="pt-BR"`);
 });

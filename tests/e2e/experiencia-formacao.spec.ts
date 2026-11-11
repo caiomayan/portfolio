@@ -2,13 +2,13 @@ import { expect, test } from "@playwright/test";
 import { rotasTexto, type RotaTexto } from "./textos";
 
 // Texto: docs/copy-deck.md (seções Experiência e Formação).
-for (const path of ["/", "/en"] as RotaTexto[]) {
+for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
   const t = rotasTexto[path];
   test.describe(`experiência e formação em ${path}`, () => {
-    test("a página inteira segue a ordem: apresentação, Carmine, experiência, formação, fundamentos, contato", async ({ page }) => {
+    test("a página inteira segue a ordem: apresentação, Carmine, experiência, formação, fundamentos, idiomas", async ({ page }) => {
       await page.goto(path);
       const tops = await Promise.all(
-        [".hero", "#carmine", "#experiencia", "#formacao", "#fundamentos", ".contact"].map(async (sel) => (await page.locator(sel).boundingBox())!.y),
+        [".hero", "#carmine", "#experiencia", "#formacao", "#fundamentos", "#idiomas"].map(async (sel) => (await page.locator(sel).boundingBox())!.y),
       );
       expect(tops).toEqual([...tops].sort((a, b) => a - b));
       expect(new Set(tops).size).toBe(6);

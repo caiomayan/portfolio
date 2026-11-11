@@ -28,14 +28,14 @@ async function coresNaoCinza(page: Page): Promise<string[]> {
   }, TOLERANCIA);
 }
 
-for (const rota of ["/", "/en"]) {
+for (const rota of ["/", "/en", "/es"]) {
   for (const tema of ["light", "dark"]) {
     test(`${rota} (${tema}): texto, fundos, sublinhados e pontos só em cinza`, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce" });
       await page.addInitScript((tm) => (tm === "dark" ? localStorage.setItem("theme", "dark") : localStorage.removeItem("theme")), tema);
       await page.goto(rota);
       // Estados que desenham sublinhado/realce: hover nos links e no e-mail.
-      for (const sel of [".mail-address", "#carmine .link-external", "#experiencia h3 a"]) {
+      for (const sel of [".contact-link", "#carmine .link-external", "#experiencia h3 a"]) {
         const el = page.locator(sel).first();
         if (await el.count()) {
           await el.scrollIntoViewIfNeeded();

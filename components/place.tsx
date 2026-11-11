@@ -9,7 +9,7 @@ const CITY = { lon: -34.88, lat: -7.12 };
 
 /**
  * Lugar na primeira tela (#29, no lugar da linha "João Pessoa, PB"): mapa de pontos compacto (recorte das Américas e do Atlântico,
- * mesmos dados do mapa da #24) com o pino pulsando em João Pessoa; ao lado, a cidade, a hora local e o clima (#28).
+ * mesmos dados do mapa da #24) com o pino pulsando em João Pessoa; ao lado, em três linhas empilhadas, a cidade, a hora local e o clima (#28, #38).
  * Componente de servidor: só a hora (`LocalTime`) vai pro cliente. O mapa é decorativo (`aria-hidden`); cidade e hora estão em texto.
  * `weather`: clima já renderizado no servidor; `null` quando a API falhou.
  */
@@ -27,14 +27,10 @@ export function Place({ place, weather }: { place: Content["hero"]["place"]; wea
           <span className="place-dot" />
         </span>
       </div>
-      {/* Uma linha só (#36): cidade · hora · clima. Os separadores "·" são ornamento e ficam pendurados à esquerda de cada item,
-          então, se a linha quebrar, nenhuma linha começa com "·". */}
+      {/* Três linhas (#38): cidade, hora e clima (ícone e temperatura); o mapa fica centrado na altura delas. */}
       <p className="place-line">
         <span className="place-city">{place.city}</span>
-        <span className="place-clock">
-          <span className="place-sep" aria-hidden="true">·</span>
-          <LocalTime offset={place.offset} />
-        </span>
+        <LocalTime />
         {weather?.now}
       </p>
     </div>
