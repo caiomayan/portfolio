@@ -11,8 +11,11 @@ declare global {
 const idioma = (page: Page) => page.getByRole("button", { name: /^(Idioma|Language)/ });
 const tema = (page: Page) => page.getByRole("button", { name: /tema|theme/i });
 const capsula = (page: Page) => page.locator(".top-actions");
-/** Espera a entrada da cápsula acabar (opacidade cheia): o axe mede o contraste com o que está na tela. */
-const pousada = (page: Page) => expect.poll(() => capsula(page).evaluate((el) => el.getAnimations().filter((a) => a.playState === "running").length)).toBe(0);
+/** Espera as animações de entrada acabarem (opacidade cheia): o axe mede o contraste com o que está na tela. */
+const pousada = (page: Page) =>
+  expect
+    .poll(() => page.evaluate(() => document.getAnimations().filter((a) => a.playState === "running" && a.effect?.getComputedTiming().iterations !== Infinity).length))
+    .toBe(0); // também as entradas da primeira tela (o pino do mapa pulsa pra sempre e fica de fora)
 const rolarPara = async (page: Page, y: number) => {
   await page.evaluate((v) => window.scrollTo(0, v), y);
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(y - 5);
