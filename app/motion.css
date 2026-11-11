@@ -40,7 +40,7 @@
   /* Abertura (#39, components/opening.tsx): enquanto `html[data-opening]` existe (o script inline de components/site-shell.tsx o põe antes da primeira pintura,
      só na primeira visita da aba e sem movimento reduzido), uma tela de cobertura em --bg mostra a assinatura grande se escrevendo e a do topo fica invisível
      (mantém o lugar: é ali que a grande vai parar). A página por baixo carrega normal, com o h1 pintado, e a cobertura só some (opacity) depois do voo.
-     O traço é CSS: nasce na primeira pintura, sem esperar o JavaScript; o voo (transform) e o fade da cobertura são WAAPI, por JS. Os tempos repetem lib/opening.ts. */
+     O traço é CSS: nasce na primeira pintura, sem esperar o JavaScript; o voo (transform) e o fade da cobertura são WAAPI, disparados por um script inline (lib/opening.ts), sem esperar o React. Os tempos repetem lib/opening.ts. */
   html[data-opening] .opening { display: grid; place-items: center; position: fixed; inset: 0; z-index: 100; color: var(--ink); }
   .opening-scrim { position: absolute; inset: 0; background: var(--bg); } /* só ele some (opacity); a assinatura grande fica opaca até o fim */
   html[data-opening] .signature-mark .signature { visibility: hidden; }

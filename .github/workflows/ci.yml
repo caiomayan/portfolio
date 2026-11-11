@@ -14,7 +14,8 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Fixo em 24.04 (decisão do coordenador): o ubuntu-latest migrou pro 26.04, cujo runner não resolve archive.ubuntu.com e quebra a instalação das dependências do navegador. Voltar a ubuntu-latest quando isso for corrigido.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
       # PR vindo de fork não recebe secrets: só nesse caso o teste de termos proibidos é pulado, com aviso.

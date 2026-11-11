@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import type { ReactNode } from "react";
 import type { Lang } from "@/content";
-import { openingScript } from "@/lib/opening";
+import { openingFlightScript, openingScript } from "@/lib/opening";
 import { locales } from "@/lib/locales";
 import { Opening } from "@/components/opening";
 import { Parallax } from "@/components/parallax";
@@ -30,6 +30,8 @@ export function SiteShell({ lang, children }: { lang: Lang; children: ReactNode 
         <script dangerouslySetInnerHTML={{ __html: openingScript }} />
         <Opening />
         {children}
+        {/* #39: o voo, o fade e o pular da abertura, sem esperar a hidratação (a cobertura e a assinatura do topo já estão no DOM). */}
+        <script dangerouslySetInnerHTML={{ __html: openingFlightScript }} />
         <Reveal />
         <ThemeKeeper />
         <SmoothScroll />

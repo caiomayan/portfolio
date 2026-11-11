@@ -164,17 +164,30 @@ test.describe("abertura (#39)", () => {
     await ctx.close();
   });
 
-  test("se o script da página falhar, o atributo sai sozinho e o conteúdo não fica escondido", async ({ browser }) => {
+  test("a abertura não depende da hidratação: sem o pacote JS da página, ela termina sozinha em ≈ 1,6 s, antes do prazo de segurança", async ({ browser }) => {
     const ctx = await browser.newContext({ reducedMotion: "no-preference" });
     const page = await ctx.newPage();
     await page.route("**/_next/static/**/*.js", (route) => route.abort());
     await page.goto("/");
-    await expect(html(page)).toHaveAttribute("data-opening", "run"); // o script inline rodou; o pacote, não
-    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/, { timeout: 8000 }); // o prazo de segurança (4 s) o tira
-    await expect(cobertura(page)).toBeHidden();
-    await expect(topo(page)).toBeVisible();
+    await expect(html(page)).toHaveAttribute("data-opening", "run"); // os scripts inline rodaram; o pacote, não
+    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/, { timeout: 3500 }); // < 4 s do prazo de segurança
+    expect(await cobertura(page).evaluate((el) => getComputedStyle(el).display)).toBe("none");
+    expect(await topo(page).evaluate((el) => getComputedStyle(el).visibility)).toBe("visible");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await ctx.close();
+  });
+
+  test("o prazo de segurança (4 s) tira a cobertura mesmo se a coreografia travar", async ({ page }) => {
+    await page.addInitScript(() => {
+      Element.prototype.animate = function () { // sem WAAPI o script inline termina na hora; aqui simulamos uma animação que nunca acaba
+        return { finished: new Promise(() => {}), cancel() {} } as unknown as Animation;
+      };
+    });
+    await page.goto("/");
+    await expect(html(page)).toHaveAttribute("data-opening", "run");
+    await expect(html(page)).not.toHaveAttribute("data-opening", /.*/, { timeout: 6000 });
+    await expect(cobertura(page)).toHaveCount(0);
+    await expect(topo(page)).toBeVisible();
   });
 
   test("durante a abertura só transform, opacity e o traço (stroke-dashoffset) animam", async ({ page }) => {
