@@ -214,42 +214,25 @@ export function arm(): () => void {
 }
 
 /* ====================================================================================================================
-   Transição da primeira tela para o resto (#39, rodada 4), PRÉVIA com duas variantes (`html[data-transicao]`, posto por lib/transition.ts a partir de
-   `?transicao=`). Uma peça só, presa à saída da primeira tela: o scrub vai do começo da saída até a primeira tela ter saído e depois fica parado. É reversível
-   (rolar de volta desfaz) e por isso NÃO usa o ciclo "assenta e para" das entradas: fica fora de `items`, sem `data-motion`, sem vigia e sem o `focusin`. A perdedora
-   sai antes do merge: apague o ramo dela aqui, em lib/transition.ts, em app/motion.css (blocos "TRANSIÇÃO") e o parâmetro nos testes.
+   A folha (#39, rodadas 4 e 5): no desktop (≥ 900×700, sem movimento reduzido) a primeira tela inteira (topo e primeira tela) fica travada por CSS (app/motion.css)
+   e o resto da página sobe por cima como uma folha. Aqui só o recuo por baixo: enquanto a folha sobe (do fundo da janela até o topo) a primeira tela encolhe de
+   leve (1 → 0,95) e esmaece (1 → 0,25), preso à rolagem (scrub). Reversível (rolar de volta desfaz), então NÃO usa o ciclo "assenta e para" das entradas: fica fora de
+   `items`, sem `data-motion`, sem vigia e sem o `focusin`. Só onde o CSS prende a primeira tela (`position: sticky`); no celular não há folha.
    ==================================================================================================================== */
 export function armHero(): () => void {
   const hero = document.querySelector<HTMLElement>(".hero");
   const rest = document.querySelector<HTMLElement>(".rest");
-  if (!hero || !rest || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return () => {};
+  if (!hero || !rest || window.matchMedia("(prefers-reduced-motion: reduce)").matches || getComputedStyle(hero).position !== "sticky") return () => {};
   gsap.registerPlugin(ScrollTrigger);
-  const desktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  const scrub = desktop ? 0.5 : true; // no desktop o Lenis já suaviza; no toque, sem atraso
-  const folha = document.documentElement.dataset.transicao === "folha";
-  let tl: gsap.core.Timeline | gsap.core.Tween | null = null;
-
-  if (folha) {
-    // TRANSIÇÃO B (folha): a primeira tela (presa por CSS, uma tela só) recua e escurece de leve por baixo enquanto a folha sobe. Só onde o CSS prende a primeira tela.
-    if (getComputedStyle(hero).position === "sticky") {
-      tl = gsap.fromTo(
-        hero,
-        { scale: 1, opacity: 1, transformOrigin: "50% 40%" },
-        { scale: 0.95, opacity: 0.25, ease: "none", scrollTrigger: { trigger: rest, start: "top bottom", end: "top top", scrub, invalidateOnRefresh: true } },
-      );
-    }
-  } else {
-    // TRANSIÇÃO A (recuo): conforme a primeira tela sai por cima, o conteúdo recua como um bloco (scale, translateY pequeno e opacity), do começo da rolagem até ela
-    // ter saído. O desktop recua mais (0,94, 48 px, some); no celular, mais leve (0,97, 16 px, vai a 20 %).
-    const t = gsap.timeline({ scrollTrigger: { trigger: hero, start: 0, end: "bottom top", scrub, invalidateOnRefresh: true } });
-    t.fromTo(hero, { scale: 1, y: 0, transformOrigin: "50% 50%" }, { scale: desktop ? 0.94 : 0.97, y: desktop ? 48 : 16, ease: "none", duration: 1 }, 0);
-    t.fromTo(hero, { opacity: 1 }, { opacity: desktop ? 0 : 0.2, ease: "power2.in", duration: 1 }, 0);
-    tl = t;
-  }
-
+  const scrub = window.matchMedia("(hover: hover) and (pointer: fine)").matches ? 0.5 : true; // no desktop o Lenis já suaviza; no toque, sem atraso
+  const tl = gsap.fromTo(
+    hero,
+    { scale: 1, opacity: 1, transformOrigin: "50% 40%" },
+    { scale: 0.95, opacity: 0.25, ease: "none", scrollTrigger: { trigger: rest, start: "top bottom", end: "top top", scrub, invalidateOnRefresh: true } },
+  );
   return () => {
-    tl?.scrollTrigger?.kill();
-    tl?.kill();
+    tl.scrollTrigger?.kill();
+    tl.kill();
     gsap.set(hero, { clearProps: "transform,opacity,transformOrigin" });
   };
 }

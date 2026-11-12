@@ -3,7 +3,6 @@ import { Analytics } from "@vercel/analytics/next";
 import type { ReactNode } from "react";
 import type { Lang } from "@/content";
 import { openingFlightScript, openingScript } from "@/lib/opening";
-import { transitionScript } from "@/lib/transition";
 import { locales } from "@/lib/locales";
 import { Choreography } from "@/components/choreography";
 import { Opening } from "@/components/opening";
@@ -27,7 +26,6 @@ export function SiteShell({ lang, children }: { lang: Lang; children: ReactNode 
         {/* Antes de qualquer conteúdo: o tema já está aplicado na primeira pintura. */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {/* #39: decide, antes da primeira pintura, se a abertura roda nesta visita (uma vez por aba). Sem JavaScript nada é escondido. */}
-        <script dangerouslySetInnerHTML={{ __html: transitionScript }} />
         <script dangerouslySetInnerHTML={{ __html: openingScript }} />
         <Opening />
         {children}

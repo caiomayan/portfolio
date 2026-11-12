@@ -42,7 +42,10 @@
      (mantém o lugar: é ali que a grande vai parar). A página por baixo carrega normal, com o h1 pintado, e a cobertura só some (opacity) depois do voo.
      O traço é CSS: nasce na primeira pintura, sem esperar o JavaScript; o voo (transform) e o fade da cobertura são WAAPI, disparados por um script inline (lib/opening.ts), sem esperar o React. Os tempos repetem lib/opening.ts. */
   html[data-opening] .opening { display: grid; place-items: center; position: fixed; inset: 0; z-index: 100; color: var(--ink); }
-  .opening-scrim { position: absolute; inset: 0; background: var(--bg); } /* só ele some (opacity); a assinatura grande fica opaca até o fim */
+  /* A cobertura é uma folha (#39, rodada 5): em --bg, cantos de baixo arredondados e a sombra de baixo (a folha da transição, ao contrário); se recolhe pra cima
+     (translateY, lib/opening.ts) revelando a primeira tela. A assinatura grande fica opaca e por cima dela até o fim. */
+  .opening-scrim { position: absolute; inset: 0; background: var(--bg); border-radius: 0 0 28px 28px; box-shadow: var(--sheet-shadow-down); will-change: transform; }
+  .opening-ink { opacity: 0.55; } /* o script a leva a 1 (pressão da caneta); sem ele (falha) o contorno fica mais leve só até o fim da abertura */
   html[data-opening] .signature-mark .signature { visibility: hidden; }
   /* Invólucro (Y do voo) e <svg> (X e escala do voo): o script assenta os dois no tamanho e no lugar da assinatura do topo e anima a partir do grande. */
   .opening-art { position: relative; width: min(72vw, 560px); will-change: transform; }
@@ -111,26 +114,31 @@
 }
 
 /* ====================================================================================================================
-   Transição da primeira tela para o resto (#39, rodada 4). PRÉVIA com duas variantes, `?transicao=recuo` (padrão) e `?transicao=folha`; a perdedora sai antes do merge.
-   `.stage` (a primeira tela) e `.rest` (as outras seções) são blocos `display: contents`: sem efeito no layout, a não ser na "folha".
+   A folha (#39, rodadas 4 e 5). `.stage` (a primeira tela) e `.rest` (as outras seções) são blocos `display: contents`: sem efeito no layout, a não ser na folha.
    ==================================================================================================================== */
 .stage, .rest { display: contents; }
 
-/* TRANSIÇÃO B (folha): início. A primeira tela fica presa por UMA tela (o `.stage` termina com um vão de 100svh que a `.rest` puxa de volta com a margem negativa: a altura
-   da página não muda e a primeira tela se solta depois de exatamente uma tela de rolagem) e o resto sobe por cima, como uma folha em --bg, cantos de cima arredondados,
-   um fio e uma sombra leve (--sheet-shadow, tokens dos dois temas). Só no desktop com altura (a primeira tela tem que caber na janela; no celular ela não é de tela cheia)
-   e sem movimento reduzido. O recuo da primeira tela por baixo (scale e opacity) é o scrub em lib/choreography.ts. */
+/* Só no desktop com altura (a primeira tela tem que caber na janela; no celular ela não é de tela cheia) e sem movimento reduzido.
+   A PRIMEIRA TELA INTEIRA fica travada, do primeiro pixel de rolagem até a folha cobri-la: o topo (assinatura e controles, `.top`) é sticky em 0 e a primeira tela
+   (`.hero`) é sticky logo abaixo dele (`top: var(--top-height)`, a altura do topo, que é a posição natural dela: nada se move). O `.stage` termina com um vão de 100svh que
+   a `.rest` puxa de volta com a margem negativa: a altura da página não muda e a primeira tela se solta depois de exatamente uma tela de rolagem, quando a folha já a cobriu
+   por inteiro. Só a folha se move: fundo --bg, cantos de cima arredondados, um fio e uma sombra leve (--sheet-shadow, tokens dos dois temas). O recuo da primeira tela
+   por baixo (scale e opacity) é o scrub em lib/choreography.ts. O topo fica acima da primeira tela (pro menu de idioma, que desce sobre ela, não ficar por baixo: z-index 1) e abaixo da folha (z-index 2); quando a folha cobre o topo, a cápsula dos controles
+   (components/floating-controls.tsx) sobe acima dela: o topo vai pra z-index 3, sem eventos, com a assinatura escondida (já coberta). */
 @media (prefers-reduced-motion: no-preference) and (min-width: 900px) and (min-height: 700px) {
-  html[data-transicao="folha"] .stage { display: block; position: relative; }
-  html[data-transicao="folha"] .stage::after { content: ""; display: block; height: 100svh; }
-  html[data-transicao="folha"] .stage .hero { position: sticky; top: 0; }
-  html[data-transicao="folha"] .rest {
-    display: block; position: relative; z-index: 1; margin-top: -100svh;
+  .top { position: sticky; top: 0; z-index: 1; min-height: var(--top-height); }
+  .top:has(.top-actions[data-floating]) { z-index: 3; pointer-events: none; }
+  .top:has(.top-actions[data-floating]) .signature-mark { visibility: hidden; }
+  .top-actions[data-floating] { pointer-events: auto; }
+  .stage { display: block; position: relative; }
+  .stage::after { content: ""; display: block; height: 100svh; }
+  .stage .hero { position: sticky; top: var(--top-height); }
+  .rest {
+    display: block; position: relative; z-index: 2; margin-top: -100svh;
     padding-top: clamp(16px, 2.5vw, 32px);
     background: var(--bg); border-radius: 24px 24px 0 0; box-shadow: var(--sheet-shadow);
   }
 }
-/* TRANSIÇÃO B (folha): fim. */
 
 /* Indicador de rolagem no fim da primeira tela (aproveita o vão em telas altas): um fio fino com um ponto que desce devagar; some ao começar a rolar (components/scroll-cue.tsx).
    Decorativo (aria-hidden, sem texto). O ponto só anda sem movimento reduzido; parado enquanto a abertura roda. */

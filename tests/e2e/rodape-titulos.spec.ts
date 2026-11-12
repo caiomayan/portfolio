@@ -2,9 +2,9 @@ import { expect, test } from "./base";
 
 // Issue #29, revisão de frontend: mapa sem corte seco (máscara), títulos de seção unificados, idiomas com largura contida e rodapé mínimo.
 const rotas = [
-  { path: "/", carmine: "Carmine", nota: "Projeto pessoal", contato: "Contato", credito: /^Dados do clima por Open-Meteo\.com$/ },
-  { path: "/en", carmine: "Carmine", nota: "Personal project", contato: "Contact", credito: /^Weather data by Open-Meteo\.com$/ },
-  { path: "/es", carmine: "Carmine", nota: "Proyecto personal", contato: "Contacto", credito: /^Datos del clima de Open-Meteo\.com$/ },
+  { path: "/", carmine: "Carmine", nota: "Projeto pessoal", contato: "Contato" },
+  { path: "/en", carmine: "Carmine", nota: "Personal project", contato: "Contact" },
+  { path: "/es", carmine: "Carmine", nota: "Proyecto personal", contato: "Contacto" },
 ] as const;
 
 // Parte opaca do recorte, em fração (iguais a --fade-x, --fade-right e --fade-y em app/globals.css): tem que conter o pino com folga pro pulso.
@@ -73,22 +73,16 @@ for (const r of rotas) {
       await expect(secao.locator("h2 img")).toHaveAttribute("alt", "");
     });
 
-    test("rodapé mínimo: © com o ano atual à esquerda, crédito do clima à direita, sem linha nem fundo, depois de Idiomas", async ({ page }) => {
+    test("rodapé mínimo: só o © com o ano atual, sem crédito do clima (ele foi pra temperatura), sem linha nem fundo, depois de Idiomas", async ({ page }) => {
       await page.setViewportSize({ width: 1440, height: 900 });
       await page.goto(r.path);
       const rodape = page.locator("footer.site-footer");
       await expect(rodape).toHaveCount(1);
       await rodape.scrollIntoViewIfNeeded();
       await expect(rodape.locator(".site-footer-copy")).toHaveText(`© ${new Date().getFullYear()} Caio Mayan`);
-      await expect(rodape.locator(".weather-credit")).toHaveText(r.credito);
+      await expect(rodape).not.toContainText("Open-Meteo");
       await expect(page.locator("#idiomas footer, #idiomas .weather-credit")).toHaveCount(0);
-      const [copy, cred, contato] = await Promise.all([
-        rodape.locator(".site-footer-copy").boundingBox(),
-        rodape.locator(".weather-credit").boundingBox(),
-        page.locator("#idiomas").boundingBox(),
-      ]);
-      expect(cred!.x).toBeGreaterThan(copy!.x + copy!.width);
-      expect(Math.abs(cred!.y - copy!.y)).toBeLessThan(6); // mesma linha
+      const [copy, contato] = await Promise.all([rodape.locator(".site-footer-copy").boundingBox(), page.locator("#idiomas").boundingBox()]);
       expect(copy!.y).toBeGreaterThan(contato!.y + contato!.height - 1); // depois de Idiomas
       const caixa = await rodape.evaluate((e) => {
         const cs = getComputedStyle(e);
@@ -98,14 +92,11 @@ for (const r of rotas) {
       expect(caixa.fundo).toBe("rgba(0, 0, 0, 0)");
     });
 
-    test("rodapé no celular: os dois textos empilham e a página não rola de lado", async ({ browser }) => {
+    test("rodapé no celular: a página não rola de lado", async ({ browser }) => {
       const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
       const page = await ctx.newPage();
       await page.goto(r.path);
-      const rodape = page.locator("footer.site-footer");
-      await rodape.scrollIntoViewIfNeeded();
-      const [copy, cred] = await Promise.all([rodape.locator(".site-footer-copy").boundingBox(), rodape.locator(".weather-credit").boundingBox()]);
-      expect(cred!.y).toBeGreaterThan(copy!.y + copy!.height - 1);
+      await page.locator("footer.site-footer").scrollIntoViewIfNeeded();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       await ctx.close();
     });

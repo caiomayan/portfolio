@@ -4,9 +4,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { OPENING_ATTR } from "@/lib/opening";
 
-/** A variante da transição da primeira tela (#39, rodada 4, prévia): lida do <html> na primeira vez. A troca de idioma recria o layout raiz e o React apaga os `data-*` do <html> (como o do tema: components/theme-keeper.tsx), então ela é reposta antes da pintura. */
-let variant: string | null = null;
-
 /** A rota em que a coreografia foi armada. Fica no módulo (não numa ref): a troca de idioma pode remontar o componente, e a ref voltaria a vazio e armaria de novo. */
 let armedPath: string | null = null;
 
@@ -19,13 +16,8 @@ let armedPath: string | null = null;
 export function Choreography() {
   const pathname = usePathname();
   const teardown = useRef<(() => void) | null>(null);
-  const heroOff = useRef<(() => void) | null>(null); // a transição da primeira tela (#39, rodada 4) é uma peça à parte: sobrevive à troca de idioma (é refeita depois dela)
+  const heroOff = useRef<(() => void) | null>(null); // a folha (#39) é uma peça à parte: sobrevive à troca de idioma (é refeita depois dela)
 
-  useLayoutEffect(() => {
-    const d = document.documentElement;
-    if (variant === null) variant = d.dataset.transicao ?? "";
-    else if (variant) d.dataset.transicao = variant;
-  }, [pathname]);
 
   // A troca de rota desmonta antes da pintura (layout effect), pra não aparecer um quadro com partes escondidas do idioma antigo.
   useLayoutEffect(

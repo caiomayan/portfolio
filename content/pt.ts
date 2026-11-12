@@ -20,7 +20,7 @@ export const pt: Content = {
   },
   weather: {
     labels: { clear: "Céu limpo", partly: "Parcialmente nublado", cloudy: "Nublado", fog: "Neblina", rain: "Chuva", storm: "Tempestade" },
-    credit: { prefix: "Dados do clima por", name: "Open-Meteo.com", href: "https://open-meteo.com/" },
+    credit: { label: "Dados do clima: Open-Meteo.com", href: "https://open-meteo.com/" },
   },
   languages: {
     heading: "Idiomas",

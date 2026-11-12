@@ -1,10 +1,10 @@
 import { expect, test, type Page } from "@playwright/test"; // direto do Playwright: aqui a abertura roda de verdade (os outros testes partem de tests/e2e/base.ts)
 
-// Issue #39: abertura com a assinatura (uma vez por aba, pulável, sem esconder nada sem JavaScript ou com movimento reduzido).
+// Issue #39: abertura com a assinatura (uma vez por aba, pulável, sem esconder nada sem JavaScript ou com movimento reduzido). Rodada 5: cobertura que se recolhe como uma folha, voo com mola, inclinação, pouso que encaixa.
 const html = (page: Page) => page.locator("html");
 const cobertura = (page: Page) => page.locator(".opening");
 const topo = (page: Page) => page.locator(".top .signature");
-/** Espera a abertura acabar sozinha (≈ 3 s; folga pra máquina lenta). */
+/** Espera a abertura acabar sozinha (≈ 3,2 s; folga pra máquina lenta). */
 const terminou = async (page: Page) => {
   await expect(cobertura(page)).toHaveCount(0, { timeout: 8000 });
   await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
@@ -82,7 +82,7 @@ test.describe("abertura (#39)", () => {
     await expect(page.getByRole("img", { name: "Caio Mayan", exact: true })).toHaveCount(1);
   });
 
-  test("os momentos: grande no centro, o respiro (recua 1,5 %), o voo com arco e o pouso igual à assinatura do topo", async ({ page }) => {
+  test("os momentos: grande no centro, o respiro (recua 1,5 %), o voo com arco, o pouso 1,5 % maior que encaixa e o último quadro igual à assinatura do topo", async ({ page }) => {
     await page.goto("/");
     await expect(cobertura(page)).toBeVisible();
     await expect.poll(() => irPara(page, 1700)).toBeGreaterThan(10);
@@ -92,8 +92,10 @@ test.describe("abertura (#39)", () => {
     const respiro = (await svgGrande(page))!;
     await irPara(page, 2020 + 220); // início do voo
     const a = (await svgGrande(page))!;
-    await irPara(page, 2020 + 860 * 0.5);
+    await irPara(page, 2020 + 920 * 0.5);
     const meio = (await svgGrande(page))!;
+    await irPara(page, 2020 + 920); // pouso: chega 1,5 % maior
+    const pouso = (await svgGrande(page))!;
     await irPara(page, 5000);
     const fim = (await svgGrande(page))!;
     expect(grande.width).toBeGreaterThan(alvo.width * 1.5);
@@ -102,11 +104,74 @@ test.describe("abertura (#39)", () => {
     expect(a.width).toBeLessThan(respiro.width);
     expect(meio.width).toBeLessThan(a.width);
     expect(meio.width).toBeGreaterThan(alvo.width);
+    expect(pouso.width / alvo.width).toBeGreaterThan(1.01); // assentamento de 1–2 %: chega um pouco maior e encaixa
+    expect(pouso.width / alvo.width).toBeLessThan(1.02);
     for (const k of ["x", "y", "width", "height"] as const) expect(Math.abs(fim[k] - alvo[k])).toBeLessThan(1.5);
-    // Arco: X e Y andam em frações diferentes do caminho (curvas diferentes), então a rota não é uma reta.
+    // Arco: X e Y andam em frações diferentes do caminho (molas com rigidezes diferentes), então a rota não é uma reta.
     const fx = (respiro.x - a.x) / (respiro.x - alvo.x);
     const fy = (respiro.y - a.y) / (respiro.y - alvo.y);
     expect(Math.abs(fx - fy)).toBeGreaterThan(0.03);
+  });
+
+  test("o voo é uma mola sem quique (linear() gerado, com a curva de antes como alternativa) e nunca passa do alvo; a assinatura escreve inclinada e se endireita", async ({ page }) => {
+    await page.goto("/");
+    await expect(cobertura(page)).toBeVisible();
+    const curvas = await page.evaluate(() =>
+      document
+        .getAnimations()
+        .filter((a) => a.constructor.name !== "CSSAnimation" && ((a.effect as KeyframeEffect).target as Element | null)?.matches(".opening-art-svg, .opening-art, .opening-scrim"))
+        .map((a) => ({ alvo: String(((a.effect as KeyframeEffect).target as Element).getAttribute("class")), easings: [...(a.effect as KeyframeEffect).getKeyframes().map((k) => String(k.easing)), String(a.effect!.getTiming().easing)] })),
+    );
+    const suporta = await page.evaluate(() => CSS.supports("animation-timing-function", "linear(0, 1)"));
+    expect(curvas.length).toBe(3);
+    for (const c of curvas) expect(c.easings.some((e) => (suporta ? e.startsWith("linear(") && e.length > 80 : e.startsWith("cubic-bezier"))), String(c.alvo)).toBe(true);
+    // Sem quique: do começo do voo ao pouso a largura só diminui e nunca fica abaixo do pouso (1,5 % maior que o alvo).
+    const alvo = (await page.locator(".top .signature-mark").boundingBox())!;
+    let anterior = Infinity;
+    for (const t of [2020, 2300, 2600, 2900, 2960, 3050]) {
+      await irPara(page, t);
+      const w = (await svgGrande(page))!.width;
+      expect(w, `t=${t}`).toBeLessThanOrEqual(anterior + 0.5);
+      expect(w, `t=${t}`).toBeGreaterThanOrEqual(alvo.width - 0.5);
+      anterior = w;
+    }
+    // Inclinação: -1,6° enquanto escreve, 0° no pouso (no invólucro; o <svg> não leva rotação, senão entortaria).
+    const rot = async (t: number) => {
+      await irPara(page, t);
+      return page.locator(".opening-art").evaluate((el) => { const m = getComputedStyle(el).transform; return m === "none" ? 0 : (Math.atan2(new DOMMatrixReadOnly(m).b, new DOMMatrixReadOnly(m).a) * 180) / Math.PI; });
+    };
+    expect(await rot(900)).toBeCloseTo(-1.6, 1);
+    expect(Math.abs(await rot(2020 + 920))).toBeLessThan(0.05);
+    await irPara(page, 2400);
+    expect(await page.locator(".opening-art-svg").evaluate((el) => { const m = new DOMMatrixReadOnly(getComputedStyle(el).transform); return Math.abs(m.b) + Math.abs(m.c); })).toBeLessThan(1e-6);
+  });
+
+  test("a cobertura é uma folha que se recolhe pra cima (translateY, cantos de baixo arredondados e sombra), sem fade e sem clip-path", async ({ page }) => {
+    await page.goto("/");
+    await expect(cobertura(page)).toBeVisible();
+    const estilo = await page.locator(".opening-scrim").evaluate((el) => { const s = getComputedStyle(el); return { raio: s.borderBottomLeftRadius, sombra: s.boxShadow, clip: s.clipPath, filtro: s.filter }; });
+    expect(estilo.raio).toBe("28px");
+    expect(estilo.sombra).not.toBe("none");
+    expect(estilo.clip).toBe("none");
+    expect(estilo.filtro).toBe("none");
+    const altura = page.viewportSize()!.height;
+    const ty = async (t: number) => {
+      await irPara(page, t);
+      return page.locator(".opening-scrim").evaluate((el) => { const m = getComputedStyle(el).transform; return m === "none" ? 0 : new DOMMatrixReadOnly(m).m42; });
+    };
+    expect(await ty(2020)).toBe(0); // fechada até o voo
+    const meio = await ty(2020 + 80 + 400);
+    expect(meio).toBeLessThan(-altura * 0.2); // já recolheu boa parte
+    expect(meio).toBeGreaterThan(-altura * 1.1);
+    expect(await ty(2020 + 80 + 940)).toBeLessThan(-altura * 1.05); // fora da tela, a sombra de baixo inclusive
+    let anterior = 1;
+    for (const t of [2100, 2300, 2500, 2700, 2900, 3040]) {
+      const v = await ty(t);
+      expect(v, `t=${t}`).toBeLessThanOrEqual(anterior + 0.01);
+      anterior = v;
+    }
+    const opac = await page.locator(".opening-scrim").evaluate((el) => Number(getComputedStyle(el).opacity));
+    expect(opac).toBe(1); // nada de esmaecer: só se recolhe
   });
 
   test("o traço tem cadência de caneta: letras com durações diferentes, easing que não é linear, termina entre 1,5 e 1,9 s", async ({ page }) => {
@@ -130,7 +195,7 @@ test.describe("abertura (#39)", () => {
     expect(fim).toBeLessThan(1900);
   });
 
-  test("a duração total até a página pronta fica em ≈ 3 s (entre 2,6 e 3,6 s), abaixo do prazo de segurança", async ({ page }) => {
+  test("a duração total até a página pronta fica em ≈ 3,2 s (entre 3,0 e 3,5 s), abaixo do prazo de segurança", async ({ page }) => {
     await page.addInitScript(() => {
       const w = window as unknown as { __visto?: boolean; __fim?: number };
       const iv = setInterval(() => {
@@ -145,21 +210,25 @@ test.describe("abertura (#39)", () => {
     await page.goto("/");
     await expect.poll(() => page.evaluate(() => (window as unknown as { __fim?: number }).__fim ?? 0), { timeout: 8000 }).toBeGreaterThan(0);
     const fim = await page.evaluate(() => (window as unknown as { __fim: number }).__fim);
-    expect(fim).toBeGreaterThan(2600);
-    expect(fim).toBeLessThan(3600);
+    expect(fim).toBeGreaterThan(3000);
+    expect(fim).toBeLessThan(3500);
   });
 
-  test("a primeira tela entra em sequência na ordem foto, título, frase, lugar, contato, controles enquanto a assinatura pousa", async ({ page }) => {
+  test("a primeira tela sobe ao lugar em sequência (foto, título, frase, lugar, contato, controles) sob a borda da cobertura, sempre visível (opacity 1)", async ({ page }) => {
     await page.goto("/");
     await expect(cobertura(page)).toBeVisible();
-    await expect.poll(() => irPara(page, 1900)).toBeGreaterThan(20);
-    expect(await opac(page)).toEqual([1, 1, 1, 1, 1, 1]); // visível até o fim do respiro (é o que o LCP mede)
-    await irPara(page, 2020 + 120 + 90); // começando a entrar: a ordem decide quem está mais adiantado
-    const o = await opac(page);
-    for (let i = 1; i < o.length; i++) expect(o[i], PRIMEIRA_TELA[i]).toBeLessThanOrEqual(o[i - 1] + 1e-6);
-    expect(o[0]).toBeGreaterThan(o[o.length - 1]);
-    await irPara(page, 2020 + 860 + 400);
+    const sobe = (sels: string[]) => page.evaluate((ss) => ss.map((s) => { const m = getComputedStyle(document.querySelector(s)!).transform; return m === "none" ? 0 : new DOMMatrixReadOnly(m).m42; }), sels);
+    await expect.poll(() => irPara(page, 1900)).toBeGreaterThan(10);
+    expect(await opac(page)).toEqual([1, 1, 1, 1, 1, 1]); // visível desde o começo (é o que o LCP mede); nada é escondido
+    const antes = await sobe(PRIMEIRA_TELA);
+    for (const v of antes) expect(v).toBeCloseTo(28, 0); // todos 28 px abaixo do lugar, por baixo da cobertura opaca
+    await irPara(page, 2020 + 160 + 200); // começando a subir: a ordem decide quem está mais adiantado
+    const o = await sobe(PRIMEIRA_TELA);
     expect(await opac(page)).toEqual([1, 1, 1, 1, 1, 1]);
+    for (let i = 1; i < o.length; i++) expect(o[i], PRIMEIRA_TELA[i]).toBeGreaterThanOrEqual(o[i - 1] - 1e-6);
+    expect(o[0]).toBeLessThan(o[o.length - 1]);
+    await irPara(page, 2020 + 160 + 5 * 50 + 700 + 40);
+    expect(await sobe(PRIMEIRA_TELA)).toEqual([0, 0, 0, 0, 0, 0]);
     await terminou(page);
     for (const sel of PRIMEIRA_TELA) {
       await expect(page.locator(sel).first()).toHaveCSS("opacity", "1");
@@ -168,7 +237,7 @@ test.describe("abertura (#39)", () => {
   });
 
   for (const [largura, altura] of [[1440, 900], [375, 667]] as const) {
-    test(`a primeira tela nunca pisca a ${largura} px com a CPU 4× mais lenta: depois que a cobertura começa a levantar, o título só ganha opacidade`, async ({ browser }) => {
+    test(`a primeira tela nunca pisca a ${largura} px com a CPU 4× mais lenta: depois que a cobertura começa a subir o título fica sempre opaco e ela só sobe (nunca volta)`, async ({ browser }) => {
       for (let rodada = 0; rodada < 3; rodada++) {
         const ctx = await browser.newContext({ viewport: { width: largura, height: altura }, reducedMotion: "no-preference" });
         const page = await ctx.newPage();
@@ -180,7 +249,10 @@ test.describe("abertura (#39)", () => {
           const tick = () => {
             const h1 = document.querySelector("h1");
             const cob = document.querySelector(".opening-scrim");
-            if (h1) w.__amostras.push([Number(getComputedStyle(h1).opacity), cob ? Number(getComputedStyle(cob).opacity) : 0]);
+            if (h1) {
+              const m = cob ? getComputedStyle(cob).transform : "none";
+              w.__amostras.push([Number(getComputedStyle(h1).opacity), m === "none" ? 0 : new DOMMatrixReadOnly(m).m42]);
+            }
             if (w.__amostras.length < 600) requestAnimationFrame(tick);
           };
           requestAnimationFrame(tick);
@@ -188,10 +260,12 @@ test.describe("abertura (#39)", () => {
         await page.goto("/");
         await expect(page.locator("html")).not.toHaveAttribute("data-opening", /.*/, { timeout: 9000 });
         const amostras = await page.evaluate(() => (window as unknown as { __amostras: number[][] }).__amostras);
-        const depois = amostras.filter(([, cob]) => cob < 0.999);
-        expect(depois.length).toBeGreaterThan(5);
-        for (let i = 1; i < depois.length; i++) expect(depois[i][0], `rodada ${rodada}, amostra ${i}`).toBeGreaterThanOrEqual(depois[i - 1][0] - 0.001);
-        expect(depois[depois.length - 1][0]).toBe(1);
+        expect(amostras.length).toBeGreaterThan(20);
+        const subindo = amostras.filter(([, y]) => y < 0);
+        expect(subindo.length).toBeGreaterThan(3);
+        for (const [h1] of subindo) expect(h1, `rodada ${rodada}`).toBe(1); // depois que a cobertura começa a subir, o título nunca esmaece nem pisca
+        const sobe = subindo.map(([, y]) => y);
+        for (let i = 1; i < sobe.length; i++) expect(sobe[i], `rodada ${rodada}, amostra ${i}`).toBeLessThanOrEqual(sobe[i - 1] + 0.01); // a cobertura só sobe
         await ctx.close();
       }
     });
@@ -277,6 +351,44 @@ test.describe("abertura (#39)", () => {
     await expect(cobertura(page)).toHaveCount(0);
   });
 
+  for (const [largura, altura, min, max] of [[1920, 1080, 219, 221], [1440, 900, 219, 221], [375, 667, 140, 155]] as const) {
+    test(`a assinatura do topo tem tamanho de logomarca a ${largura} px (${min}–${max} px de largura), na mesma proporção, e a abertura pousa nesse tamanho`, async ({ browser }) => {
+      const ctx = await browser.newContext({ viewport: { width: largura, height: altura }, reducedMotion: "no-preference" });
+      const page = await ctx.newPage();
+      await page.goto("/");
+      await expect(cobertura(page)).toBeVisible();
+      const alvo = (await page.locator(".top .signature-mark").boundingBox())!;
+      expect(alvo.width).toBeGreaterThanOrEqual(min);
+      expect(alvo.width).toBeLessThanOrEqual(max);
+      expect(Math.abs(alvo.width / alvo.height - 1371.08 / 389.58)).toBeLessThan(0.02); // proporção do desenho
+      await expect.poll(() => irPara(page, 5000)).toBeGreaterThan(5);
+      const fim = (await svgGrande(page))!;
+      expect(Math.abs(fim.width - alvo.width)).toBeLessThan(1.5);
+      expect(Math.abs(fim.height - alvo.height)).toBeLessThan(1.5);
+      await terminou(page);
+      const final = (await page.locator(".top .signature-mark").boundingBox())!;
+      expect(Math.abs(final.width - alvo.width)).toBeLessThan(0.5);
+      await ctx.close();
+    });
+  }
+
+  test("o traço nasce mais leve e encorpa até o respiro (pressão: opacidade do contorno), sem blur", async ({ page }) => {
+    await page.goto("/");
+    await expect(cobertura(page)).toBeVisible();
+    const op = async (t: number) => {
+      await irPara(page, t);
+      return page.locator(".opening-ink").evaluate((el) => Number(getComputedStyle(el).opacity));
+    };
+    const a = await op(100);
+    const b = await op(1000);
+    const c = await op(2020);
+    expect(a).toBeGreaterThanOrEqual(0.55 - 0.01);
+    expect(a).toBeLessThan(0.7);
+    expect(b).toBeGreaterThan(a);
+    expect(c).toBeCloseTo(1, 2); // chega ao peso final no respiro, sem salto no fim
+    expect(await page.locator(".opening-art").evaluate((el) => getComputedStyle(el).filter)).toBe("none");
+  });
+
   test("com prefers-reduced-motion: reduce, nada de abertura e a assinatura aparece pronta", async ({ browser }) => {
     const ctx = await browser.newContext({ reducedMotion: "reduce" });
     const page = await ctx.newPage();
@@ -338,7 +450,7 @@ test.describe("abertura (#39)", () => {
       return [...nomes].sort();
     });
     expect(props.length).toBeGreaterThan(0);
-    const permitidas = new Set(["transform", "opacity", "strokeDashoffset", "translate"]);
+    const permitidas = new Set(["transform", "opacity", "strokeDashoffset", "translate"]); // sem blur, sem clip-path, sem filter
     expect(props.filter((p) => !permitidas.has(p))).toEqual([]);
     expect(props).toContain("strokeDashoffset");
     expect(props).toContain("transform");
@@ -355,7 +467,7 @@ test.describe("abertura (#39)", () => {
       await page.evaluate(() => {
         for (const a of document.getAnimations()) {
           const t = (a.effect as KeyframeEffect | null)?.target?.classList;
-          if (t?.contains("opening-art") || t?.contains("opening-art-svg") || t?.contains("opening-scrim") || t?.contains("opening-stroke")) {
+          if (t?.contains("opening-art") || t?.contains("opening-art-svg") || t?.contains("opening-scrim") || t?.contains("opening-stroke") || t?.contains("opening-ink")) {
             a.pause();
             const tm = a.effect!.getTiming();
             a.currentTime = Number(tm.delay) + Number(tm.duration);
@@ -383,7 +495,7 @@ test.describe("abertura (#39)", () => {
       await reduzido.close();
       expect(depois).toBe(recarregada);
       expect(semMovimento).toBe(recarregada);
-      expect(Math.abs(ultimoQuadro - depois) / depois).toBeLessThan(0.03); // sem "pulo" de espessura na troca pela assinatura do topo
+      expect(Math.abs(ultimoQuadro - depois) / depois).toBeLessThan(0.05); // sem "pulo" de espessura (a 375 px a assinatura tem 148 px e cai em meio pixel: a tinta varia um pouco mais) na troca pela assinatura do topo
       await ctx.close();
     });
   }

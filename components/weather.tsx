@@ -16,27 +16,23 @@ const icons: Record<WeatherIcon, LucideIcon> = {
 };
 
 /**
- * Clima de João Pessoa (#28), renderizado no servidor: `now` é a terceira linha do lugar, na primeira tela (#29, #38), e `credit` vai numa linha discreta no rodapé.
+ * Clima de João Pessoa (#28), renderizado no servidor: `now` é a terceira linha do lugar, na primeira tela (#29, #38).
+ * Crédito do Open-Meteo (CC BY 4.0, #39 rodada 5): a temperatura é um link discreto para open-meteo.com, ao lado de onde o dado aparece (sai do rodapé).
  * Sem dado (`null`), nada aparece. O ícone é decorativo; o nome do tempo vai só pra leitor de tela.
  */
 export function weatherSlots(weather: Weather | null, w: Content["weather"]) {
   if (!weather) return null;
   const Icon = icons[weatherIcon(weather.kind, weather.isDay)];
+  const temperature = `${weather.temperature}°C`;
   return {
     now: (
       <span className="place-weather">
         <Icon className="weather-icon" size={16} strokeWidth={1.75} aria-hidden="true" focusable="false" />
         <span className="sr-only">{w.labels[weather.kind]}, </span>
-        {`${weather.temperature}°C`}
-      </span>
-    ),
-    credit: (
-      <p className="weather-credit">
-        {w.credit.prefix}{" "}
-        <a href={w.credit.href} target="_blank" rel="noopener noreferrer">
-          {w.credit.name}
+        <a className="weather-credit" href={w.credit.href} target="_blank" rel="noopener noreferrer" title={w.credit.label} aria-label={`${temperature}. ${w.credit.label}`}>
+          {temperature}
         </a>
-      </p>
+      </span>
     ),
   };
 }

@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "./base";
 import { rotasTexto, type RotaTexto } from "./textos";
 
-// Issue #39, rodada 4: (1) transição da primeira tela para o resto, duas variantes de PRÉVIA por `?transicao=` (recuo = padrão, folha); (2) brilho cinza
+// Issue #39, rodadas 4 e 5: (1) a folha: a primeira tela inteira fica travada e o resto sobe por cima (o recuo e o `?transicao=` da prévia saíram); (2) brilho cinza
 // (Animated Shiny Text, Magic UI) no trecho "engenharia de IA" da frase de abertura. A abertura da assinatura e a passada de brilho dela ficam em abertura.spec.ts.
 const TRECHO: Record<RotaTexto, string> = { "/": "engenharia de IA", "/en": "AI engineering", "/es": "ingeniería de IA" };
 
@@ -90,144 +90,126 @@ test.describe("brilho no trecho da frase de abertura (Magic UI)", () => {
 
 });
 
-test.describe("transição da primeira tela: recuo (padrão)", () => {
+test.describe("a folha: a primeira tela inteira fica travada e só a folha se move (#39, rodada 5)", () => {
+  /** O que tem que ficar imóvel: o topo (assinatura e controles) e a primeira tela (sem o recuo). */
+  const imovel = (page: Page) =>
+    page.evaluate(() => {
+      const r = (s: string) => { const b = document.querySelector(s)!.getBoundingClientRect(); return [Math.round(b.x * 10) / 10, Math.round(b.y * 10) / 10, Math.round(b.width * 10) / 10, Math.round(b.height * 10) / 10].join(","); };
+      // A primeira tela é lida sem o recuo (o scrub de escala mexe no retângulo): limpa o transform só durante a leitura.
+      const hero = document.querySelector(".hero") as HTMLElement;
+      hero.style.setProperty("transform", "none", "important");
+      const heroRect = r(".hero");
+      hero.style.removeProperty("transform");
+      return { assinatura: r(".top .signature-mark"), controles: r(".top-actions"), hero: heroRect };
+    });
+
   for (const [w, h] of [[1920, 1080], [1440, 900]] as const) {
-    test(`${w}×${h}: a primeira tela recua como um bloco ao sair, para, e volta ao normal ao rolar de volta`, async ({ page }) => {
+    test(`${w}×${h}: do primeiro pixel até a folha cobrir, o topo e a primeira tela não saem do lugar; a folha sobe e a primeira tela recua por baixo`, async ({ page }) => {
       await page.setViewportSize({ width: w, height: h });
       await page.goto("/");
       await armada(page);
-      await expect(page.locator("html")).not.toHaveAttribute("data-transicao", /.*/);
-      let e = await estadoHero(page);
-      expect(e).toMatchObject({ opacity: 1, escala: 1, y: 0 }); // no topo é exatamente a identidade
-      const fim = await page.locator(".hero").evaluate((el) => el.getBoundingClientRect().bottom + window.scrollY);
-      await rolarAte(page, fim * 0.5);
-      e = await estadoHero(page);
-      expect(e.escala).toBeLessThan(0.99);
-      expect(e.escala).toBeGreaterThan(0.94);
-      expect(e.opacity).toBeLessThan(1);
-      expect(e.opacity).toBeGreaterThan(0.05);
-      await rolarAte(page, fim + 40);
-      e = await estadoHero(page);
-      expect(e.opacity).toBeLessThan(0.02);
-      expect(e.escala).toBeCloseTo(0.94, 2);
-      expect(e.y).toBeGreaterThan(40);
-      expect(e.y).toBeLessThanOrEqual(48.5);
-      // Parou: rolar mais não muda mais nada.
-      await rolarAte(page, fim + 600, 800);
-      expect(await estadoHero(page)).toMatchObject({ opacity: e.opacity, escala: e.escala });
-      await rolarAte(page, 0);
-      expect(await estadoHero(page)).toMatchObject({ opacity: 1, escala: 1, y: 0 });
-    });
-  }
-
-  test("só transform e opacity no estilo da primeira tela, e o Carmine vem logo depois sem sobreposição", async ({ page }) => {
-    await page.setViewportSize({ width: 1920, height: 1080 });
-    await page.goto("/");
-    await armada(page);
-    const r = await page.evaluate(() => ({ hero: document.querySelector(".hero")!.getBoundingClientRect().bottom + scrollY, carmine: document.querySelector("#carmine")!.getBoundingClientRect().top + scrollY }));
-    await rolarAte(page, 300);
-    const props = await page.locator(".hero").evaluate((el) => [...Array(el.style.length).keys()].map((i) => el.style[i]));
-    expect(props.filter((p) => !["opacity", "transform", "transform-origin", "translate", "scale", "rotate"].includes(p))).toEqual([]);
-    expect(r.carmine).toBeGreaterThanOrEqual(r.hero - 1); // sem sobreposição no fluxo: o vão natural da primeira tela é mantido
-  });
-
-  test("no celular (toque) é mais leve: recua pouco e não some por inteiro", async ({ browser }) => {
-    const ctx = await browser.newContext({ viewport: { width: 375, height: 667 }, hasTouch: true, isMobile: true });
-    const page = await ctx.newPage();
-    await page.goto("/");
-    await armada(page);
-    const fim = await page.locator(".hero").evaluate((el) => el.getBoundingClientRect().bottom + window.scrollY);
-    await rolarAte(page, fim + 40, 800);
-    const e = await estadoHero(page);
-    expect(e.escala).toBeGreaterThanOrEqual(0.97 - 0.005);
-    expect(e.opacity).toBeGreaterThanOrEqual(0.19);
-    expect(e.y).toBeLessThanOrEqual(16.5);
-    await ctx.close();
-  });
-
-  test("com prefers-reduced-motion a primeira tela fica estática", async ({ browser }) => {
-    const ctx = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 1440, height: 900 } });
-    const page = await ctx.newPage();
-    await page.goto("/");
-    await page.waitForTimeout(1500);
-    await rolarAte(page, 500, 600);
-    expect(await estadoHero(page)).toMatchObject({ opacity: 1, escala: 1, y: 0 });
-    await ctx.close();
-  });
-});
-
-test.describe("transição da primeira tela: folha (?transicao=folha)", () => {
-  for (const [w, h] of [[1920, 1080], [1440, 900]] as const) {
-    test(`${w}×${h}: a primeira tela fica presa por uma tela só e a folha sobe por cima, com a primeira tela recuando por baixo`, async ({ page }) => {
-      await page.setViewportSize({ width: w, height: h });
-      await page.goto("/?transicao=folha");
-      await armada(page);
-      await expect(page.locator("html")).toHaveAttribute("data-transicao", "folha");
       let e = await estadoHero(page);
       expect(e).toMatchObject({ pos: "sticky", opacity: 1, escala: 1 });
-      const heroH = await page.locator(".hero").evaluate((el) => el.getBoundingClientRect().height);
-      // Presa: depois de rolar, o topo da primeira tela fica em 0 enquanto a folha sobe.
-      await rolarAte(page, 122 + heroH * 0.5);
+      const base = await imovel(page);
+      expect(await page.locator(".top").evaluate((el) => getComputedStyle(el).position)).toBe("sticky");
+      for (const y of [120, h * 0.35, h * 0.7, h - 120]) {
+        await rolarAte(page, y, 900);
+        expect(await imovel(page), `rolado ${Math.round(y)} px: o topo e a primeira tela não podem se mover`).toEqual(base);
+        const folha = await page.locator(".rest").evaluate((el) => Math.round(el.getBoundingClientRect().top));
+        expect(folha).toBeGreaterThan(0); // só a folha sobe: ainda não cobriu tudo
+      }
+      // O recuo por baixo (o esmaecimento de que o Caio gostou): escala e opacidade presas à rolagem.
+      await rolarAte(page, h * 0.5, 900);
       e = await estadoHero(page);
-      expect(Math.abs(e.top - heroH * 0.4 * (1 - e.escala))).toBeLessThanOrEqual(1.5); // presa em 0 (o recuo, a 50 % 40 %, só a desloca pelo que escalou)
       expect(e.escala).toBeLessThan(1);
+      expect(e.escala).toBeGreaterThan(0.95);
       expect(e.opacity).toBeLessThan(1);
-      const folha = await page.locator(".rest").evaluate((el) => { const s = getComputedStyle(el); return { top: Math.round(el.getBoundingClientRect().top), raio: s.borderTopLeftRadius, bg: s.backgroundColor, sombra: s.boxShadow }; });
+      expect(e.opacity).toBeGreaterThan(0.25);
+      const folha = await page.locator(".rest").evaluate((el) => { const s = getComputedStyle(el); return { raio: s.borderTopLeftRadius, sombra: s.boxShadow, bg: s.backgroundColor }; });
       expect(folha.raio).toBe("24px");
-      expect(folha.top).toBeGreaterThan(0);
       expect(folha.sombra).not.toBe("none");
-      // A folha cobriu a primeira tela: o recuo termina, e depois de uma tela ela se solta e vai embora.
-      await rolarAte(page, 122 + heroH + 200);
+      // A folha cobriu tudo: o recuo termina e, depois de mais alguma rolagem, a primeira tela se solta e vai embora.
+      await rolarAte(page, h + 60, 900);
       e = await estadoHero(page);
       expect(e.opacity).toBeCloseTo(0.25, 1);
       expect(e.escala).toBeCloseTo(0.95, 2);
-      await rolarAte(page, 122 + heroH + h * 1.0 + 400, 800);
-      e = await estadoHero(page);
-      expect(e.top).toBeLessThan(0); // solta: não fica presa pela página inteira
+      await rolarAte(page, h * 2 + 400, 900);
+      expect((await estadoHero(page)).top).toBeLessThan(0);
       await rolarAte(page, 0);
       expect(await estadoHero(page)).toMatchObject({ opacity: 1, escala: 1 });
+      expect(await imovel(page)).toEqual(base);
     });
   }
 
-  test("a altura da página é a mesma nas duas variantes (nada de rolagem a mais) e o <html> não ganha rolagem lateral", async ({ page }) => {
+  test("a cápsula entra só quando a folha cobre os controles, e nunca há dois conjuntos de controles à vista", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
-    const a = await alturaDaPagina(page);
-    await page.goto("/?transicao=folha");
-    expect(Math.abs((await alturaDaPagina(page)) - a)).toBeLessThanOrEqual(40); // só o respiro de cima da folha
+    await armada(page);
+    const caps = page.locator(".top-actions");
+    await rolarAte(page, 600, 800);
+    await expect(caps).not.toHaveAttribute("data-floating", "true"); // os controles do topo seguem à vista (ainda sem folha por cima)
+    await rolarAte(page, 900 + 40, 900);
+    await expect(caps).toHaveAttribute("data-floating", "true");
+    const r = await page.evaluate(() => ({
+      cap: getComputedStyle(document.querySelector(".top-actions")!).position,
+      topoZ: Number(getComputedStyle(document.querySelector(".top")!).zIndex),
+      restZ: Number(getComputedStyle(document.querySelector(".rest")!).zIndex),
+      assinatura: getComputedStyle(document.querySelector(".top .signature-mark")!).visibility,
+      controles: document.querySelectorAll(".top-actions").length, // uma cópia só no DOM
+    }));
+    expect(r).toMatchObject({ cap: "fixed", assinatura: "hidden", controles: 1 });
+    expect(r.topoZ).toBeGreaterThan(r.restZ);
+    const ponto = await caps.locator("button").first().evaluate((el) => { const b = el.getBoundingClientRect(); return document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2)?.closest(".top-actions") !== null; });
+    expect(ponto).toBe(true);
+    // O topo (sem a cápsula) não rouba os cliques da folha: o que está debaixo do canto superior esquerdo não é o cabeçalho.
+    const sobre = await page.evaluate(() => document.elementFromPoint(200, 40)?.closest("header") === null);
+    expect(sobre).toBe(true);
+    await rolarAte(page, 300, 900);
+    await expect(caps).not.toHaveAttribute("data-floating", "true"); // a folha desceu: a cápsula volta pro topo
+  });
+
+  test("a altura da página é a mesma sem a folha (nada de rolagem a mais) e o <html> não ganha rolagem lateral", async ({ page, browser }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    const com = await alturaDaPagina(page);
+    const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
+    const p2 = await ctx.newPage();
+    await p2.goto("/");
+    expect(Math.abs(com - (await alturaDaPagina(p2)))).toBeLessThanOrEqual(40); // só o respiro de cima da folha
+    await ctx.close();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
 
-  test("a âncora continua valendo: /?transicao=folha#carmine leva ao título do Carmine, sem ficar sob a folha", async ({ page }) => {
+  test("a âncora continua valendo: /#carmine leva ao título do Carmine, sem ficar sob a folha", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("/?transicao=folha#carmine");
+    await page.goto("/#carmine");
     await page.waitForTimeout(1200);
     const topo = await page.locator("#carmine h2").evaluate((el) => el.getBoundingClientRect().top);
     expect(topo).toBeGreaterThanOrEqual(0);
     expect(topo).toBeLessThan(500);
     await expect(page.locator("#carmine h2")).toBeInViewport();
-  });
-
-  test("a cápsula flutuante (idioma e tema) continua aparecendo ao rolar e fica acima da folha", async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("/?transicao=folha");
-    await rolarAte(page, 900, 800);
     await expect(page.locator(".top-actions")).toHaveAttribute("data-floating", "true");
-    const z = await page.evaluate(() => ({ cap: Number(getComputedStyle(document.querySelector(".top-actions")!).zIndex), rest: Number(getComputedStyle(document.querySelector(".rest")!).zIndex) }));
-    expect(z.cap).toBeGreaterThan(z.rest);
-    const ponto = await page.locator(".top-actions button").first().evaluate((el) => { const r = el.getBoundingClientRect(); return document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)?.closest(".top-actions") !== null; });
-    expect(ponto).toBe(true);
   });
 
-  test("no celular e em janelas baixas a folha não prende a primeira tela (ela não é de tela cheia)", async ({ browser }) => {
+  test("o parâmetro ?transicao= não existe mais: a folha é o comportamento único", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    for (const q of ["", "?transicao=recuo", "?transicao=folha"]) {
+      await page.goto("/" + q);
+      expect((await estadoHero(page)).pos).toBe("sticky");
+      await expect(page.locator("html")).not.toHaveAttribute("data-transicao", /.*/);
+    }
+  });
+
+  test("no celular e em janelas baixas nada é travado (a primeira tela não é de tela cheia)", async ({ browser }) => {
     const ctx = await browser.newContext({ viewport: { width: 375, height: 667 }, hasTouch: true, isMobile: true });
     const page = await ctx.newPage();
-    await page.goto("/?transicao=folha");
+    await page.goto("/");
     expect((await estadoHero(page)).pos).not.toBe("sticky");
+    expect(await page.locator(".top").evaluate((el) => getComputedStyle(el).position)).not.toBe("sticky");
     await ctx.close();
     const baixa = await browser.newContext({ viewport: { width: 1280, height: 640 } });
     const p2 = await baixa.newPage();
-    await p2.goto("/?transicao=folha");
+    await p2.goto("/");
     expect((await estadoHero(p2)).pos).not.toBe("sticky");
     await baixa.close();
   });
@@ -235,29 +217,29 @@ test.describe("transição da primeira tela: folha (?transicao=folha)", () => {
   test("com prefers-reduced-motion não há folha presa nem recuo: tudo estático", async ({ browser }) => {
     const ctx = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 1440, height: 900 } });
     const page = await ctx.newPage();
-    await page.goto("/?transicao=folha");
+    await page.goto("/");
     expect((await estadoHero(page)).pos).not.toBe("sticky");
+    expect(await page.locator(".top").evaluate((el) => getComputedStyle(el).position)).not.toBe("sticky");
     await rolarAte(page, 500, 600);
     expect(await estadoHero(page)).toMatchObject({ opacity: 1, escala: 1 });
     await ctx.close();
   });
 
-  test("a escolha sobrevive à troca de idioma, a rolagem fica e a transição é refeita no conteúdo novo", async ({ page }) => {
+  test("a troca de idioma mantém a rolagem e a folha é refeita no conteúdo novo", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("/?transicao=folha");
+    await page.goto("/");
     await armada(page);
     await rolarAte(page, 300, 800);
     const y = await page.evaluate(() => window.scrollY);
     await page.getByRole("button", { name: /^Idioma/ }).click();
     await page.getByRole("menuitemradio", { name: "English" }).click();
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Software Engineer");
-    await expect(page.locator("html")).toHaveAttribute("data-transicao", "folha");
     await page.waitForTimeout(1500);
     expect(Math.abs((await page.evaluate(() => window.scrollY)) - y)).toBeLessThan(120);
     await rolarAte(page, 700);
     const e = await estadoHero(page);
     expect(e.pos).toBe("sticky");
-    expect(e.opacity).toBeLessThan(1); // a transição voltou a valer depois da troca
+    expect(e.opacity).toBeLessThan(1); // o recuo voltou a valer depois da troca
     await rolarAte(page, 0);
     expect(await estadoHero(page)).toMatchObject({ opacity: 1, escala: 1 });
   });

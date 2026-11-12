@@ -72,7 +72,7 @@ A seção Contato saiu: os ícones moram na faixa da primeira tela (ver Apresent
 - LinkedIn: https://www.linkedin.com/in/caiomayan/
 - GitHub: https://github.com/caiomayan
 - Currículo (PDF): link por língua. Arquivos em `public/`: `caio-mayan-curriculo.pdf` (pt) e `caio-mayan-resume.pdf` (en e es). Só ícone: o rótulo "Currículo (PDF)" vira tooltip e nome acessível, assim como "LinkedIn" e "GitHub".
-- Clima (#28, proposto, o Caio revisa; na primeira tela desde a #29): ícone do tempo e temperatura atual de João Pessoa, por exemplo "☁ 28°C", na terceira linha do lugar. O nome do tempo só é lido por leitor de tela: "Céu limpo", "Parcialmente nublado", "Nublado", "Neblina", "Chuva", "Tempestade". De noite o ícone é o da versão noturna (lua; nuvem com lua), pelo `is_day` do Open-Meteo. O crédito (licença CC BY 4.0 do Open-Meteo) fica no rodapé (abaixo): "Dados do clima por Open-Meteo.com" (o nome é um link). Se a API falha, nada disso aparece.
+- Clima (#28, proposto, o Caio revisa; na primeira tela desde a #29): ícone do tempo e temperatura atual de João Pessoa, por exemplo "☁ 28°C", na terceira linha do lugar. O nome do tempo só é lido por leitor de tela: "Céu limpo", "Parcialmente nublado", "Nublado", "Neblina", "Chuva", "Tempestade". De noite o ícone é o da versão noturna (lua; nuvem com lua), pelo `is_day` do Open-Meteo. O crédito (licença CC BY 4.0 do Open-Meteo, #39 rodada 5) é a própria temperatura, que vira um link discreto para open-meteo.com (igual ao texto, com sublinhado só no hover e no foco; abre em nova aba), com título e nome acessível "Dados do clima: Open-Meteo.com" (`weather.credit.label` em `content/`; o nome acessível começa pela temperatura, por exemplo "28°C. Dados do clima: Open-Meteo.com"). O crédito não está mais no rodapé. Se a API falha, nada disso aparece.
 
 ## Idiomas (#38)
 
@@ -83,7 +83,7 @@ Seção própria no fim da página, depois de Atividade, com o mesmo título gra
 
 ## Rodapé (#29)
 
-- Faixa mínima no fim da página, separada da última seção só por espaço (sem linha nem fundo): "© 2026 Caio Mayan" à esquerda e o crédito do clima, "Dados do clima por Open-Meteo.com", à direita (o crédito só aparece quando há clima). No celular os dois empilham. O ano é o corrente, calculado ao gerar a página (`{year}` em `content/`).
+- Faixa mínima no fim da página, separada da última seção só por espaço (sem linha nem fundo): só "© 2026 Caio Mayan" (o crédito do clima saiu daqui: é o link da temperatura na primeira tela). O ano é o corrente, calculado ao gerar a página (`{year}` em `content/`).
 
 ## Atividade (#28, proposto, o Caio revisa)
 
@@ -165,7 +165,7 @@ The Contact section is gone: the icons live in the first screen's strip (see Pre
 
 - Email: mail@caiomayan.com (icon only, no copy button)
 - Resume (PDF): icon only; "Resume (PDF)" is the tooltip and accessible name, file `caio-mayan-resume.pdf`.
-- Weather (#28, proposed, Caio reviews; on the first screen since #29): a weather icon and the current temperature in João Pessoa, e.g. "☁ 28°C", on the third line of the place. The weather name is read by screen readers only: "Clear sky", "Partly cloudy", "Cloudy", "Fog", "Rain", "Thunderstorm". At night the icon is the night version (moon; cloud with moon), from Open-Meteo’s `is_day`. The credit (Open-Meteo CC BY 4.0) sits in the footer (below): "Weather data by Open-Meteo.com" (the name is a link). If the API fails, none of this shows.
+- Weather (#28, proposed, Caio reviews; on the first screen since #29): a weather icon and the current temperature in João Pessoa, e.g. "☁ 28°C", on the third line of the place. The weather name is read by screen readers only: "Clear sky", "Partly cloudy", "Cloudy", "Fog", "Rain", "Thunderstorm". At night the icon is the night version (moon; cloud with moon), from Open-Meteo’s `is_day`. The credit (Open-Meteo CC BY 4.0, #39 round 5) is the temperature itself, which becomes a discreet link to open-meteo.com (same look as the text, underlined only on hover and focus; opens in a new tab), with the title and accessible name "Weather data by Open-Meteo.com" (`weather.credit.label` in `content/`; the accessible name starts with the temperature, e.g. "28°C. Weather data by Open-Meteo.com"). The credit is no longer in the footer. If the API fails, none of this shows.
 
 ### Languages (#38)
 
@@ -176,7 +176,7 @@ Section of its own at the end of the page, after Activity, with the same large h
 
 ### Footer (#29)
 
-- Minimal strip at the end of the page, separated from the last section by space only (no line, no background): "© 2026 Caio Mayan" on the left and the weather credit "Weather data by Open-Meteo.com" on the right (the credit only shows when there is weather). On mobile the two stack. The year is the current year, computed when the page is generated (`{year}` in `content/`).
+- Minimal strip at the end of the page, separated from the last section by space only (no line, no background): only "© 2026 Caio Mayan" (the weather credit left: it is the temperature link on the first screen). The year is the current year, computed when the page is generated (`{year}` in `content/`).
 
 ### Activity (#28, proposed, Caio reviews)
 
@@ -254,7 +254,7 @@ Título: "Fundamentos". Tres grupos:
 
 ### Pie de página
 
-- "© {year} Caio Mayan" a la izquierda y el crédito del clima, "Datos del clima de Open-Meteo.com" (el nombre es un enlace), a la derecha.
+- Solo "© {year} Caio Mayan". El crédito del clima (Open-Meteo, CC BY 4.0) ya no está aquí: es la propia temperatura de la primera pantalla, un enlace discreto a open-meteo.com con título y nombre accesible "Datos del clima: Open-Meteo.com" (`weather.credit.label` en `content/`).
 
 ### Interfaz
 

@@ -22,9 +22,9 @@ const stroke = (n: number) =>
   }) as CSSProperties;
 
 /**
- * Abertura (#39): na primeira visita da aba, a assinatura aparece grande no centro e se escreve (1,76 s, cada letra no seu ritmo); a tinta assenta num
- * respiro (0,26 s) e ela voa até o lugar dela no topo (0,86 s, FLIP só transform, X e Y com curvas diferentes) enquanto a cobertura levanta e a primeira tela
- * entra em sequência. ≈ 3 s no total. Os tempos e as curvas estão em lib/opening.ts.
+ * Abertura (#39): na primeira visita da aba, a assinatura aparece grande no centro e se escreve (1,76 s, cada letra no seu ritmo, o traço encorpando); a tinta assenta num
+ * respiro (0,26 s) e ela voa até o lugar dela no topo (0,92 s, FLIP só transform, mola sem quique, X e Y com rigidezes diferentes) enquanto a cobertura se recolhe pra cima como
+ * uma folha e a primeira tela sobe ao lugar em sequência; ela pousa e encaixa. ≈ 3,2 s no total. Os tempos e as curvas estão em lib/opening.ts.
  *
  * **Toda a coreografia roda fora do React**, pra não depender da hidratação: dois scripts inline (lib/opening.ts, postos em components/site-shell.tsx)
  * decidem se a abertura roda (sessionStorage, movimento reduzido, endereço com #), fazem o voo e o fade (WAAPI) e tratam o pular e o prazo de
@@ -82,19 +82,22 @@ export function Opening() {
               ))}
             </mask>
           </defs>
-          {drawnLetters.map((l, n) => (
-            <path
-              key={l.i}
-              className="opening-stroke"
-              pathLength={1}
-              d={l.d}
-              stroke="currentColor"
-              strokeWidth={OUTLINE_PX}
-              vectorEffect="non-scaling-stroke"
-              strokeLinejoin="round"
-              style={stroke(n)}
-            />
-          ))}
+          {/* O contorno (o traço visível): o grupo carrega a "pressão" (opacidade .55 → 1, lib/opening.ts). */}
+          <g className="opening-ink">
+            {drawnLetters.map((l, n) => (
+              <path
+                key={l.i}
+                className="opening-stroke"
+                pathLength={1}
+                d={l.d}
+                stroke="currentColor"
+                strokeWidth={OUTLINE_PX}
+                vectorEffect="non-scaling-stroke"
+                strokeLinejoin="round"
+                style={stroke(n)}
+              />
+            ))}
+          </g>
           <g mask="url(#opening-reveal)" fill="currentColor">
             <Filled />
           </g>

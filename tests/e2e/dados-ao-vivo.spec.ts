@@ -6,9 +6,9 @@ import { expect, test } from "./base";
 const TOKEN_FALSO = "token-de-teste-nao-e-segredo";
 
 const rotas = [
-  { path: "/", clima: "Parcialmente nublado", titulo: "Atividade", total: "1.234 contribuições no último ano", credito: "Dados do clima por" },
-  { path: "/en", clima: "Partly cloudy", titulo: "Activity", total: "1,234 contributions in the last year", credito: "Weather data by" },
-  { path: "/es", clima: "Parcialmente nublado", titulo: "Actividad", total: "1.234 contribuciones en el último año", credito: "Datos del clima de" },
+  { path: "/", clima: "Parcialmente nublado", titulo: "Atividade", total: "1.234 contribuições no último ano", credito: "Dados do clima: Open-Meteo.com" },
+  { path: "/en", clima: "Partly cloudy", titulo: "Activity", total: "1,234 contributions in the last year", credito: "Weather data by Open-Meteo.com" },
+  { path: "/es", clima: "Parcialmente nublado", titulo: "Actividad", total: "1.234 contribuciones en el último año", credito: "Datos del clima: Open-Meteo.com" },
 ] as const;
 
 for (const r of rotas) {
@@ -32,14 +32,31 @@ for (const r of rotas) {
       expect(c!.y).toBeGreaterThanOrEqual(t!.y + t!.height - 1);
       expect(Math.abs(c!.x - t!.x)).toBeLessThan(2);
       await expect(clima.locator(".place-sep")).toHaveCount(0);
-      // Crédito CC BY 4.0 do Open-Meteo: no rodapé (nunca na primeira tela), depois da seção Idiomas.
-      await expect(page.locator(".hero .weather-credit")).toHaveCount(0);
-      const credito = page.locator("footer .weather-credit");
-      await credito.scrollIntoViewIfNeeded();
-      const [lg, cr] = await Promise.all([page.locator("#idiomas").boundingBox(), credito.boundingBox()]);
-      expect(cr!.y).toBeGreaterThan(lg!.y + lg!.height - 1);
-      await expect(credito).toContainText(r.credito);
-      await expect(credito.getByRole("link", { name: "Open-Meteo.com" })).toHaveAttribute("href", "https://open-meteo.com/");
+      // Crédito CC BY 4.0 do Open-Meteo (#39, rodada 5): a temperatura é o link, ao lado do dado, na primeira tela; o rodapé não tem mais o crédito.
+      const credito = page.locator(".hero .place-weather a.weather-credit");
+      await expect(credito).toHaveCount(1);
+      await expect(credito).toHaveText(/^\d+°C$/);
+      await expect(credito).toHaveAttribute("href", "https://open-meteo.com/");
+      await expect(credito).toHaveAttribute("target", "_blank");
+      await expect(credito).toHaveAttribute("rel", "noopener noreferrer");
+      await expect(credito).toHaveAttribute("title", r.credito);
+      const rotulo = await credito.getAttribute("aria-label");
+      expect(rotulo).toMatch(/^\d+°C\. /); // a temperatura continua no nome acessível
+      expect(rotulo).toContain(r.credito);
+      await expect(page.locator("footer")).not.toContainText("Open-Meteo");
+      await expect(page.locator(".weather-credit")).toHaveCount(1);
+      // Visualmente igual ao de antes: mesma cor do texto ao redor, sem sublinhado em repouso; realce só no hover e no foco.
+      const estilo = () => credito.evaluate((el) => { const cs = getComputedStyle(el); return { cor: cs.color, pai: getComputedStyle(el.parentElement!).color, deco: cs.textDecorationLine }; });
+      const repouso = await estilo();
+      expect(repouso.cor).toBe(repouso.pai);
+      expect(repouso.deco).toBe("none");
+      await credito.hover();
+      expect((await estilo()).deco).toBe("underline");
+      await page.mouse.move(5, 5);
+      await credito.focus();
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Shift+Tab");
+      expect((await estilo()).deco).toBe("underline"); // foco por teclado
     });
 
     test("gráfico de contribuições antes de Idiomas, com título e total", async ({ page }) => {
