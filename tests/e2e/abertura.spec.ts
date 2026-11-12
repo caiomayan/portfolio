@@ -8,6 +8,7 @@ const topo = (page: Page) => page.locator(".top .signature");
 const terminou = async (page: Page) => {
   await expect(cobertura(page)).toHaveCount(0, { timeout: 8000 });
   await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
+  await expect(html(page)).not.toHaveAttribute("data-shine", /.*/, { timeout: 4000 }); // a passada de brilho da assinatura (rodada 4) acaba ~1,3 s depois
 };
 const PRIMEIRA_TELA = [".hero .who", ".hero h1", ".hero .lead", ".hero .place", ".hero .contact-icons", ".top-actions"];
 /** Pausa a abertura num instante (ms depois do início): traço, respiro, voo, cobertura e a entrada da primeira tela vão todos pra esse ponto da linha do tempo (lib/opening.ts). */
@@ -331,6 +332,7 @@ test.describe("abertura (#39)", () => {
       const ignorar = new Set(["offset", "easing", "composite", "computedOffset"]);
       const nomes = new Set<string>();
       for (const a of document.getAnimations()) {
+        if ((a.effect as KeyframeEffect).target?.closest(".lead-shine")) continue; // o brilho da frase (rodada 4) anima background-position, parado durante a abertura (teste abaixo)
         for (const k of (a.effect as KeyframeEffect).getKeyframes()) for (const p of Object.keys(k)) if (!ignorar.has(p)) nomes.add(p);
       }
       return [...nomes].sort();
@@ -394,5 +396,51 @@ test.describe("abertura (#39)", () => {
     await expect(html(page)).not.toHaveAttribute("data-choreography", /.*/);
     await terminou(page);
     await expect(html(page)).toHaveAttribute("data-choreography", "armed", { timeout: 8000 });
+  });
+
+  test("o brilho da frase fica parado durante a abertura e só corre depois dela", async ({ page }) => {
+    await page.goto("/");
+    await expect(cobertura(page)).toBeVisible();
+    const estado = () => page.locator(".lead-shine").evaluate((el) => el.getAnimations().map((a) => a.playState));
+    expect(await estado()).toEqual(["paused"]);
+    await terminou(page);
+    await expect.poll(estado).toEqual(["running"]);
+  });
+
+  test("a passada de brilho da assinatura: uma vez, só no fim natural da abertura, só com transform e opacity", async ({ page }) => {
+    await page.goto("/");
+    await expect(html(page)).toHaveAttribute("data-shine", "", { timeout: 8000 });
+    const a = await page.locator(".signature-glare").evaluate((el) => {
+      const anim = el.getAnimations()[0];
+      const kf = (anim.effect as KeyframeEffect).getKeyframes();
+      return { n: el.getAnimations().length, it: anim.effect!.getTiming().iterations, dur: Number(anim.effect!.getTiming().duration), props: [...new Set(kf.flatMap((k) => Object.keys(k)))] };
+    });
+    expect(a.n).toBe(1);
+    expect(a.it).toBe(1); // uma vez, sem loop
+    expect(a.props.filter((p) => !["offset", "easing", "composite", "computedOffset", "opacity", "transform"].includes(p))).toEqual([]);
+    await expect(html(page)).not.toHaveAttribute("data-shine", /.*/, { timeout: 4000 });
+    expect(await page.locator(".signature-glare").evaluate((el) => el.getAnimations().length)).toBe(0);
+    // Mesma estrutura de antes (a máscara usa <use>: nenhum caminho novo): 9 letras preenchidas + 9 contornos.
+    expect(await page.locator(".top .signature path").count()).toBe(18);
+  });
+
+  test("sem passada de brilho: ao recarregar (segunda visita), ao pular a abertura e com movimento reduzido", async ({ page, browser }) => {
+    await page.goto("/");
+    await terminou(page);
+    await page.reload();
+    await page.waitForTimeout(600);
+    await expect(html(page)).not.toHaveAttribute("data-shine", /.*/);
+    const outra = await page.context().newPage();
+    await outra.goto("/");
+    await expect(cobertura(outra)).toBeVisible();
+    await outra.keyboard.press("Tab"); // pula
+    await outra.waitForTimeout(600);
+    await expect(html(outra)).not.toHaveAttribute("data-shine", /.*/);
+    const ctx = await browser.newContext({ reducedMotion: "reduce" });
+    const p3 = await ctx.newPage();
+    await p3.goto("/");
+    await p3.waitForTimeout(600);
+    await expect(p3.locator("html")).not.toHaveAttribute("data-shine", /.*/);
+    await ctx.close();
   });
 });

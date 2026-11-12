@@ -7,6 +7,7 @@ export const en: Content = {
     name: "Caio Mayan",
     title: "Software Engineer",
     lead: "On the path to AI engineering: LLMs, agents and the backend that holds them up.",
+    leadShine: "AI engineering",
     place: { city: "João Pessoa, Brazil" },
     photoAlt: "Portrait of Caio Mayan",
   },

@@ -36,13 +36,18 @@ export default async function Page({ params }: Props) {
     <>
       <SiteHeader content={page} lang={lang} />
       <main>
-        <Hero content={page} weather={clima} />
-        <CarmineSection content={page.carmine} />
-        <Experience content={page} />
-        <Education content={page} />
-        <Foundations content={page} />
-        <Activity content={page.activity} data={activity} lang={lang} />
-        <Languages languages={page.languages} />
+        {/* #39, rodada 4: a primeira tela e o resto da página em dois blocos (`display: contents`, sem efeito no layout), pra transição "folha" (prévia). */}
+        <div className="stage">
+          <Hero content={page} weather={clima} />
+        </div>
+        <div className="rest">
+          <CarmineSection content={page.carmine} />
+          <Experience content={page} />
+          <Education content={page} />
+          <Foundations content={page} />
+          <Activity content={page.activity} data={activity} lang={lang} />
+          <Languages languages={page.languages} />
+        </div>
       </main>
       {/* Crédito do Open-Meteo (CC BY 4.0) à direita do rodapé, só quando há clima. */}
       <SiteFooter footer={page.footer} credit={clima?.credit} />

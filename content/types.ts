@@ -28,6 +28,8 @@ export type Content = {
     title: string;
     /** Frase de abertura (#38); título + frase formam a descrição da página e a prévia. */
     lead: string;
+    /** Trecho da frase de abertura que recebe o brilho (#39, rodada 4): tem que aparecer exatamente uma vez em `lead`. O texto da página não muda. */
+    leadShine: string;
     /** Lugar ao lado do mapa compacto (#29, #38): cidade, hora (o relógio) e clima em três linhas. */
     place: { city: string };
     photoAlt: string;

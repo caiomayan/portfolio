@@ -7,6 +7,7 @@ export const pt: Content = {
     name: "Caio Mayan",
     title: "Engenheiro de Software",
     lead: "A caminho da engenharia de IA: LLMs, agentes e o backend que os sustenta.",
+    leadShine: "engenharia de IA",
     place: { city: "João Pessoa, Brasil" },
     photoAlt: "Retrato de Caio Mayan",
   },

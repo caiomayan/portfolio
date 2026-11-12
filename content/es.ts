@@ -7,6 +7,7 @@ export const es: Content = {
     name: "Caio Mayan",
     title: "Ingeniero de Software",
     lead: "Rumbo a la ingeniería de IA: LLMs, agentes y el backend que los sostiene.",
+    leadShine: "ingeniería de IA",
     place: { city: "João Pessoa, Brasil" },
     photoAlt: "Retrato de Caio Mayan",
   },

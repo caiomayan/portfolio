@@ -13,6 +13,11 @@
  */
 import { signature } from "@/lib/signature";
 
+const [vx, vy, vw, vh] = signature.viewBox.split(" ").map(Number);
+/** Largura da faixa de brilho e quanto ela corre (em unidades do viewBox) na passada única do fim da abertura (app/motion.css). */
+const GLARE_W = vw * 0.38;
+const GLARE_TRAVEL = vw + GLARE_W;
+
 // Um caminho por letra (o "" do espaço não entra); calculado uma vez, no módulo.
 export const drawnLetters = signature.glyphs.map((d, i) => ({ d, i })).filter((l) => l.d);
 
@@ -50,8 +55,23 @@ export function Signature({ name }: { name: string }) {
     <span className="signature-mark" role="img" aria-label={name}>
       <svg className="signature" data-static="" viewBox={signature.viewBox} aria-hidden="true" focusable="false">
         <Outline />
-        <g fill="currentColor">
+        <g id="signature-fill" fill="currentColor">
           <Filled />
+        </g>
+        {/* Passada única de brilho depois que a abertura termina (#39, rodada 4; app/motion.css): uma faixa de --bg translúcida que corre por cima das letras,
+            recortada pela máscara estática (as mesmas letras, por <use>: não cria caminhos novos). Só `transform`; parada e invisível o resto do tempo. */}
+        <defs>
+          <mask id="signature-glare-mask" maskUnits="userSpaceOnUse" x={vx} y={vy} width={vw} height={vh}>
+            <use href="#signature-fill" style={{ color: "#fff" }} />
+          </mask>
+          <linearGradient id="signature-glare-grad" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" style={{ stopColor: "var(--bg)", stopOpacity: 0 }} />
+            <stop offset="0.5" style={{ stopColor: "var(--bg)", stopOpacity: 0.6 }} />
+            <stop offset="1" style={{ stopColor: "var(--bg)", stopOpacity: 0 }} />
+          </linearGradient>
+        </defs>
+        <g mask="url(#signature-glare-mask)">
+          <rect className="signature-glare" x={vx - GLARE_W} y={vy} width={GLARE_W} height={vh} fill="url(#signature-glare-grad)" style={{ "--glare-travel": `${GLARE_TRAVEL}px` } as React.CSSProperties} />
         </g>
       </svg>
     </span>

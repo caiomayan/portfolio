@@ -37,7 +37,7 @@ for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
       await expect(sig.locator("g > path")).toHaveCount(9);
       await expect(sig.locator("g > path").first()).toHaveCSS("fill", /rgb\(/);
       await expect(sig.locator("path.signature-outline")).toHaveCount(9);
-      expect(await sig.locator("mask").count()).toBe(0);
+      expect(await sig.locator("mask:not(#signature-glare-mask)").count()).toBe(0); // só a máscara estática do brilho (rodada 4), nada de máscara de traço
 
       // Rolar e trocar de tema: nada vira animação nem transição.
       await scrollToEnd(page);
@@ -66,7 +66,7 @@ for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
       const sig = page.locator(".signature");
       await expect(sig).toHaveAttribute("data-static", "");
       await expect(sig).toBeVisible();
-      expect(await sig.locator("mask").count()).toBe(0);
+      expect(await sig.locator("mask:not(#signature-glare-mask)").count()).toBe(0); // só a máscara estática do brilho (rodada 4), nada de máscara de traço
       await ctx.close();
     });
 

@@ -85,7 +85,7 @@ for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
       const titulo = (sel: string) => page.locator(sel).evaluate((el) => { const c = getComputedStyle(el); return [c.fontSize, c.fontWeight, c.letterSpacing, c.color].join("|"); });
       expect(await titulo("#idiomas h2")).toBe(await titulo("#fundamentos h2"));
       // Ordem: ... Atividade (quando há dados), Idiomas, rodapé; e nenhuma seção depois.
-      const ids = await page.locator("main > section").evaluateAll((els) => els.map((e) => e.id));
+      const ids = await page.locator("main section").evaluateAll((els) => els.map((e) => e.id));
       expect(ids.at(-1)).toBe("idiomas");
       expect(ids.indexOf("idiomas")).toBeGreaterThan(ids.indexOf("fundamentos"));
       expect(ids.indexOf("atividade")).toBeLessThan(ids.indexOf("idiomas"));

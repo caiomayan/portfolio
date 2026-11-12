@@ -48,7 +48,7 @@ for (const r of rotas) {
       await expect(secao.getByRole("heading", { level: 2, name: r.titulo })).toBeVisible();
       await expect(secao.locator(".activity-total")).toHaveText(r.total);
       await expect(secao.getByRole("img", { name: r.total })).toHaveCount(1);
-      const ordem = await page.evaluate(() => [...document.querySelectorAll("main > section")].map((s) => s.className || s.id));
+      const ordem = await page.evaluate(() => [...document.querySelectorAll("main section")].map((s) => s.className || s.id));
       expect(ordem.indexOf("activity")).toBe(ordem.indexOf("idiomas") - 1);
       // 53 semanas de 7 dias.
       await expect(secao.locator(".activity-week")).toHaveCount(53);

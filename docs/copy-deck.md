@@ -8,7 +8,7 @@ Regras: nunca citar o nome da instituição que usa o plugin, projetos anteriore
 
 - Nome: Caio Mayan
 - Título: Engenheiro de Software
-- Frase de abertura (#38): A caminho da engenharia de IA: LLMs, agentes e o backend que os sustenta. (Título e frase formam a descrição da página e a prévia: "Engenheiro de Software. A caminho da engenharia de IA: …".)
+- Frase de abertura (#38): A caminho da engenharia de IA: LLMs, agentes e o backend que os sustenta. (Título e frase formam a descrição da página e a prévia: "Engenheiro de Software. A caminho da engenharia de IA: …".) **Brilho (#39, rodada 4):** só o trecho "engenharia de IA" recebe o brilho cinza que corre devagar (marcado em `content/pt.ts`, `hero.leadShine`); o texto da frase não muda.
 - Lugar (#38, três linhas empilhadas ao lado do mapa de pontos compacto, que fica centrado na altura delas): "João Pessoa, Brasil"; a hora local, só "18:06" (24 h, fuso America/Fortaleza, atualizada a cada minuto; a hora não vem no HTML do servidor; o "(UTC−3)" saiu da tela, o fuso segue no cálculo); e o clima (abaixo), ícone e temperatura, "27°C". Fica embaixo da frase de abertura, na primeira tela, na faixa à esquerda.
 - Contato na primeira tela (#38): a seção Contato e o link "Contato ↓" saíram. Na faixa da primeira tela, à direita, ficam só ícones (alvos de 44 px, tooltip, uma parada de Tab e setas): e-mail (`mailto:`, o endereço mail@caiomayan.com é o tooltip e o nome acessível), LinkedIn, GitHub e Currículo (PDF). Nome acessível do grupo (proposto, o Caio revisa): "Contato".
 - Foto: `assets/foto-original.jpg`
@@ -103,7 +103,7 @@ Tradução fiel do texto acima, escrita na tarefa da versão em inglês (#7). Va
 
 - Name: Caio Mayan
 - Title: Software Engineer
-- Opening line (#38): On the path to AI engineering: LLMs, agents and the backend that holds them up. (Title and line form the page description and the preview: "Software Engineer. On the path to AI engineering: …".)
+- Opening line (#38): On the path to AI engineering: LLMs, agents and the backend that holds them up. (Title and line form the page description and the preview: "Software Engineer. On the path to AI engineering: …".) **Shine (#39, round 4):** only "AI engineering" gets the slow gray shine (marked in `content/en.ts`, `hero.leadShine`); the sentence text does not change.
 - Place (#38, three stacked lines next to the compact dot map, which is centered on their height): "João Pessoa, Brazil"; the local time, just "18:06" (24-hour, America/Fortaleza, updated every minute; the time is not in the server HTML; "(UTC−3)" left the screen, the time zone stays in the calculation); and the weather (below), icon and temperature, "27°C". Sits under the opening line, on the first screen, in the strip on the left.
 - Contact on the first screen (#38): the Contact section and the "Contact ↓" link are gone. In the first screen's strip, on the right, icons only (44 px targets, tooltip, one Tab stop and arrow keys): email (`mailto:`, the address mail@caiomayan.com is the tooltip and the accessible name), LinkedIn, GitHub and Resume (PDF). Accessible name of the group (proposed, Caio reviews): "Contact".
 - Photo alt: "Portrait of Caio Mayan"
@@ -197,7 +197,7 @@ Traducción fiel del texto de arriba, escrita en la tarea del español. Valen la
 
 - Nombre: Caio Mayan
 - Título: Ingeniero de Software
-- Frase de apertura: Rumbo a la ingeniería de IA: LLMs, agentes y el backend que los sostiene. (Descripción de la página: "Ingeniero de Software. Rumbo a la ingeniería de IA: …".)
+- Frase de apertura: Rumbo a la ingeniería de IA: LLMs, agentes y el backend que los sostiene. (Descripción de la página: "Ingeniero de Software. Rumbo a la ingeniería de IA: …".) **Brillo (#39, ronda 4):** solo el tramo "ingeniería de IA" recibe el brillo gris que corre despacio (marcado en `content/es.ts`, `hero.leadShine`); el texto de la frase no cambia.
 - Lugar: "João Pessoa, Brasil"; la hora local, "18:06"; el clima, ícono y temperatura, "27°C". Mapa de puntos compacto al lado, decorativo.
 - Contacto en la primera pantalla: solo íconos a la derecha de la franja (nombre accesible del grupo: "Contacto"): correo (mail@caiomayan.com), LinkedIn, GitHub y "Currículum (PDF)" (el archivo es `caio-mayan-resume.pdf`, en inglés).
 - Alt de la foto: "Retrato de Caio Mayan"
