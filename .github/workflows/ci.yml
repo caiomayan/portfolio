@@ -138,10 +138,27 @@ jobs:
       - name: Lighthouse
         run: npx --yes @lhci/cli@0.15.1 autorun --config=lighthouserc.json
 
+      # Mediana das 4 notas por URL no resumo do job, pra calibrar os mínimos sem baixar o artifact.
+      - name: Resumo do Lighthouse
+        if: always()
+        run: |
+          node -e "
+          const fs=require('fs');
+          if(!fs.existsSync('.lighthouseci/manifest.json')){process.exit(0)}
+          const m=JSON.parse(fs.readFileSync('.lighthouseci/manifest.json','utf8'));
+          const med=a=>{const s=[...a].sort((x,y)=>x-y);return s[Math.floor(s.length/2)]};
+          const cats=['performance','accessibility','seo','best-practices'];
+          let out='## Lighthouse (mediana de '+m.length/new Set(m.map(r=>r.url)).size+' execuções por URL)\n\n| URL | desempenho | acessibilidade | SEO | boas práticas |\n|---|---|---|---|---|\n';
+          for(const u of new Set(m.map(r=>r.url))){const rs=m.filter(r=>r.url===u);out+='| '+u+' | '+cats.map(k=>med(rs.map(r=>r.summary[k]))).join(' | ')+' |\n'}
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,out);
+          console.log(out);
+          "
+
       - name: Relatório do Lighthouse
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-report
           path: .lighthouseci
+          include-hidden-files: true # .lighthouseci é pasta oculta; sem isso o artifact sai vazio
           if-no-files-found: ignore
