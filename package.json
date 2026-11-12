@@ -11,7 +11,7 @@
     "test": "playwright test",
     "test:terms": "node --test scripts/check-forbidden-terms.test.mjs",
     "test:dados": "node --test tests/unit/dados.test.ts",
-    "test:idioma": "node --test tests/unit/idioma.test.ts",
+    "test:idioma": "node --test tests/unit/idioma.test.ts tests/unit/dados-estruturados.test.ts",
     "check:terms": "node scripts/check-forbidden-terms.mjs",
     "prepare": "node scripts/install-hooks.mjs",
     "signature": "node scripts/generate-signature.mjs",

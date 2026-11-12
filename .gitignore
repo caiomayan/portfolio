@@ -24,3 +24,5 @@ test-results/
 scripts/fonts/
 
 scripts/data/
+
+.lighthouseci/

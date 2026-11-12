@@ -112,3 +112,56 @@ jobs:
         run: npm test
         env:
           FORBIDDEN_TERMS: ${{ secrets.FORBIDDEN_TERMS }}
+
+  # Lighthouse (#45): job separado, em paralelo com o `test`, contra o build de produção (`next start`). Mediana de 3 execuções por página
+  # (mobile, o padrão do Lighthouse), notas mínimas em lighthouserc.json. Sem upload público: o relatório vai como artifact.
+  # O nome do job (`lighthouse`) deve ficar estável: vai virar check obrigatório.
+  lighthouse:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Mesmo servidor falso do `test`: o build lê o Open-Meteo e o GitHub dele, então a nota não depende da rede nem do token (o token abaixo é só do falso).
+      - name: Build (APIs falsas)
+        run: |
+          node tests/fixtures/apis.mjs > /dev/null 2>&1 &
+          MOCK_PID=$!
+          for i in $(seq 1 20); do curl -fs http://127.0.0.1:3199/health > /dev/null && break; sleep 0.5; done
+          ALLOW_TEST_API_URLS=1 OPEN_METEO_URL=http://127.0.0.1:3199/weather GITHUB_GRAPHQL_URL=http://127.0.0.1:3199/github GITHUB_TOKEN=token-de-teste-nao-e-segredo npm run build
+          kill $MOCK_PID
+
+      - name: Lighthouse
+        run: npx --yes @lhci/cli@0.15.1 autorun --config=lighthouserc.json
+
+      # Mediana das 4 notas por URL no resumo do job, pra calibrar os mínimos sem baixar o artifact.
+      - name: Resumo do Lighthouse
+        if: always()
+        run: |
+          node -e "
+          const fs=require('fs');
+          if(!fs.existsSync('.lighthouseci/manifest.json')){process.exit(0)}
+          const m=JSON.parse(fs.readFileSync('.lighthouseci/manifest.json','utf8'));
+          const med=a=>{const s=[...a].sort((x,y)=>x-y);return s[Math.floor(s.length/2)]};
+          const cats=['performance','accessibility','seo','best-practices'];
+          let out='## Lighthouse (mediana de '+m.length/new Set(m.map(r=>r.url)).size+' execuções por URL)\n\n| URL | desempenho | acessibilidade | SEO | boas práticas |\n|---|---|---|---|---|\n';
+          for(const u of new Set(m.map(r=>r.url))){const rs=m.filter(r=>r.url===u);out+='| '+u+' | '+cats.map(k=>med(rs.map(r=>r.summary[k]))).join(' | ')+' |\n'}
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,out);
+          console.log(out);
+          "
+
+      - name: Relatório do Lighthouse
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: .lighthouseci
+          include-hidden-files: true # .lighthouseci é pasta oculta; sem isso o artifact sai vazio
+          if-no-files-found: ignore

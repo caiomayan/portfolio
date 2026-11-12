@@ -167,7 +167,7 @@ test("título da aba: só o nome, nas três páginas e na 404; og:title mantém 
   await expect(page.locator('head meta[property="og:title"]')).toHaveAttribute("content", "Caio Mayan — Software Engineer");
 });
 
-test("favicon e apple-icon: PNG transparente nos cantos, com o círculo claro em cima e escuro embaixo e contorno neutro (#46)", async ({ page }) => {
+test("favicon (transparente) e apple-icon (fundo opaco --bg): PNG com o círculo claro em cima e escuro embaixo e contorno neutro (#46)", async ({ page }) => {
   await page.goto("/");
   const href = (sel: string) => page.locator(sel).first().getAttribute("href");
   const icone = new URL((await href('head link[rel="icon"]'))!, "http://x").pathname;
@@ -185,7 +185,8 @@ test("favicon e apple-icon: PNG transparente nos cantos, com o círculo claro em
       return { w: bmp.width, canto: px(0, 0), cima: px(m, q), baixo: px(m, (n as number) - q), borda: px(m, 1 + Math.floor((n as number) / 40)) };
     }, [caminho, lado] as const);
     expect(r.w, caminho).toBe(lado);
-    expect(r.canto[3], `${caminho} canto transparente`).toBe(0);
+    if (caminho === icone) expect(r.canto[3], `${caminho} (aba) tem canto transparente`).toBe(0);
+    else expect(r.canto, `${caminho} (apple-icon) tem fundo opaco --bg`).toEqual([251, 251, 253, 255]); // o iOS pinta transparência de preto na tela inicial
     expect(r.cima[0], `${caminho} cima mais claro que baixo`).toBeGreaterThan(r.baixo[0] + 60);
     expect(r.cima[3]).toBe(255);
     expect(r.baixo[3]).toBe(255);

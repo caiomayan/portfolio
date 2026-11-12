@@ -146,7 +146,9 @@ test.describe("seletor de idioma: globo e menu", () => {
     await expect(page).toHaveURL(/\/es$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "es");
     await expect(page).toHaveTitle("Caio Mayan");
-    await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute("content", "es_ES");
+    // #44: o <head> certo tem uma só og:locale. Não reproduzi duas no build de produção (3 trocas, 6 s cada); o relato foi uma vez, no CI sob carga.
+    // Por isso a asserção espera sobrar só a nova, sem `toHaveAttribute` (que falha em strict mode enquanto houver duas), e continua falhando se a antiga ficar.
+    await expect.poll(() => page.locator('meta[property="og:locale"]').evaluateAll((ms) => ms.map((m) => m.getAttribute("content"))), { timeout: 15_000 }).toEqual(["es_ES"]);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", `${SITE_URL}/es`);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(rotasTexto["/es"].titulo);
     await expect(botao(page, "/es")).toBeFocused();

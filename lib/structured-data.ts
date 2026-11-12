@@ -3,6 +3,8 @@ import { content, type Lang } from "@/content";
 import { locales } from "./locales";
 import { absoluteUrl } from "./site";
 
+export { jsonLdText } from "./structured-data-text.ts";
+
 /**
  * JSON-LD `Person` de uma língua (#46), montado só com o que já é público em `content/`: nome, cargo, a URL da própria versão, a foto e os perfis
  * (LinkedIn e GitHub, em `sameAs`). Sem empregador, instituição nem contato pessoal.
@@ -20,6 +22,3 @@ export function personJsonLd(lang: Lang) {
     sameAs: [contact.linkedin.href, contact.github.href],
   };
 }
-
-/** Texto pro `<script type="application/ld+json">`: o `<` sai escapado, pra nenhum valor fechar a tag antes da hora. */
-export const jsonLdText = (data: object): string => JSON.stringify(data).replace(/</g, "\u003c");
