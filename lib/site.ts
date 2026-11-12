@@ -3,3 +3,6 @@ export const SITE_URL = "https://caiomayan.com";
 
 /** URL absoluta de uma rota do site ("/" vira a origem, sem barra no final). */
 export const absoluteUrl = (path: string) => (path === "/" ? SITE_URL : `${SITE_URL}${path}`);
+
+/** Repositório público do site: é o link do recado no console (#46). */
+export const REPO_URL = "https://github.com/caiomayan/portfolio";

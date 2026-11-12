@@ -96,6 +96,7 @@ export const es: Content = {
       },
     ],
   },
+  console: { message: "¿Curioso? El código de este sitio es abierto:" },
   ui: { themeToggle: "Tema oscuro", language: "Idioma" },
   activity: { heading: "Actividad", total: { one: "{n} contribución en el último año", other: "{n} contribuciones en el último año" } },
   foundations: {

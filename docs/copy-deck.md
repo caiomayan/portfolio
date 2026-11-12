@@ -93,7 +93,16 @@ Seção própria no fim da página, depois de Atividade, com o mesmo título gra
 
 - Troca de idioma (#38, no lugar das bandeiras): botão com ícone de globo e a sigla da língua atual ("PT"), com `aria-expanded`; nome acessível "Idioma" (proposto, o Caio revisa). Abre um menu pequeno com "Português", "English" e "Español" (cada nome na própria língua, em todas as páginas), com um ✓ no idioma atual. Setas navegam, Esc fecha, clique fora fecha e o foco volta pro botão. Trocar de idioma não recarrega a página: o conteúdo troca na hora, com um crossfade curto (até 200 ms), o endereço muda (`/`, `/en`, `/es`), a rolagem fica onde estava, e o `lang`, o título e as metas acompanham. Com movimento reduzido, a troca é imediata.
 - Botão de tema (nome acessível; proposto pelo build, o Caio revisa): "Tema escuro" (pt). Em inglês: "Dark theme" (seção English).
-- Título da aba (proposto, o Caio revisa): "Caio Mayan — Engenheiro de Software". A descrição e a prévia (OG) usam a frase de abertura.
+- Título da aba (#46): só "Caio Mayan", em todas as páginas e na 404. O `og:title` e o `twitter:title` continuam "Caio Mayan — Engenheiro de Software" (a prévia de link mantém o cargo). A descrição e a prévia (OG) usam a frase de abertura.
+- Recado no console (#46, proposto, o Caio revisa): uma linha só, em `console.info`, logo seguida do endereço do repositório (https://github.com/caiomayan/portfolio): "Curioso? O código deste site é aberto:" (`console.message` em `content/`).
+
+## Idioma automático, dados estruturados e llms.txt (#46)
+
+Sem texto novo visível na página. O que muda no comportamento:
+
+- **Idioma na primeira visita:** só `GET /`, pelo `proxy.ts`. Ordem: (1) o cookie `lang` (`pt`, `en` ou `es`), gravado pelo seletor de idioma (menu e cápsula), 1 ano, `SameSite=Lax`, `Secure`, vence tudo; (2) sem `Accept-Language`, ou robô conhecido (Googlebot, Bingbot, prévias de link, Lighthouse…): fica em `/`; (3) a primeira língua suportada da lista, respeitando o `q`: português fica em `/`, inglês vai a `/en` e espanhol a `/es` (redirect 307, sem cache público); (4) nenhuma suportada: `/en`. `/en` e `/es` abertos direto nunca são redirecionados. Não usa IP.
+- **Dados estruturados:** um JSON-LD `Person` por página, na língua dela, só com o que já está em `content/` (nome, cargo, frase de abertura, URL da versão, foto, LinkedIn e GitHub em `sameAs`).
+- **/llms.txt** (em inglês, gerado de `content/` e de `content/llms.ts`): título "Caio Mayan", citação com o título e a frase de abertura em inglês ("Software Engineer. On the path to AI engineering: …"), a frase "Personal portfolio of Caio Mayan, based in João Pessoa, Brazil. The same page in three languages:", a lista "Versions" ("Português", "English", "Español", cada uma com o endereço e a descrição "Portuguese (Brazil)", "English", "Spanish") e "Elsewhere" (GitHub, LinkedIn e "Source code of this site").
 
 ## English
 
@@ -186,7 +195,8 @@ Section of its own at the end of the page, after Activity, with the same large h
 
 - Language switch (#38, replaces the flags): a button with a globe icon and the current language code ("EN"), with `aria-expanded`; accessible name "Language" (proposed, Caio reviews). It opens a small menu with "Português", "English" and "Español" (each name in its own language, on every page), with a ✓ on the current one. Arrow keys move, Esc closes, a click outside closes, and focus returns to the button. Switching language does not reload the page: the content changes at once, with a short crossfade (up to 200 ms), the address changes (`/`, `/en`, `/es`), the scroll stays where it was, and `lang`, the title and the metas follow. With reduced motion, the switch is immediate.
 - Theme button (accessible name): "Dark theme".
-- Tab title: "Caio Mayan — Software Engineer". The description and the preview (OG) use the opening line.
+- Tab title (#46): just "Caio Mayan", on every page and the 404. `og:title` and `twitter:title` stay "Caio Mayan — Software Engineer" (the link preview keeps the role). The description and the preview (OG) use the opening line.
+- Console note (#46, proposed, Caio reviews): a single `console.info` line followed by the repository address (https://github.com/caiomayan/portfolio): "Curious? This site's code is open:" (`console.message` in `content/`).
 - Section headings: "Experience", "Education", "Foundations", "Activity", "Languages".
 
 ## Español (#38)
@@ -260,6 +270,7 @@ Título: "Fundamentos". Tres grupos:
 
 - Cambio de idioma: botón con globo y la sigla actual ("ES"), nombre accesible "Idioma"; menú con "Português", "English" y "Español", con ✓ en el actual.
 - Botón de tema (nombre accesible): "Tema oscuro".
-- Título de la pestaña: "Caio Mayan — Ingeniero de Software".
+- Título de la pestaña (#46): solo "Caio Mayan", en todas las páginas y en la 404. `og:title` y `twitter:title` siguen "Caio Mayan — Ingeniero de Software".
+- Aviso en la consola (#46, propuesto, Caio revisa): una sola línea `console.info` seguida de la dirección del repositorio (https://github.com/caiomayan/portfolio): "¿Curioso? El código de este sitio es abierto:" (`console.message` en `content/`).
 - Clima (nombres solo para lector de pantalla): "Cielo despejado", "Parcialmente nublado", "Nublado", "Niebla", "Lluvia", "Tormenta".
 - Títulos de sección: "Experiencia", "Formación", "Fundamentos", "Actividad", "Idiomas".

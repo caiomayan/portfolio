@@ -79,7 +79,8 @@ test("favicon e imagens de prévia são só preto, branco e cinza", async ({ pag
       ctx.drawImage(bmp, 0, 0);
       const d = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
       let max = 0;
-      for (let i = 0; i < d.length; i += 4) max = Math.max(max, Math.abs(d[i] - d[i + 1]), Math.abs(d[i + 1] - d[i + 2]));
+      // Pixels quase transparentes (borda suavizada do favicon, #46) perdem precisão ao desmultiplicar o alfa: só contam os com alfa >= 128.
+      for (let i = 0; i < d.length; i += 4) if (d[i + 3] >= 128) max = Math.max(max, Math.abs(d[i] - d[i + 1]), Math.abs(d[i + 1] - d[i + 2]));
       return max;
     }, caminho);
     expect(colorido, `${caminho} tem pixels coloridos`).toBeLessThanOrEqual(TOLERANCIA);

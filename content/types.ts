@@ -74,6 +74,8 @@ export type Content = {
       stack?: IconList;
     })[];
   };
+  /** Recado no console do navegador (#46): uma frase curta; o link do repositório (`REPO_URL`) vem logo depois, na mesma mensagem. */
+  console: { message: string };
   ui: {
     themeToggle: string;
     /** Seletor de idioma (#38): nome acessível do botão do globo e do menu. Os nomes das línguas ficam em `locales` (cada uma na própria língua). */

@@ -20,7 +20,7 @@ export const test = base.extend<{ openingDone: void }>({
     async ({ browser }, use) => {
       const original = browser.newContext.bind(browser);
       browser.newContext = async (options) => {
-        const context = await original(options);
+        const context = await original({ locale: "pt-BR", ...options }); // #46: sem locale o Chrome manda en-US e `/` redireciona pra `/en`
         await context.addInitScript(markOpeningDone);
         return context;
       };

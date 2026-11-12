@@ -14,6 +14,7 @@ export const buildEnv = {
   falha: { ALLOW_TEST_API_URLS: "1", OPEN_METEO_URL: `${APIS}/weather-erro`, GITHUB_GRAPHQL_URL: `${APIS}/github-erro`, GITHUB_TOKEN: TEST_TOKEN, NEXT_DIST_DIR: ".next-falha" },
 };
 
+// Locale pt-BR em todos os projetos (#46): o idioma automático redireciona `/` pela língua do navegador, e os testes partem da versão em português.
 // Os testes rodam contra o build de produção (next build + next start).
 // No CI o build é um passo à parte (typecheck, lint, build, testes); aqui só se sobe o servidor.
 export default defineConfig({
@@ -21,8 +22,8 @@ export default defineConfig({
   fullyParallel: true,
   reporter: process.env.CI ? [["list"], ["github"]] : [["list"]],
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"], baseURL: `http://localhost:${PORT}` }, testIgnore: /falha-dados/ },
-    { name: "apis-falhando", use: { ...devices["Desktop Chrome"], baseURL: `http://localhost:${PORT_FALHA}` }, testMatch: /falha-dados/ },
+    { name: "chromium", use: { ...devices["Desktop Chrome"], locale: "pt-BR", baseURL: `http://localhost:${PORT}` }, testIgnore: /falha-dados/ },
+    { name: "apis-falhando", use: { ...devices["Desktop Chrome"], locale: "pt-BR", baseURL: `http://localhost:${PORT_FALHA}` }, testMatch: /falha-dados/ },
   ],
   webServer: [
     { command: "node tests/fixtures/apis.mjs", url: `${APIS}/health`, reuseExistingServer: !process.env.CI, env: { MOCK_APIS_PORT: String(PORT_APIS) } },

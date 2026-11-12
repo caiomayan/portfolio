@@ -2,7 +2,7 @@ import { expect, test, type Page } from "./base";
 import { SITE_URL } from "@/lib/site";
 import { rotasTexto } from "./textos";
 
-// Issues #7 e #38: três línguas (/, /en, /es), seletor com globo e menu, hreflang, sem redirecionamento por língua do navegador.
+// Issues #7 e #38: três línguas (/, /en, /es), seletor com globo e menu, hreflang. O idioma automático de `/` (#46) está em idioma-automatico.spec.ts.
 const rotas = [
   { path: "/", sigla: "PT", lang: "pt-BR", atual: "Português" },
   { path: "/en", sigla: "EN", lang: "en", atual: "English" },
@@ -24,8 +24,8 @@ test.describe("rotas e hreflang", () => {
     });
   }
 
-  test("não redireciona pela língua do navegador", async ({ browser }) => {
-    for (const [locale, path] of [["en-US", "/"], ["pt-BR", "/en"], ["en-US", "/es"], ["es-ES", "/"]] as const) {
+  test("/en e /es abertos direto nunca são redirecionados, qualquer que seja a língua do navegador (#46)", async ({ browser }) => {
+    for (const [locale, path] of [["pt-BR", "/en"], ["en-US", "/es"], ["es-ES", "/en"], ["fr-FR", "/es"], ["pt-BR", "/"]] as const) {
       const ctx = await browser.newContext({ locale, extraHTTPHeaders: { "Accept-Language": locale } });
       const page = await ctx.newPage();
       const res = await page.goto(path);
@@ -145,7 +145,7 @@ test.describe("seletor de idioma: globo e menu", () => {
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/es$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "es");
-    await expect(page).toHaveTitle("Caio Mayan — Ingeniero de Software");
+    await expect(page).toHaveTitle("Caio Mayan");
     // #44: o <head> certo tem uma só og:locale. Não reproduzi duas no build de produção (3 trocas, 6 s cada); o relato foi uma vez, no CI sob carga.
     // Por isso a asserção espera sobrar só a nova, sem `toHaveAttribute` (que falha em strict mode enquanto houver duas), e continua falhando se a antiga ficar.
     await expect.poll(() => page.locator('meta[property="og:locale"]').evaluateAll((ms) => ms.map((m) => m.getAttribute("content"))), { timeout: 15_000 }).toEqual(["es_ES"]);

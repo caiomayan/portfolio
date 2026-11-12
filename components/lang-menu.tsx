@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { prefersReducedMotion } from "@/lib/motion";
 import { Check, Globe } from "lucide-react";
+import { saveLangChoice } from "@/lib/language-choice";
 import { langs, locales, type Lang } from "@/lib/locales";
 
 /** Foco a devolver ao botão quando a troca de idioma remonta a página (a barra do topo é recriada junto com o conteúdo). */
@@ -135,6 +136,7 @@ export function LangMenu({ lang, label }: { lang: Lang; label: string }) {
                 className="lang-item"
                 href={locales[l].path}
                 scroll={false}
+                prefetch={false} // #46: um prefetch de "/" feito antes da escolha guardaria o redirect do idioma automático; a troca busca a rota depois de gravar o cookie
                 lang={locales[l].htmlLang}
                 hrefLang={locales[l].hreflang}
                 role="menuitemradio"
@@ -142,6 +144,7 @@ export function LangMenu({ lang, label }: { lang: Lang; label: string }) {
                 tabIndex={-1}
                 onClick={(e) => {
                   setOpen(false);
+                  saveLangChoice(l); // #46: a escolha manual fica salva (cookie) e vence a detecção automática da primeira visita
                   if (l === lang) {
                     e.preventDefault();
                     return;
