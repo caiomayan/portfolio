@@ -9,6 +9,7 @@ import { locales } from "@/lib/locales";
  * porque a resposta depende de cookie e de `Accept-Language`: nenhuma CDN pode servir o redirect de uma pessoa pra outra.
  */
 export function proxy(request: NextRequest) {
+  if (request.method !== "GET") return NextResponse.next(); // só `GET /` (HEAD, POST etc. seguem direto)
   const lang = chooseLang({
     acceptLanguage: request.headers.get("accept-language"),
     cookie: request.cookies.get(LANG_COOKIE)?.value,
