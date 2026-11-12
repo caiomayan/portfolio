@@ -37,6 +37,6 @@
     "eslint-config-next": "^16.4.5",
     "opentype.js": "^2.0.0",
     "pdfjs-dist": "^6.5.438",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }
