@@ -96,6 +96,7 @@ export const en: Content = {
       },
     ],
   },
+  console: { message: "Curious? This site's code is open:" },
   ui: { themeToggle: "Dark theme", language: "Language" },
   activity: { heading: "Activity", total: { one: "{n} contribution in the last year", other: "{n} contributions in the last year" } },
   foundations: {

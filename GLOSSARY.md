@@ -15,3 +15,7 @@ _Avoid_: o nome real da instituição, "a faculdade X"
 **Carmine**:
 O principal projeto pessoal do Caio: um SaaS para jogadores e times competitivos de Counter-Strike 2. É o único projeto pessoal que aparece no site.
 _Avoid_: nomes de projetos anteriores (não aparecem no site)
+
+**Idioma automático**:
+Na primeira visita, `GET /` redireciona (307) pela língua do navegador pra `/en` ou `/es`; português fica em `/`. A escolha manual no seletor fica salva no cookie `lang` e sempre vence. `/en`, `/es` e robôs nunca são redirecionados, pra as três versões continuarem indexadas.
+_Avoid_: detecção por IP, redirecionar robôs

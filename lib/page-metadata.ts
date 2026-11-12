@@ -11,9 +11,10 @@ export function pageMetadata(lang: Lang): Metadata {
   const image = { url: ogPath(lang), width: ogSize.width, height: ogSize.height, alt: ogAlt(lang) };
   return {
     metadataBase: new URL(SITE_URL),
-    title: page.meta.title,
+    // #46: o título da aba é só o nome; og:title e twitter:title mantêm o cargo (`meta.title`), pra prévia de link.
+    title: page.hero.name,
     description,
-    // Canonical e hreflang entre as três rotas (cada uma aponta pra si e pras outras); sem redirecionamento por língua do navegador.
+    // Canonical e hreflang entre as três rotas (cada uma aponta pra si e pras outras); o redirecionamento por língua do navegador só existe em `GET /` (proxy.ts, #46) e nunca pra robôs.
     alternates: {
       canonical: url,
       languages: {

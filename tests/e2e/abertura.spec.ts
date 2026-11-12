@@ -239,7 +239,7 @@ test.describe("abertura (#39)", () => {
   for (const [largura, altura] of [[1440, 900], [375, 667]] as const) {
     test(`a primeira tela nunca pisca a ${largura} px com a CPU 4× mais lenta: depois que a cobertura começa a subir o título fica sempre opaco e ela só sobe (nunca volta)`, async ({ browser }) => {
       for (let rodada = 0; rodada < 3; rodada++) {
-        const ctx = await browser.newContext({ viewport: { width: largura, height: altura }, reducedMotion: "no-preference" });
+        const ctx = await browser.newContext({ locale: "pt-BR", viewport: { width: largura, height: altura }, reducedMotion: "no-preference" });
         const page = await ctx.newPage();
         const cdp = await ctx.newCDPSession(page);
         await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
@@ -312,7 +312,7 @@ test.describe("abertura (#39)", () => {
   });
 
   test("o toque pula a abertura no celular", async ({ browser }) => {
-    const ctx = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 375, height: 667 } });
+    const ctx = await browser.newContext({ locale: "pt-BR", hasTouch: true, isMobile: true, viewport: { width: 375, height: 667 } });
     const page = await ctx.newPage();
     await page.goto("/");
     await expect(cobertura(page)).toBeVisible();
@@ -353,7 +353,7 @@ test.describe("abertura (#39)", () => {
 
   for (const [largura, altura, min, max] of [[1920, 1080, 219, 221], [1440, 900, 219, 221], [375, 667, 140, 155]] as const) {
     test(`a assinatura do topo tem tamanho de logomarca a ${largura} px (${min}–${max} px de largura), na mesma proporção, e a abertura pousa nesse tamanho`, async ({ browser }) => {
-      const ctx = await browser.newContext({ viewport: { width: largura, height: altura }, reducedMotion: "no-preference" });
+      const ctx = await browser.newContext({ locale: "pt-BR", viewport: { width: largura, height: altura }, reducedMotion: "no-preference" });
       const page = await ctx.newPage();
       await page.goto("/");
       await expect(cobertura(page)).toBeVisible();
@@ -390,7 +390,7 @@ test.describe("abertura (#39)", () => {
   });
 
   test("com prefers-reduced-motion: reduce, nada de abertura e a assinatura aparece pronta", async ({ browser }) => {
-    const ctx = await browser.newContext({ reducedMotion: "reduce" });
+    const ctx = await browser.newContext({ locale: "pt-BR", reducedMotion: "reduce" });
     const page = await ctx.newPage();
     await page.goto("/");
     await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
@@ -400,7 +400,7 @@ test.describe("abertura (#39)", () => {
   });
 
   test("sem JavaScript, nada fica escondido: a assinatura e a primeira tela aparecem prontas", async ({ browser }) => {
-    const ctx = await browser.newContext({ javaScriptEnabled: false, reducedMotion: "no-preference" });
+    const ctx = await browser.newContext({ locale: "pt-BR", javaScriptEnabled: false, reducedMotion: "no-preference" });
     const page = await ctx.newPage();
     await page.goto("/");
     await expect(html(page)).not.toHaveAttribute("data-opening", /.*/);
@@ -412,7 +412,7 @@ test.describe("abertura (#39)", () => {
   });
 
   test("a abertura não depende da hidratação: sem o pacote JS da página, ela termina sozinha em ≈ 3 s, antes do prazo de segurança", async ({ browser }) => {
-    const ctx = await browser.newContext({ reducedMotion: "no-preference" });
+    const ctx = await browser.newContext({ locale: "pt-BR", reducedMotion: "no-preference" });
     const page = await ctx.newPage();
     await page.route("**/_next/static/**/*.js", (route) => route.abort());
     await page.goto("/");
@@ -458,7 +458,7 @@ test.describe("abertura (#39)", () => {
 
   for (const [largura, altura] of [[1440, 900], [375, 667]] as const) {
     test(`a assinatura do topo depois da abertura tem o mesmo traço (1,5 px de contorno) da recarregada, da com movimento reduzido e do último quadro do voo, a ${largura} px`, async ({ browser }) => {
-      const ctx = await browser.newContext({ viewport: { width: largura, height: altura }, reducedMotion: "no-preference", deviceScaleFactor: 1 });
+      const ctx = await browser.newContext({ locale: "pt-BR", viewport: { width: largura, height: altura }, reducedMotion: "no-preference", deviceScaleFactor: 1 });
       const page = await ctx.newPage();
       await page.goto("/");
       await expect(cobertura(page)).toBeVisible();
@@ -488,7 +488,7 @@ test.describe("abertura (#39)", () => {
       await page.reload();
       await expect(topo(page)).toBeVisible();
       const recarregada = await tinta(page, clip);
-      const reduzido = await browser.newContext({ viewport: { width: largura, height: altura }, reducedMotion: "reduce", deviceScaleFactor: 1 });
+      const reduzido = await browser.newContext({ locale: "pt-BR", viewport: { width: largura, height: altura }, reducedMotion: "reduce", deviceScaleFactor: 1 });
       const p2 = await reduzido.newPage();
       await p2.goto("/");
       const semMovimento = await tinta(p2, await recorteDaAssinatura(p2));
@@ -548,7 +548,7 @@ test.describe("abertura (#39)", () => {
     await outra.keyboard.press("Tab"); // pula
     await outra.waitForTimeout(600);
     await expect(html(outra)).not.toHaveAttribute("data-shine", /.*/);
-    const ctx = await browser.newContext({ reducedMotion: "reduce" });
+    const ctx = await browser.newContext({ locale: "pt-BR", reducedMotion: "reduce" });
     const p3 = await ctx.newPage();
     await p3.goto("/");
     await p3.waitForTimeout(600);

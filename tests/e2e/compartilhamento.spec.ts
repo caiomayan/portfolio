@@ -16,7 +16,7 @@ for (const r of rotas) {
       const meta = (sel: string) => page.locator(`head meta[${sel}]`);
       const t = rotasTexto[r.path];
       const descricao = `${t.titulo}. ${t.lead}`;
-      await expect(page).toHaveTitle(r.titulo);
+      await expect(page).toHaveTitle("Caio Mayan"); // #46: título da aba só com o nome; og:title e twitter:title seguem com o cargo
       await expect(meta('name="description"')).toHaveAttribute("content", descricao);
       await expect(meta('property="og:title"')).toHaveAttribute("content", r.titulo);
       await expect(meta('property="og:description"')).toHaveAttribute("content", descricao);

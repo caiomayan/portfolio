@@ -13,6 +13,7 @@ import { content } from "@/content";
 import { getActivity } from "@/lib/github-activity";
 import { langFromParams } from "@/lib/locales";
 import { pageMetadata } from "@/lib/page-metadata";
+import { jsonLdText, personJsonLd } from "@/lib/structured-data";
 import { getWeather } from "@/lib/weather";
 
 type Props = PageProps<"/[[...lang]]">;
@@ -34,6 +35,8 @@ export default async function Page({ params }: Props) {
   const clima = weatherSlots(weather, page.weather);
   return (
     <>
+      {/* Dados estruturados (#46): um JSON-LD `Person` por página, na língua dela. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdText(personJsonLd(lang)) }} />
       <SiteHeader content={page} lang={lang} />
       <main>
         {/* #39: a primeira tela e o resto da página em dois blocos (`display: contents`, sem efeito no layout fora da folha, app/motion.css). */}
