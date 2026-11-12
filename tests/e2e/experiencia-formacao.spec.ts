@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 import { rotasTexto, type RotaTexto } from "./textos";
 
 // Texto: docs/copy-deck.md (seções Experiência e Formação).

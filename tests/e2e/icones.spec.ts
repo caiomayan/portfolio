@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 
 // Tamanhos de ícone vêm dos tokens do CSS (DESIGN.md): conferimos o resultado na página.
 for (const path of ["/", "/en", "/es"]) {

@@ -1,11 +1,12 @@
 import type { Content } from "@/content";
 import { EntryRow } from "./entry-row";
+import { TitleMask } from "./title-mask";
 
 export function Education({ content }: { content: Content }) {
   const { heading, items } = content.education;
   return (
     <section id="formacao" className="entries" aria-labelledby="formacao-title">
-      <h2 id="formacao-title" data-reveal-part>{heading}</h2>
+      <h2 id="formacao-title"><TitleMask>{heading}</TitleMask></h2>
       <ul>
         {items.map((item) => (
           <EntryRow

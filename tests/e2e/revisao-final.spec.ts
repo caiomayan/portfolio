@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./base";
 import { rotasTexto } from "./textos";
 
 // Revisão final da #29 (PR #33): estrutura (main), teclado nas linhas de ícones, ordem no celular, largura em telas estreitas,
@@ -14,7 +14,7 @@ for (const path of rotas) {
     test("o <main> envolve todas as seções; header e footer ficam fora; a primeira tela é uma seção", async ({ page }) => {
       await page.goto(path);
       await expect(page.locator("main")).toHaveCount(1);
-      await expect(page.locator("main > section")).toHaveCount(await page.locator("section").count());
+      await expect(page.locator("main section")).toHaveCount(await page.locator("section").count());
       await expect(page.locator("main section.hero h1")).toHaveText(t.titulo);
       expect(await page.locator("main header, main footer").count()).toBe(0);
       await expect(page.locator("body > header")).toHaveCount(1);

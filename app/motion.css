@@ -27,6 +27,8 @@
   color: var(--ink);
 }
 
+.opening { display: none; } /* só existe com `html[data-opening]` */
+
 @media (prefers-reduced-motion: no-preference) {
   /* Tooltip: entra com fade e 4 px de deslocamento (transform/opacity); fecha na hora. Sem movimento reduzido, só aparece. */
   @keyframes tip-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
@@ -35,17 +37,33 @@
   .place-pulse { animation: pin-pulse 2.4s var(--ease) infinite; }
   .tip { animation: tip-in 140ms var(--ease) both; }
 
-  /* A versão pronta (render do servidor) fica escondida até o script trocar pela animada; sem script, sem assinatura. */
-  /* Depois da troca de idioma (`data-drawn`) ela já foi desenhada nesta visita: fica pronta e visível, sem desenhar de novo. */
-  .signature[data-static]:not([data-drawn]) { visibility: hidden; }
-
-  /* Entrada escalonada: o estado escondido só existe se o script (components/reveal.tsx) o aplicar. */
-  [data-reveal="pending"] { opacity: 0; transform: translateY(20px); }
-  [data-reveal="in"] {
-    transition:
-      opacity 600ms var(--ease) var(--reveal-delay, 0ms),
-      transform 900ms var(--spring) var(--reveal-delay, 0ms);
+  /* Abertura (#39, components/opening.tsx): enquanto `html[data-opening]` existe (o script inline de components/site-shell.tsx o põe antes da primeira pintura,
+     só na primeira visita da aba e sem movimento reduzido), uma tela de cobertura em --bg mostra a assinatura grande se escrevendo e a do topo fica invisível
+     (mantém o lugar: é ali que a grande vai parar). A página por baixo carrega normal, com o h1 pintado, e a cobertura só some (opacity) depois do voo.
+     O traço é CSS: nasce na primeira pintura, sem esperar o JavaScript; o voo (transform) e o fade da cobertura são WAAPI, disparados por um script inline (lib/opening.ts), sem esperar o React. Os tempos repetem lib/opening.ts. */
+  html[data-opening] .opening { display: grid; place-items: center; position: fixed; inset: 0; z-index: 100; color: var(--ink); }
+  /* A cobertura é uma folha (#39, rodada 5): em --bg, cantos de baixo arredondados e a sombra de baixo (a folha da transição, ao contrário); se recolhe pra cima
+     (translateY, lib/opening.ts) revelando a primeira tela. A assinatura grande fica opaca e por cima dela até o fim. */
+  .opening-scrim { position: absolute; inset: 0; background: var(--bg); border-radius: 0 0 28px 28px; box-shadow: var(--sheet-shadow-down); will-change: transform; }
+  .opening-ink { opacity: 0.55; } /* o script a leva a 1 (pressão da caneta); sem ele (falha) o contorno fica mais leve só até o fim da abertura */
+  html[data-opening] .signature-mark .signature { visibility: hidden; }
+  /* Invólucro (Y do voo) e <svg> (X e escala do voo): o script assenta os dois no tamanho e no lugar da assinatura do topo e anima a partir do grande. */
+  .opening-art { position: relative; width: min(72vw, 560px); will-change: transform; }
+  .opening-art-svg { display: block; width: 100%; height: auto; overflow: visible; transform-origin: 0 0; will-change: transform; }
+  /* O traço, letra a letra (a exceção documentada: stroke-dashoffset num SVG pequeno). O 1% evita o pontinho do caps redondo antes de começar. */
+  @keyframes opening-draw {
+    0% { stroke-dashoffset: 1; opacity: 0; }
+    1% { stroke-dashoffset: 1; opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 1; }
   }
+  .opening-stroke { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; animation: opening-draw var(--d) cubic-bezier(0.45, 0.05, 0.25, 1) var(--s) both; } /* --s e --d: início e duração de cada letra (lib/opening.ts, LETTERS) */
+
+  /* Passada única de brilho na assinatura do topo (#39, rodada 4), depois que a abertura termina sozinha (`html[data-shine]`, posto por lib/opening.ts): uma faixa de
+     --bg translúcida corre pelas letras (máscara estática em components/signature.tsx). Só `transform`, uma vez, sem loop; sem abertura (segunda visita, movimento
+     reduzido) o atributo nunca existe. Técnica inspirada no Animated Shiny Text do Magic UI (MIT). */
+  .signature-glare { opacity: 0; transform-box: fill-box; }
+  @keyframes signature-glare { from { opacity: 1; transform: translateX(0); } to { opacity: 1; transform: translateX(var(--glare-travel)); } }
+  html[data-shine] .signature-glare { animation: signature-glare 1300ms cubic-bezier(0.4, 0, 0.2, 1) both; }
 
   /* Troca de tema: fade da página inteira (View Transitions), 100% composição. Sem suporte, a troca é instantânea. */
   ::view-transition-old(root),
@@ -64,4 +82,78 @@
 /* Movimento reduzido: sem View Transitions em lugar nenhum (a troca de idioma e a de tema são imediatas). */
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+
+/* Brilho cinza no trecho "engenharia de IA" da frase de abertura (#39, rodada 4). Técnica do Animated Shiny Text do Magic UI (MIT, magicui.design): gradiente com
+   `background-clip: text` e `background-position` animado (segunda exceção documentada à regra "só transform e opacity", ao lado do traço da assinatura). Adaptado ao
+   projeto: sem Tailwind, em escala de cinza (a faixa é --ink a 55 %, então só aumenta o contraste nos dois temas), uma passada lenta e um intervalo longo (9 s no total,
+   a passada leva ~2,5 s). **Camada por cima do texto, não o texto em si** (components/hero.tsx, `shineLead`): a frase segue inteira e sem <span> no <p> (um <span> ali
+   estragava o LCP no celular); `.lead-glare` repete a frase por CSS `content` (sem texto no DOM, aria-hidden), transparente, e só o trecho marcado leva o gradiente
+   recortado no texto, que cai exatamente sobre as letras de baixo. Parado enquanto a abertura roda. Sem brilho com movimento reduzido ou cores forçadas. */
+.lead-glare { display: none; }
+@media (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    @keyframes shiny-text {
+      0% { background-position: calc(-100% - var(--shiny-width)) 0; }
+      28%, 100% { background-position: calc(100% + var(--shiny-width)) 0; }
+    }
+    .lead-glare { display: block; position: absolute; inset: 0; pointer-events: none; -webkit-user-select: none; user-select: none; }
+    .lead-glare > span { color: transparent; }
+    .lead-glare > span::before { content: attr(data-t); }
+    .lead-shine {
+      --shiny-width: 110px;
+      background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ink) 55%, transparent) 50%, transparent) 0 0 / var(--shiny-width) 100% no-repeat;
+      background-position: calc(-100% - var(--shiny-width)) 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shiny-text 9s cubic-bezier(0.45, 0.05, 0.25, 1) 1.2s infinite;
+    }
+    html[data-opening] .lead-shine { animation-play-state: paused; }
+  }
+}
+
+/* ====================================================================================================================
+   A folha (#39, rodadas 4 e 5). `.stage` (a primeira tela) e `.rest` (as outras seções) são blocos `display: contents`: sem efeito no layout, a não ser na folha.
+   ==================================================================================================================== */
+.stage, .rest { display: contents; }
+
+/* Só no desktop com altura (a primeira tela tem que caber na janela; no celular ela não é de tela cheia) e sem movimento reduzido.
+   A PRIMEIRA TELA INTEIRA fica travada, do primeiro pixel de rolagem até a folha cobri-la: o topo (assinatura e controles, `.top`) é sticky em 0 e a primeira tela
+   (`.hero`) é sticky logo abaixo dele (`top: var(--top-height)`, a altura do topo, que é a posição natural dela: nada se move). O `.stage` termina com um vão de 100svh que
+   a `.rest` puxa de volta com a margem negativa: a altura da página não muda e a primeira tela se solta depois de exatamente uma tela de rolagem, quando a folha já a cobriu
+   por inteiro. Só a folha se move: fundo --bg, cantos de cima arredondados, um fio e uma sombra leve (--sheet-shadow, tokens dos dois temas). O recuo da primeira tela
+   por baixo (scale e opacity) é o scrub em lib/choreography.ts. O topo fica acima da primeira tela (pro menu de idioma, que desce sobre ela, não ficar por baixo: z-index 1) e abaixo da folha (z-index 2); quando a folha cobre o topo, a cápsula dos controles
+   (components/floating-controls.tsx) sobe acima dela: o topo vai pra z-index 3, sem eventos, com a assinatura escondida (já coberta). */
+@media (prefers-reduced-motion: no-preference) and (min-width: 900px) and (min-height: 700px) {
+  .top { position: sticky; top: 0; z-index: 1; min-height: var(--top-height); }
+  .top:has(.top-actions[data-floating]) { z-index: 3; pointer-events: none; }
+  .top:has(.top-actions[data-floating]) .signature-mark { visibility: hidden; }
+  .top-actions[data-floating] { pointer-events: auto; }
+  .stage { display: block; position: relative; }
+  .stage::after { content: ""; display: block; height: 100svh; }
+  .stage .hero { position: sticky; top: var(--top-height); }
+  .rest {
+    display: block; position: relative; z-index: 2; margin-top: -100svh;
+    padding-top: clamp(16px, 2.5vw, 32px);
+    background: var(--bg); border-radius: 24px 24px 0 0; box-shadow: var(--sheet-shadow);
+  }
+}
+
+/* Indicador de rolagem no fim da primeira tela (aproveita o vão em telas altas): um fio fino com um ponto que desce devagar; some ao começar a rolar (components/scroll-cue.tsx).
+   Decorativo (aria-hidden, sem texto). O ponto só anda sem movimento reduzido; parado enquanto a abertura roda. */
+.scroll-cue { display: none; }
+@media (min-width: 900px) and (min-height: 880px) {
+  .scroll-cue {
+    display: block; position: absolute; left: 50%; bottom: 20px; width: 1px; height: 44px; margin-left: -0.5px;
+    background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--soft) 45%, transparent));
+    transition: opacity 240ms var(--ease), visibility 0s 240ms;
+  }
+  .scroll-cue[data-hidden] { opacity: 0; visibility: hidden; }
+  .scroll-cue-dot { position: absolute; left: -2px; top: 18px; width: 5px; height: 5px; border-radius: 50%; background: var(--soft); opacity: 0.7; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes cue-dot { 0% { transform: translateY(-18px); opacity: 0; } 25%, 75% { opacity: 0.8; } 100% { transform: translateY(22px); opacity: 0; } }
+  .scroll-cue-dot { opacity: 0; animation: cue-dot 2.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s infinite; }
+  html[data-opening] .scroll-cue-dot, .scroll-cue[data-hidden] .scroll-cue-dot { animation-play-state: paused; }
 }

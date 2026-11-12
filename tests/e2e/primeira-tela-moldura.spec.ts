@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 
 // Primeira tela em moldura (#36): foto e título (centrado na altura da foto, #38) no meio e, logo abaixo, a faixa de lugar (à esquerda) e ícones de contato (à direita, #38; sem linha em cima); o conjunto fica centrado na primeira tela.
 // Movimento reduzido: a entrada (`rise`, translateY) não desloca as caixas durante a medida.

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 import { rotasTexto, type RotaTexto } from "./textos";
 
 // Issue #18: botões sem fundo em repouso, hero sem legenda, logo da TechEduConnect inteiro.

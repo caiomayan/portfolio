@@ -1,5 +1,3 @@
-"use client";
-
 /*
  * Baseado no componente Signature do componentry.dev (github.com/harshjdhv/componentry).
  * MIT License. Copyright (c) 2026 Harsh Jadhav.
@@ -9,42 +7,36 @@
  * subject to the following conditions: the above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  *
- * Mudanças: usa o pacote `motion` (não framer-motion) e os contornos pré-gerados em lib/signature.ts
- * (scripts/generate-signature.mjs), então nem a fonte nem o opentype.js vão pro navegador.
+ * Mudanças: contornos pré-gerados em lib/signature.ts (scripts/generate-signature.mjs), então nem a fonte nem o
+ * opentype.js vão pro navegador; desde a #39 o desenho do traço é CSS, na abertura (components/opening.tsx), e a
+ * assinatura do topo é sempre a versão pronta.
  */
-import { motion } from "motion/react";
-import { useEffect, useId, useSyncExternalStore } from "react";
-import { prefersReducedMotion } from "@/lib/motion";
 import { signature } from "@/lib/signature";
 
-const LETTER_GAP_S = 0.2; // entre uma letra e a próxima
-const DRAW_S = 1; // duração do traço de cada letra
-const START_S = 0.25;
-const OUTLINE_PX = 1.5;
-const MASK_STROKE = signature.fontSize * 0.22; // espessura do traço da máscara, proporcional à fonte
-const MASK_PAD = MASK_STROKE; // folga da máscara em volta do viewBox, pro traço grosso não cortar nas bordas
-
-// Região da máscara derivada do viewBox ("x y w h"): nada de medida fixa.
-const [viewBoxX, viewBoxY, viewBoxWidth, viewBoxHeight] = signature.viewBox.split(" ").map(Number);
-const maskRegion = {
-  x: viewBoxX - MASK_PAD,
-  y: viewBoxY - MASK_PAD,
-  width: viewBoxWidth + 2 * MASK_PAD,
-  height: viewBoxHeight + 2 * MASK_PAD,
-};
+const [vx, vy, vw, vh] = signature.viewBox.split(" ").map(Number);
+/** Largura da faixa de brilho e quanto ela corre (em unidades do viewBox) na passada única do fim da abertura (app/motion.css). */
+const GLARE_W = vw * 0.38;
+const GLARE_TRAVEL = vw + GLARE_W;
 
 // Um caminho por letra (o "" do espaço não entra); calculado uma vez, no módulo.
-const drawnLetters = signature.glyphs.map((d, i) => ({ d, i })).filter((l) => l.d);
+export const drawnLetters = signature.glyphs.map((d, i) => ({ d, i })).filter((l) => l.d);
 
-const noSubscription = () => () => {};
+/** Espessura do contorno em px de tela, igual à da assinatura de antes da #39 (`non-scaling-stroke`: não muda com o tamanho do desenho). */
+export const OUTLINE_PX = 1.5;
 
-/** A assinatura já foi desenhada nesta sessão do navegador? A troca de idioma (#38) recria a barra do topo sem recarregar a página: ali ela aparece pronta, sem desenhar de novo. */
-let drawn = false;
+/** O contorno de cada letra: uma camada de traço sobre o preenchimento, como na assinatura desenhada de antes da #39 (é ele que dá o peso do traço). */
+export function Outline() {
+  return (
+    <>
+      {drawnLetters.map((l) => (
+        <path key={l.i} className="signature-outline" d={l.d} fill="none" stroke="currentColor" strokeWidth={OUTLINE_PX} vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
+      ))}
+    </>
+  );
+}
 
-const variants = { hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength: 1, opacity: 1 } };
-
-/** As letras já prontas, sem animação: usado no render estático e como a camada de preenchimento da animada. */
-function Filled() {
+/** As letras já prontas, sem animação. */
+export function Filled() {
   return (
     <>
       {drawnLetters.map((l) => (
@@ -55,79 +47,33 @@ function Filled() {
 }
 
 /**
- * Assinatura "Caio Mayan", desenhada letra a letra na abertura. É o nome do site: o nome acessível fica num invólucro
- * que nunca é escondido (o SVG fica `visibility: hidden` até o script trocar pela versão animada).
+ * Assinatura "Caio Mayan" do topo, igual ao estado final da assinatura desenhada de antes da #39 (contorno de 1,5 px mais o preenchimento) em todos os casos (recarregar, movimento reduzido, sem JavaScript, troca de idioma): sempre pronta e visível (é o nome do site; o nome acessível fica no invólucro, que nunca é escondido).
+ * Só durante a abertura (#39, `html[data-opening]`) o CSS a deixa invisível, porque a mesma assinatura está sendo desenhada, grande, por cima.
  */
 export function Signature({ name }: { name: string }) {
   return (
     <span className="signature-mark" role="img" aria-label={name}>
-      <SignatureArt />
-    </span>
-  );
-}
-
-function SignatureArt() {
-  const maskId = `signature-reveal-${useId().replace(/:/g, "")}`;
-  // Primeiro render (servidor e cliente) = assinatura pronta; só depois do mount, sem movimento reduzido, passa a desenhar.
-  const animated = useSyncExternalStore(noSubscription, () => !drawn && !prefersReducedMotion(), () => false);
-  // Só marca ao sair: durante a vida deste componente o valor não muda, e a próxima montagem (troca de idioma) já nasce pronta.
-  useEffect(
-    () => () => {
-      drawn = true;
-    },
-    [],
-  );
-
-  const timing = (i: number) => ({
-    pathLength: { delay: START_S + i * LETTER_GAP_S, duration: DRAW_S, ease: "easeInOut" as const },
-    opacity: { delay: START_S + i * LETTER_GAP_S + 0.01, duration: 0.01 },
-  });
-
-  if (!animated) {
-    return (
-      <svg className="signature" data-static="" data-drawn={drawn ? "" : undefined} viewBox={signature.viewBox} aria-hidden="true" focusable="false">
-        <g fill="currentColor">
+      <svg className="signature" data-static="" viewBox={signature.viewBox} aria-hidden="true" focusable="false">
+        <Outline />
+        <g id="signature-fill" fill="currentColor">
           <Filled />
         </g>
+        {/* Passada única de brilho depois que a abertura termina (#39, rodada 4; app/motion.css): uma faixa de --bg translúcida que corre por cima das letras,
+            recortada pela máscara estática (as mesmas letras, por <use>: não cria caminhos novos). Só `transform`; parada e invisível o resto do tempo. */}
+        <defs>
+          <mask id="signature-glare-mask" maskUnits="userSpaceOnUse" x={vx} y={vy} width={vw} height={vh}>
+            <use href="#signature-fill" style={{ color: "#fff" }} />
+          </mask>
+          <linearGradient id="signature-glare-grad" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" style={{ stopColor: "var(--bg)", stopOpacity: 0 }} />
+            <stop offset="0.5" style={{ stopColor: "var(--bg)", stopOpacity: 0.6 }} />
+            <stop offset="1" style={{ stopColor: "var(--bg)", stopOpacity: 0 }} />
+          </linearGradient>
+        </defs>
+        <g mask="url(#signature-glare-mask)">
+          <rect className="signature-glare" x={vx - GLARE_W} y={vy} width={GLARE_W} height={vh} fill="url(#signature-glare-grad)" style={{ "--glare-travel": `${GLARE_TRAVEL}px` } as React.CSSProperties} />
+        </g>
       </svg>
-    );
-  }
-
-  return (
-    <motion.svg className="signature" viewBox={signature.viewBox} aria-hidden="true" focusable="false" fill="none" initial="hidden" animate="visible">
-      <defs>
-        <mask id={maskId} maskUnits="userSpaceOnUse" {...maskRegion}>
-          {drawnLetters.map((l) => (
-            <motion.path
-              key={l.i}
-              d={l.d}
-              stroke="white"
-              strokeWidth={MASK_STROKE}
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              variants={variants}
-              transition={timing(l.i)}
-            />
-          ))}
-        </mask>
-      </defs>
-      {drawnLetters.map((l) => (
-        <motion.path
-          key={l.i}
-          d={l.d}
-          stroke="currentColor"
-          strokeWidth={OUTLINE_PX}
-          vectorEffect="non-scaling-stroke"
-          strokeLinejoin="round"
-          fill="none"
-          variants={variants}
-          transition={timing(l.i)}
-        />
-      ))}
-      <g mask={`url(#${maskId})`} fill="currentColor">
-        <Filled />
-      </g>
-    </motion.svg>
+    </span>
   );
 }

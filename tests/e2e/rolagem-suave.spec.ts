@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 
 // Issue #18: Lenis só no desktop, desligado com prefers-reduced-motion, sem quebrar links internos e teclado.
 for (const rota of ["/", "/en", "/es"]) {

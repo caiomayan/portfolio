@@ -28,6 +28,8 @@ export type Content = {
     title: string;
     /** Frase de abertura (#38); título + frase formam a descrição da página e a prévia. */
     lead: string;
+    /** Trecho da frase de abertura que recebe o brilho (#39, rodada 4): tem que aparecer exatamente uma vez em `lead`. O texto da página não muda. */
+    leadShine: string;
     /** Lugar ao lado do mapa compacto (#29, #38): cidade, hora (o relógio) e clima em três linhas. */
     place: { city: string };
     photoAlt: string;
@@ -43,7 +45,7 @@ export type Content = {
     resume: ContactLink | null;
   };
   /** Clima ao lado da hora (#28, na primeira tela): nome de cada tempo (lido por leitor de tela) e o crédito do Open-Meteo (CC BY 4.0). */
-  weather: { labels: Record<WeatherKind, string>; credit: { prefix: string; name: string; href: string } };
+  weather: { labels: Record<WeatherKind, string>; credit: { label: string; href: string } };
   /** Seção Idiomas (#38): o que ele fala. `sub`: subnível no estilo da monitoria do curso. */
   languages: { heading: string; items: { name: string; level: string; sub?: string }[] };
   experience: {
@@ -81,7 +83,7 @@ export type Content = {
   activity: { heading: string; total: { one: string; other: string } };
   /** Fundamentos: o que ele sabe de base, só texto, em três grupos, na ordem do copy deck. */
   foundations: { heading: string; groups: { label: string; items: { name: string; detail?: string }[] }[] };
-  /** Rodapé mínimo (#29): `{year}` vira o ano corrente, calculado ao gerar a página. O crédito do clima fica em `contact.weather.credit`. */
+  /** Rodapé mínimo (#29): `{year}` vira o ano corrente, calculado ao gerar a página. O crédito do clima (Open-Meteo, CC BY 4.0) é o link da temperatura na primeira tela (`weather.credit`), não o rodapé. */
   footer: { copyright: string };
   carmine: {
     heading: string;

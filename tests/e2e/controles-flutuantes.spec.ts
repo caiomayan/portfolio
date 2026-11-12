@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { assentarTudo, expect, test, type Page } from "./base";
 
 // Issue #41: o seletor de idioma e o botão de tema acompanham a rolagem numa cápsula flutuante (uma cópia só no DOM).
 declare global {
@@ -56,8 +56,11 @@ test("os controles existem uma vez só e a assinatura não flutua", async ({ pag
   await expect(idioma(page)).toHaveCount(1);
   await expect(tema(page)).toHaveCount(1);
   await expect(capsula(page)).toHaveCount(1);
-  const assinatura = (await page.locator(".signature-mark").boundingBox())!;
-  expect(assinatura.y + assinatura.height).toBeLessThan(0); // saiu da tela com a rolagem
+  // Com a folha (#39, rodada 5, desktop) o topo fica travado e a folha o cobre: a assinatura não sai do lugar nem flutua, e some (já coberta) quando a cápsula entra.
+  const marca = await page.locator(".signature-mark").evaluate((el) => ({ pos: getComputedStyle(el).position, vis: getComputedStyle(el).visibility, topo: el.getBoundingClientRect().top }));
+  expect(marca.pos).not.toBe("fixed");
+  expect(marca.vis).toBe("hidden");
+  expect(marca.topo).toBeGreaterThanOrEqual(0); // não vai pra fora da tela nem pra um canto: fica onde está, coberta
 });
 
 test("a ordem do Tab continua lógica: idioma, tema, depois o conteúdo", async ({ page }) => {
@@ -116,6 +119,7 @@ for (const [w, h] of [
       await rolarPara(page, 1500);
       await expect(capsula(page)).toHaveAttribute("data-floating", "true");
       await pousada(page);
+      await assentarTudo(page); // a coreografia das seções (#39) tem que ter assentado: o axe mede o contraste do que está na tela
       for (const b of [await idioma(page).boundingBox(), await tema(page).boundingBox()]) {
         expect(b!.width).toBeGreaterThanOrEqual(43.9);
         expect(b!.height).toBeGreaterThanOrEqual(43.9);

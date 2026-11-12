@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 
 // Issues #24, #29 e #38: mapa compacto na primeira tela, ao lado de três linhas empilhadas: cidade, hora (sem o fuso na tela) e clima.
 const rotas = [
@@ -39,10 +39,13 @@ for (const r of rotas) {
       await page.goto(r.path);
       const mapa = page.locator(".place-art");
       await expect(mapa).toHaveAttribute("aria-hidden", "true");
-      const box = (await mapa.boundingBox())!;
-      const pin = (await page.locator(".place-pin").boundingBox())!;
-      const x = (pin.x + pin.width / 2 - box.x) / box.width;
-      const y = (pin.y + pin.height / 2 - box.y) / box.height;
+      // Mapa e pino medidos no mesmo quadro (um evaluate só): a entrada `rise` do lugar ainda pode estar andando e, com dois pedidos separados,
+      // numa máquina carregada (CI em paralelo) eles saíam de quadros diferentes e o pino parecia deslocado uns 5 px.
+      const { x, y } = await page.evaluate(() => {
+        const box = document.querySelector(".place-art")!.getBoundingClientRect();
+        const pin = document.querySelector(".place-pin")!.getBoundingClientRect();
+        return { x: (pin.x + pin.width / 2 - box.x) / box.width, y: (pin.y + pin.height / 2 - box.y) / box.height };
+      });
       expect(x).toBeCloseTo((-34.88 - recorte.lonMin) / (recorte.lonMax - recorte.lonMin), 1);
       expect(y).toBeCloseTo((recorte.latTop + 7.12) / (recorte.latTop - recorte.latBottom), 1);
       // Em preto e branco: os pontos e o pino usam o cinza do tema.

@@ -2,8 +2,10 @@ import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import type { ReactNode } from "react";
 import type { Lang } from "@/content";
+import { openingFlightScript, openingScript } from "@/lib/opening";
 import { locales } from "@/lib/locales";
-import { Reveal } from "@/components/reveal";
+import { Choreography } from "@/components/choreography";
+import { Opening } from "@/components/opening";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { ThemeKeeper } from "@/components/theme-keeper";
 import "lenis/dist/lenis.css";
@@ -23,14 +25,15 @@ export function SiteShell({ lang, children }: { lang: Lang; children: ReactNode 
       <body>
         {/* Antes de qualquer conteúdo: o tema já está aplicado na primeira pintura. */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* #39: decide, antes da primeira pintura, se a abertura roda nesta visita (uma vez por aba). Sem JavaScript nada é escondido. */}
+        <script dangerouslySetInnerHTML={{ __html: openingScript }} />
+        <Opening />
         {children}
-        <Reveal />
+        {/* #39: o voo, o fade e o pular da abertura, sem esperar a hidratação (a cobertura e a assinatura do topo já estão no DOM). */}
+        <script dangerouslySetInnerHTML={{ __html: openingFlightScript }} />
         <ThemeKeeper />
+        <Choreography />
         <SmoothScroll />
-        {/* Sem JavaScript a assinatura não é desenhada: aparece pronta (é o nome do site). */}
-        <noscript>
-          <style>{`.signature[data-static]{visibility:visible}`}</style>
-        </noscript>
         {/* Vercel Web Analytics (sem cookies). Só no deploy da Vercel: fora dela o script não existe e daria 404. */}
         {process.env.VERCEL && <Analytics />}
       </body>

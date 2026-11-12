@@ -7,6 +7,7 @@ export const pt: Content = {
     name: "Caio Mayan",
     title: "Engenheiro de Software",
     lead: "A caminho da engenharia de IA: LLMs, agentes e o backend que os sustenta.",
+    leadShine: "engenharia de IA",
     place: { city: "João Pessoa, Brasil" },
     photoAlt: "Retrato de Caio Mayan",
   },
@@ -19,7 +20,7 @@ export const pt: Content = {
   },
   weather: {
     labels: { clear: "Céu limpo", partly: "Parcialmente nublado", cloudy: "Nublado", fog: "Neblina", rain: "Chuva", storm: "Tempestade" },
-    credit: { prefix: "Dados do clima por", name: "Open-Meteo.com", href: "https://open-meteo.com/" },
+    credit: { label: "Dados do clima: Open-Meteo.com", href: "https://open-meteo.com/" },
   },
   languages: {
     heading: "Idiomas",

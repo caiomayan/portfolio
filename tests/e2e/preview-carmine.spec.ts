@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./base";
 
 // Preview do site do Carmine no hover do link "stcarmine.com" (#21). Nunca vai pra rede de verdade:
 // o link aponta pra fora, então qualquer clique/toque é interceptado.
@@ -9,10 +9,10 @@ async function semRedeExterna(page: Page) {
 const link = (page: Page) => page.locator("#carmine").getByRole("link", { name: /stcarmine\.com/ });
 const preview = (page: Page) => page.locator(".link-preview");
 
-/** Rola até o link e espera a entrada ao rolar (`Reveal`) terminar: até lá o link ainda se desloca. */
+/** Rola até o link e espera a entrada ao rolar (a coreografia do Carmine, #39) assentar: até lá o link ainda se desloca. */
 async function pontoDoLink(page: Page) {
   await link(page).scrollIntoViewIfNeeded();
-  const parte = page.locator("#carmine .links");
+  const parte = page.locator("#carmine .carmine-body");
   await expect.poll(() => parte.evaluate((el) => getComputedStyle(el).opacity + "|" + getComputedStyle(el).transform)).toMatch(/^1\|(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
   const box = (await link(page).boundingBox())!;
   return { box, cx: box.x + box.width / 2, cy: box.y + box.height / 2 };

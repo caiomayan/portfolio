@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 
 // Assinatura e logos precisam continuar legíveis no tema escuro (logos pretos invertidos, o colorido do Valkey intacto).
 function luminance(rgb: string): number {

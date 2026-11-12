@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./base";
 import { SITE_URL } from "@/lib/site";
 import { rotasTexto } from "./textos";
 

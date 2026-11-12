@@ -18,6 +18,7 @@ let settleTransition: (() => void) | null = null;
  * A transição só termina de capturar o "depois" quando o conteúdo novo chegou (`settleTransition`); sem suporte, ou com movimento reduzido, troca na hora.
  */
 function navigateWithFade(go: () => void) {
+  window.dispatchEvent(new Event("lang-switch")); // a coreografia das seções (#39) se desfaz ANTES da troca: com os gatilhos do ScrollTrigger vivos, a rolagem ia a 0
   const doc = document as Document & { startViewTransition?: (options: { update: () => Promise<void>; types: string[] }) => unknown };
   if (!doc.startViewTransition || prefersReducedMotion()) return go();
   doc.startViewTransition({

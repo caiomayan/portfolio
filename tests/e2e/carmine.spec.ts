@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 import { rotasTexto, type RotaTexto } from "./textos";
 
 for (const path of ["/", "/en", "/es"] as RotaTexto[]) {

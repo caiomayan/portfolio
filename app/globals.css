@@ -6,6 +6,8 @@
   --ink: #1d1d1f;
   --soft: #6e6e73;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 40px -12px rgb(0 0 0 / 0.18);
+  --sheet-shadow-down: 0 1px 0 rgb(0 0 0 / 0.07), 0 22px 44px -22px rgb(0 0 0 / 0.22); /* a mesma folha, com a borda embaixo (cobertura da abertura, #39 rodada 5) */
+  --sheet-shadow: 0 -1px 0 rgb(0 0 0 / 0.07), 0 -20px 44px -24px rgb(0 0 0 / 0.2); /* borda de cima da folha (#39, transição "folha"): um fio e uma sombra bem leve */
 
   /* Escala de tipo: no máximo 4 tamanhos. */
   --text-small: 0.875rem;
@@ -17,8 +19,8 @@
   --gutter: 24px;
   --max: 1120px;
   --photo: clamp(256px, 30vw, 360px); /* foto da primeira tela no desktop (#36) */
-  --top-height: 122px; /* altura do topo no desktop: assinatura de 82 px mais 20 px de respiro em cima e embaixo (#38) */
-  --signature: 288px; /* largura da assinatura no topo (#38): 82 px de altura; encolhe sozinha quando falta espaço (app/motion.css) */
+  --top-height: 103px; /* altura do topo no desktop: assinatura de ~63 px mais 20 px de respiro em cima e embaixo (#39, rodada 5: a assinatura ficou menor) */
+  --signature: 220px; /* largura da assinatura no topo (#39, rodada 5: tamanho de logomarca, era 288 px): ~63 px de altura; encolhe sozinha quando falta espaço (app/motion.css) */
 
   /* Seção Carmine (ver DESIGN.md) */
   --carmine-column: 640px;
@@ -40,9 +42,13 @@
   --ink: #f5f5f7;
   --soft: #a1a1a6;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 40px -12px rgb(0 0 0 / 0.8);
+  --sheet-shadow-down: 0 1px 0 rgb(255 255 255 / 0.12), 0 24px 48px -22px rgb(0 0 0 / 0.95);
+  --sheet-shadow: 0 -1px 0 rgb(255 255 255 / 0.12), 0 -22px 48px -24px rgb(0 0 0 / 0.95);
 }
 
 * { box-sizing: border-box; }
+/* Celular (#39, rodada 5): assinatura de ~148 px (era ~185 px) e topo de 84 px (a altura real: botões de 44 px mais 20 px em cima e embaixo). */
+@media (max-width: 639px) { :root { --signature: 148px; --top-height: 84px; } }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
@@ -156,6 +162,7 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* Primeira tela (#36, moldura): meio (foto e título lado a lado) e, logo abaixo, a faixa de lugar e ícones de contato (sem linha, #38); o conjunto fica centrado na altura da primeira tela. */
 .hero {
+  position: relative; /* âncora do indicador de rolagem e, na transição "folha", do sticky */
   width: min(var(--max), 100% - 2 * var(--gutter));
   margin-inline: auto;
   min-height: calc(100svh - var(--top-height));
@@ -198,16 +205,17 @@ h1 {
 }
 /* Ponto final do título: ornamento tipográfico (ver DESIGN.md), fora da árvore de acessibilidade. */
 h1::after { content: "." / ""; }
-.lead {
-  margin: clamp(20px, 3vw, 36px) 0 0; /* espaço normal entre o título e a frase */
+.lead { margin: 0; color: var(--soft); }
+/* A frase e a camada de brilho por cima dela (.lead-glare, app/motion.css; #39, rodada 4) têm a mesma tipografia, pra quebrarem nas mesmas linhas. */
+.lead, .lead-glare {
   max-width: 24ch;
   font-size: var(--text-lead);
   font-weight: 400;
   line-height: 1.3;
   letter-spacing: -0.02em;
-  color: var(--soft);
   text-wrap: pretty;
 }
+.lead-wrap { position: relative; margin: clamp(20px, 3vw, 36px) 0 0; /* espaço normal entre o título e a frase (fica no invólucro: a camada de brilho tem a mesma caixa do <p>) */ }
 /* Lugar (#29, #36): mapa compacto à esquerda (a altura da faixa) e, ao lado, três linhas empilhadas (cidade, hora e clima, #38), com o mapa centrado na altura delas. Pontos em tons do tema, pino em João Pessoa. Decorativo. */
 .place { display: flex; align-items: center; gap: 16px; min-width: 0; margin: 0; font-size: var(--text-small); color: var(--soft); }
 .place-art {
@@ -462,7 +470,7 @@ h1::after { content: "." / ""; }
   #carmine { padding-block: 8px 0; }
 }
 
-/* Rodapé mínimo (#29): sem linha nem fundo, separado do Contato só por espaço. © à esquerda, crédito do clima à direita; no celular empilham. */
+/* Rodapé mínimo (#29): sem linha nem fundo, separado do Contato só por espaço. Só o © (o crédito do clima foi pra temperatura da primeira tela, #39 rodada 5). */
 .site-footer {
   width: min(var(--max), 100% - 2 * var(--gutter));
   margin-inline: auto;
@@ -477,3 +485,8 @@ h1::after { content: "." / ""; }
 @media (min-width: 640px) {
   .site-footer { flex-direction: row; justify-content: space-between; align-items: baseline; gap: 24px; }
 }
+
+/* Coreografia das seções (#39, lib/choreography.ts). A máscara do título é estática: só o texto interno anima (transform), conduzido pela rolagem.
+   O recorte desce um pouco (padding com margem negativa) pra não cortar a haste de baixo das letras. */
+.title-mask { display: block; overflow: clip; padding-bottom: 0.14em; margin-bottom: -0.14em; }
+.title-text { display: block; }

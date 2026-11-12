@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { assentar, expect, test } from "./base";
 import { rotasTexto, type RotaTexto } from "./textos";
 
 // Texto: docs/copy-deck.md (seções Fundamentos, Formação, Experiência e Idiomas). Issues #27, #29 e #38.
@@ -45,6 +45,7 @@ for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
         for (const img of await linha.locator("img").all()) {
           expect(await img.evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth > 0)).toBe(true);
         }
+        await assentar(page, `${secao} .icon-row .stack li`);
         const tip = page.locator(`${secao} .tip`);
         await expect(tip).toHaveCount(0);
         await itens.nth(1).hover();
@@ -84,7 +85,7 @@ for (const path of ["/", "/en", "/es"] as RotaTexto[]) {
       const titulo = (sel: string) => page.locator(sel).evaluate((el) => { const c = getComputedStyle(el); return [c.fontSize, c.fontWeight, c.letterSpacing, c.color].join("|"); });
       expect(await titulo("#idiomas h2")).toBe(await titulo("#fundamentos h2"));
       // Ordem: ... Atividade (quando há dados), Idiomas, rodapé; e nenhuma seção depois.
-      const ids = await page.locator("main > section").evaluateAll((els) => els.map((e) => e.id));
+      const ids = await page.locator("main section").evaluateAll((els) => els.map((e) => e.id));
       expect(ids.at(-1)).toBe("idiomas");
       expect(ids.indexOf("idiomas")).toBeGreaterThan(ids.indexOf("fundamentos"));
       expect(ids.indexOf("atividade")).toBeLessThan(ids.indexOf("idiomas"));

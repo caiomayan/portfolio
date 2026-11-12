@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 
 // Issue #8: axe sem violações (WCAG A/AA) nas duas rotas, nos dois temas.
 // Movimento reduzido: o conteúdo que entra com animação já aparece pronto e também é auditado.

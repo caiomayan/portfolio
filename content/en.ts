@@ -7,6 +7,7 @@ export const en: Content = {
     name: "Caio Mayan",
     title: "Software Engineer",
     lead: "On the path to AI engineering: LLMs, agents and the backend that holds them up.",
+    leadShine: "AI engineering",
     place: { city: "João Pessoa, Brazil" },
     photoAlt: "Portrait of Caio Mayan",
   },
@@ -19,7 +20,7 @@ export const en: Content = {
   },
   weather: {
     labels: { clear: "Clear sky", partly: "Partly cloudy", cloudy: "Cloudy", fog: "Fog", rain: "Rain", storm: "Thunderstorm" },
-    credit: { prefix: "Weather data by", name: "Open-Meteo.com", href: "https://open-meteo.com/" },
+    credit: { label: "Weather data by Open-Meteo.com", href: "https://open-meteo.com/" },
   },
   languages: {
     heading: "Languages",

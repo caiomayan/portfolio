@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { emitLenisScroll } from "@/lib/scroll-bus";
 
 const DESKTOP = "(hover: hover) and (pointer: fine)";
 const REDUCED = "(prefers-reduced-motion: reduce)";
@@ -8,7 +9,7 @@ const REDUCED = "(prefers-reduced-motion: reduce)";
 /**
  * Rolagem suave (lenis.dev) só no desktop (ponteiro fino com hover; no toque a rolagem segue nativa) e desligada
  * com prefers-reduced-motion. Lenis só interpreta a roda do mouse: teclado, barra de rolagem e busca da página
- * continuam nativos. Rola a janela de verdade, então o IntersectionObserver de components/reveal.tsx segue valendo.
+ * continuam nativos. Rola a janela de verdade, então o ScrollTrigger (lib/choreography.ts) segue valendo.
  * O Lenis só é baixado quando as condições valem; se elas mudam (movimento reduzido, mouse ↔ toque), liga ou desliga.
  */
 export function SmoothScroll() {
@@ -34,6 +35,7 @@ export function SmoothScroll() {
       if (!alive || lenis || !desktop.matches || reduced.matches) return;
       const instance = new Lenis({ autoRaf: true });
       lenis = instance;
+      instance.on("scroll", emitLenisScroll); // o ScrollTrigger acompanha o mesmo quadro do Lenis (lib/choreography.ts)
 
       // Links internos (#carmine etc.): rolagem suave, endereço atualizado e foco no alvo (o próximo Tab parte dali).
       const onClick = (e: MouseEvent) => {

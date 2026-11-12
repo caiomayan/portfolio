@@ -14,7 +14,8 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Fixo em 24.04, que o Playwright suporta oficialmente (decisão do coordenador). Não resolve a falha do apt (o DNS dos espelhos do Ubuntu falha no runner, nas imagens 24.04 e 26.04): isso é tratado no passo de dependências do sistema, abaixo.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
       # PR vindo de fork não recebe secrets: só nesse caso o teste de termos proibidos é pulado, com aviso.
@@ -87,13 +88,22 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
 
+      # O navegador é obrigatório: se o download falhar, o CI falha.
       - name: Instalar Chromium
         if: steps.pw-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
-      - name: Instalar dependências do sistema (cache de navegador encontrado)
-        if: steps.pw-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
+      # As libs do sistema vêm de apt, que no runner está sem resolver o DNS dos espelhos do Ubuntu (visto nas imagens 24.04 e 26.04).
+      # As imagens do GitHub já trazem as libs do Chrome; se faltar alguma, os testes quebram de forma visível. Por isso só este passo
+      # não derruba o CI: avisa e segue. Nenhum erro de verdade fica escondido.
+      - name: Instalar dependências do sistema (não fatal)
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          if ! npx playwright install-deps chromium; then
+            echo "::warning::npx playwright install-deps falhou (apt do runner sem rede). Seguindo com as libs que a imagem já traz; se faltar alguma, os testes falham."
+            exit 1
+          fi
 
       - name: Testes
         run: npm test

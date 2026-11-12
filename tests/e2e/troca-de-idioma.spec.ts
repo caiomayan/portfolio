@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./base";
 
 // Issue #38: trocar de idioma não recarrega a página. O conteúdo troca na hora, o endereço muda, a rolagem fica onde estava.
 declare global {
